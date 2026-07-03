@@ -1227,3 +1227,112 @@ Mix & master by Douglas Busta.`;
     setTimeout(applyFinalState, 3000);
   });
 })();
+
+
+/* FORCE APP DOWNLOAD BUTTONS FINAL */
+(function forceAppDownloadButtonsFinal() {
+  function hidePrivateContentButton() {
+    document.querySelectorAll("button, a, div, span").forEach((el) => {
+      const text = (el.textContent || "").trim().toLowerCase();
+
+      if (
+        text === "contenuto privato" ||
+        text.includes("contenuto privato") ||
+        text === "private content"
+      ) {
+        el.hidden = true;
+        el.style.display = "none";
+        el.style.visibility = "hidden";
+        el.style.opacity = "0";
+        el.style.pointerEvents = "none";
+      }
+    });
+  }
+
+  function renderInstallButtons() {
+    const albumArt = document.getElementById("album-art");
+    if (!albumArt || !albumArt.parentElement) return;
+
+    let actions = document.getElementById("hero-download-actions");
+
+    if (!actions) {
+      actions = document.createElement("div");
+      actions.id = "hero-download-actions";
+      actions.className = "hero-download-actions";
+      albumArt.parentElement.appendChild(actions);
+    }
+
+    actions.hidden = false;
+    actions.style.display = "grid";
+    actions.style.visibility = "visible";
+    actions.style.opacity = "1";
+    actions.style.pointerEvents = "auto";
+
+    actions.innerHTML = "";
+
+    const iosButton = document.createElement("button");
+    iosButton.type = "button";
+    iosButton.className = "hero-download-button";
+    iosButton.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
+    iosButton.addEventListener("click", () => {
+      showSheet(
+        "Download iOS",
+        "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”."
+      );
+    });
+
+    const androidButton = document.createElement("button");
+    androidButton.type = "button";
+    androidButton.className = "hero-download-button";
+    androidButton.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
+    androidButton.addEventListener("click", async () => {
+      if (state.deferredInstallPrompt) {
+        state.deferredInstallPrompt.prompt();
+        await state.deferredInstallPrompt.userChoice.catch(() => null);
+        state.deferredInstallPrompt = null;
+        showSheet("Download Android", "Installazione avviata.");
+        return;
+      }
+
+      showSheet(
+        "Download Android",
+        "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”."
+      );
+    });
+
+    actions.append(iosButton, androidButton);
+  }
+
+  function apply() {
+    hidePrivateContentButton();
+    renderInstallButtons();
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    apply();
+    setTimeout(apply, 300);
+    setTimeout(apply, 1000);
+    setTimeout(apply, 2500);
+  });
+
+  window.addEventListener("load", () => {
+    apply();
+    setTimeout(apply, 300);
+    setTimeout(apply, 1000);
+    setTimeout(apply, 2500);
+    setTimeout(apply, 5000);
+  });
+
+  const observer = new MutationObserver(() => {
+    apply();
+  });
+
+  window.addEventListener("load", () => {
+    if (document.body) {
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    }
+  });
+})();
