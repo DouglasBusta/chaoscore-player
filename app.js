@@ -142,15 +142,66 @@ function isStandaloneMode() {
 function updateInstallUI() {
   if (!els.installAppButton || !els.installIosButton) return;
 
-  if (isStandaloneMode()) {
-    els.installAppButton.hidden = true;
-    els.installIosButton.hidden = true;
-    return;
+  els.installAppButton.hidden = false;
+  els.installIosButton.hidden = false;
+}
+
+function setupDownloadActions() {
+  if (!els.albumArt) return;
+
+  const coverParent = els.albumArt.parentElement;
+  if (!coverParent) return;
+
+  let actions = document.getElementById("hero-download-actions");
+  if (!actions) {
+    actions = document.createElement("div");
+    actions.id = "hero-download-actions";
+    actions.className = "hero-download-actions";
+    coverParent.appendChild(actions);
   }
 
-  const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-  els.installAppButton.hidden = !state.deferredInstallPrompt && isIos;
-  els.installIosButton.hidden = !isIos;
+  if (els.installIosButton) {
+    els.installIosButton.hidden = false;
+    els.installIosButton.classList.add("hero-download-button");
+    els.installIosButton.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
+    actions.appendChild(els.installIosButton);
+  }
+
+  if (els.installAppButton) {
+    els.installAppButton.hidden = false;
+    els.installAppButton.classList.add("hero-download-button");
+    els.installAppButton.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
+    actions.appendChild(els.installAppButton);
+  }
+
+  let contentButton = document.getElementById("download-content");
+  if (!contentButton) {
+    contentButton = document.createElement("button");
+    contentButton.type = "button";
+    contentButton.id = "download-content";
+    contentButton.className = "hero-download-button hero-download-button--content";
+    contentButton.innerHTML = '<span class="download-icon">⬇</span><span>Download contenuto</span>';
+    contentButton.addEventListener("click", () => {
+      const url =
+        publicConfig.CONTENT_DOWNLOAD_URL ||
+        publicConfig.contentDownloadUrl ||
+        state.album.downloadUrl ||
+        state.album.download_url ||
+        "";
+
+      if (url) {
+        window.open(url, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      showSheet(
+        "Download contenuto",
+        "Il pacchetto download non e' ancora collegato. Carica il contenuto su uno storage esterno e inserisci il link in public-config.js o nel database."
+      );
+    });
+  }
+
+  actions.appendChild(contentButton);
 }
 
 function updatePlaybackButtons() {
@@ -717,6 +768,7 @@ async function init() {
   els.audio.volume = 1;
   updatePlaybackButtons();
   updateInstallUI();
+  setupDownloadActions();
 }
 
 init();
