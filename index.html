@@ -128,6 +128,35 @@
       background: rgba(255,255,255,0.095);
     }
 
+
+    .quality-downloads {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .quality-button {
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.13);
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.045);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    .quality-button:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.09);
+    }
+
     .info {
       padding-top: 8px;
     }
@@ -553,6 +582,14 @@
         <div class="install-buttons">
           <button class="clean-button" id="ios-download"> Download iOS</button>
           <button class="clean-button" id="android-download">🤖 Download Android</button>
+        </div>
+        <div class="quality-downloads">
+          <a class="quality-button" href="https://drive.google.com/drive/folders/1058oD--H9tKeTxN4ukLf_qZDHjH1gJqB?usp=drive_link" target="_blank" rel="noopener noreferrer">
+            Download WAV — High Quality
+          </a>
+          <a class="quality-button" href="/downloads/chaoscore-mp3.zip" download>
+            Download MP3
+          </a>
         </div>
       </div>
 
