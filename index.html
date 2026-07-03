@@ -238,6 +238,33 @@
       color: white;
     }
 
+
+    .track.playing {
+      animation: trackPulse 420ms ease;
+    }
+
+    .track.playing .play-small {
+      background: rgba(255,255,255,0.92);
+      color: #080608;
+      transform: scale(1.04);
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    @keyframes trackPulse {
+      0% {
+        transform: scale(1);
+      }
+      45% {
+        transform: scale(1.012);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
     .player {
       position: fixed;
       left: 18px;
@@ -383,7 +410,34 @@
         justify-content: flex-start;
       }
 
-      .player {
+  
+    .track.playing {
+      animation: trackPulse 420ms ease;
+    }
+
+    .track.playing .play-small {
+      background: rgba(255,255,255,0.92);
+      color: #080608;
+      transform: scale(1.04);
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    @keyframes trackPulse {
+      0% {
+        transform: scale(1);
+      }
+      45% {
+        transform: scale(1.012);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .player {
         grid-template-columns: 1fr;
         gap: 10px;
       }
@@ -587,6 +641,7 @@
       });
 
       renderWave(0);
+    updateTrackPlayButtons();
 
       if (shouldPlay) {
         audio.play().catch(() => popup("Audio", "Riprova cliccando Play o cliccando la traccia."));
@@ -655,11 +710,13 @@
     audio.addEventListener("play", () => {
       play.textContent = "❚❚";
       heroPlay.textContent = "❚❚";
+          updateTrackPlayButtons();
     });
 
     audio.addEventListener("pause", () => {
       play.textContent = "▶";
       heroPlay.textContent = "▶";
+          updateTrackPlayButtons();
     });
 
     audio.addEventListener("timeupdate", () => {
@@ -756,6 +813,20 @@ Mixed and mastered by Douglas Busta.`);
     });
   }
 
+
+  function setTrackButtonsPlaying(activeIndex, isPlaying) {
+    document.querySelectorAll(".track").forEach((row, index) => {
+      const button = row.querySelector(".play-small");
+      const active = index === activeIndex && isPlaying;
+
+      row.classList.toggle("playing", active);
+
+      if (button) {
+        button.textContent = active ? "❚❚" : "▶";
+      }
+    });
+  }
+
   function updateUI(index) {
     const track = tracks[index];
     if (!track) return;
@@ -783,6 +854,8 @@ Mixed and mastered by Douglas Busta.`);
     if (sameTrack && !audio.paused) {
       audio.pause();
       setButtonsPlaying(false);
+      setTrackButtonsPlaying(activeIndex, false);
+      setTrackButtonsPlaying(index, false);
       return;
     }
 
@@ -795,6 +868,7 @@ Mixed and mastered by Douglas Busta.`);
     try {
       await audio.play();
       setButtonsPlaying(true);
+      setTrackButtonsPlaying(index, true);
     } catch (error) {
       console.warn(error);
       const status = document.getElementById("audio-status");
@@ -842,6 +916,7 @@ Mixed and mastered by Douglas Busta.`);
     } else {
       audio.pause();
       setButtonsPlaying(false);
+      setTrackButtonsPlaying(activeIndex, false);
     }
   }, true);
 
