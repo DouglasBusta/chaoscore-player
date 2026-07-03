@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Archivio privato #chaoscore."
+      content="Player privato e installabile di #chaoscore."
     />
     <meta
       name="robots"
       content="noindex, nofollow, noarchive, nosnippet, noimageindex"
     />
-    <meta name="theme-color" content="#171717" />
+    <meta name="theme-color" content="#181516" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="apple-mobile-web-app-title" content="#chaoscore" />
     <title>#chaoscore</title>
     <link rel="icon" href="./assets/chaoscore-spotify-cover.jpg" />
@@ -26,28 +29,66 @@
       <section class="album-column">
         <img
           class="album-art"
+          id="album-art"
           src="./assets/chaoscore-spotify-cover.jpg"
           alt="Cover di #chaoscore"
         />
+
         <div class="install-panel">
-          <button class="install-action" id="install-android" type="button">
-            installa android
+          <button class="install-action install-primary" id="install-app" type="button">
+            installa applicazione
           </button>
           <button class="install-action" id="install-ios" type="button">
-            installa ios
+            guida installazione iPhone
           </button>
-          <button class="install-action install-download" id="content-info" type="button">
-            contenuto privato
-          </button>
+          <a class="install-action" href="./exclusive.html">contenuto privato</a>
         </div>
+
+        <section class="access-card" id="access-card" hidden>
+          <p class="eyebrow">Accesso privato</p>
+          <h2>Inserisci il codice</h2>
+          <p class="support-copy">
+            Se l'album e' impostato come privato nel database, basta un codice
+            semplice per entrare. Il link puo' restare lo stesso.
+          </p>
+          <form id="access-form" class="access-form">
+            <label class="sr-only" for="access-code">Codice accesso</label>
+            <input
+              id="access-code"
+              name="access-code"
+              class="access-input"
+              type="password"
+              autocomplete="one-time-code"
+              placeholder="codice accesso"
+            />
+            <button class="playlist-bar access-submit" type="submit">
+              entra
+            </button>
+          </form>
+          <p class="status-note" id="access-status"></p>
+        </section>
+
+        <section class="status-card">
+          <p class="eyebrow">Stato sorgente</p>
+          <p class="status-note" id="data-status">
+            Caricamento dati album in corso...
+          </p>
+          <p class="status-note" id="audio-status">
+            Gli audio arrivano da URL esterni, non dalla repository GitHub.
+          </p>
+        </section>
       </section>
 
       <section class="library-column">
         <header class="library-head">
           <div>
-            <h1>#chaoscore</h1>
+            <h1 id="album-title">#chaoscore</h1>
             <p class="album-meta" id="album-meta">
-              DouglasBusta · 15 tracks · 37m 49s
+              DouglasBusta · player privato pronto per il deploy
+            </p>
+            <p class="release-note" id="release-note">
+              Player installabile, codice portabile, audio esterni collegabili
+              da Supabase.
             </p>
           </div>
 
@@ -69,53 +110,75 @@
           <button class="playlist-bar" id="copy-link" type="button">
             + copia link privato
           </button>
-          <button class="playlist-bar playlist-download" id="content-info-secondary" type="button">
-            contenuto in arrivo
+          <button class="playlist-bar" id="refresh-data" type="button">
+            aggiorna contenuti
           </button>
         </div>
 
         <section class="tracks-panel" aria-label="Tracklist completa">
           <div class="track-list" id="track-list"></div>
+          <div class="empty-state" id="empty-state" hidden>
+            <p class="empty-copy">
+              Nessuna traccia attiva trovata. Appena colleghi Supabase o aggiungi
+              tracce di fallback, la libreria comparira' qui.
+            </p>
+          </div>
         </section>
       </section>
     </main>
 
     <section class="mini-player">
-      <audio id="audio-player" preload="metadata"></audio>
+      <audio id="audio-player" preload="metadata" crossorigin="anonymous"></audio>
 
       <div class="mini-player-main">
         <div class="mini-player-track">
           <img
             class="mini-player-art"
+            id="mini-player-art"
             src="./assets/chaoscore-spotify-cover.jpg"
             alt="Cover mini player"
           />
           <div class="mini-player-copy">
-            <h2 id="now-title">1. banale</h2>
+            <h2 id="now-title">banale</h2>
             <p id="now-subtitle">#chaoscore</p>
           </div>
         </div>
 
-        <button
-          class="waveform-wrap"
-          id="waveform-wrap"
-          type="button"
-          aria-label="Sposta la riproduzione nella traccia"
-        >
-          <div class="waveform" id="waveform"></div>
-        </button>
-
-        <div class="time-readout" id="time-readout">0:00 / 0:00</div>
+        <div class="waveform-panel">
+          <button
+            class="waveform-wrap"
+            id="waveform-wrap"
+            type="button"
+            aria-label="Sposta la riproduzione nella traccia"
+          >
+            <div class="waveform" id="waveform"></div>
+          </button>
+          <div class="time-readout" id="time-readout">0:00 / 0:00</div>
+        </div>
 
         <div class="mini-player-controls">
-          <button type="button" data-action="prev" class="control-button">⏮</button>
-          <button type="button" data-action="play" class="control-button play-button">▶</button>
-          <button type="button" data-action="next" class="control-button">⏭</button>
-          <button type="button" data-action="shuffle" class="icon-button">⤮</button>
-          <button type="button" data-action="repeat" class="icon-button">↻</button>
-          <button type="button" id="menu-button" class="icon-button">☰</button>
+          <button type="button" data-action="prev" class="control-button" aria-label="Traccia precedente">
+            ⏮
+          </button>
+          <button type="button" data-action="play" class="control-button play-button" aria-label="Play / Pausa">
+            ▶
+          </button>
+          <button type="button" data-action="next" class="control-button" aria-label="Traccia successiva">
+            ⏭
+          </button>
+          <button type="button" data-action="shuffle" class="icon-button" aria-label="Shuffle">
+            ⤮
+          </button>
+          <button type="button" data-action="repeat" class="icon-button" aria-label="Repeat">
+            ↻
+          </button>
+          <button type="button" id="menu-button" class="icon-button" aria-label="Vai alla traccia attiva">
+            ☰
+          </button>
           <div class="volume-cluster">
-            <button type="button" id="mute-button" class="icon-button">🔊</button>
+            <button type="button" id="mute-button" class="icon-button" aria-label="Mute">
+              🔊
+            </button>
             <input
               id="volume-slider"
               class="volume-slider"
@@ -128,30 +191,29 @@
           </div>
         </div>
 
-        <button class="download-link" id="content-info-mini" type="button">
-          contenuto
-        </button>
+        <a class="download-link" href="./credits.html">credits</a>
       </div>
 
       <input id="seekbar" type="range" min="0" max="100" value="0" hidden />
       <div class="waveform-tooltip" id="waveform-tooltip" hidden>0:00</div>
     </section>
 
-    <div class="install-sheet" id="install-sheet" hidden>
-      <div class="install-card">
-        <h2 id="install-title">Installa #chaoscore</h2>
-        <p id="install-copy">
-          Su iPhone apri Safari, tocca Condividi e poi “Aggiungi alla schermata Home”.
+    <div class="sheet" id="sheet" hidden>
+      <div class="sheet-card">
+        <h2 id="sheet-title">Installa #chaoscore</h2>
+        <p id="sheet-copy">
+          Scegli il percorso migliore per aprire il player come app sul tuo
+          dispositivo.
         </p>
-        <div class="install-sheet-actions">
-          <button class="playlist-bar install-close" id="install-close" type="button">
+        <div class="sheet-actions">
+          <button class="playlist-bar sheet-close" id="sheet-close" type="button">
             chiudi
           </button>
         </div>
       </div>
     </div>
 
-    <script src="./data/library.js"></script>
-    <script src="./app.js"></script>
+    <script src="./public-config.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>

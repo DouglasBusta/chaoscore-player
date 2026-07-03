@@ -5,6 +5,12 @@ downloads/chaoscore.zip
 *.aiff
 *.flac
 *.mp3
+*.zip
 downloads/
 audio/
 tracks/
+assets/chaoscore-cover-original.png
+assets/chaoscore-tracklist.png
+assets/cover-chaoscore.png
+assets/credits-preview.jpg
+guard.js

@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Contenuti esclusivi privati di Chaoscore."
+      content="Contenuti esclusivi privati di #chaoscore."
     />
     <meta
       name="robots"
       content="noindex, nofollow, noarchive, nosnippet, noimageindex"
     />
-    <title>CHAOSCORE / Exclusive</title>
+    <meta name="theme-color" content="#181516" />
+    <title>#chaoscore / exclusive</title>
     <link rel="icon" href="./assets/chaoscore-spotify-cover.jpg" />
+    <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -32,23 +35,24 @@
           <h1 class="subpage-title">Exclusive content</h1>
           <p class="hero-text">
             Una stanza privata per demo, sessioni, backstage, produzione e
-            materiali che arrivano solo a chi ha il link.
+            materiali che arrivano solo a chi ha il link o il codice giusto.
           </p>
         </div>
         <img
           class="subpage-cover"
           src="./assets/chaoscore-spotify-cover.jpg"
-          alt="Chaoscore original cover"
+          alt="Cover di #chaoscore"
         />
       </section>
 
       <section class="exclusive-grid">
         <article class="exclusive-card highlight-card">
           <p class="eyebrow">Drop zone</p>
-          <h2>Qui inseriamo i video quando me li mandi</h2>
+          <h2>Qui entrano i video esclusivi</h2>
           <p>
-            Ho gia' preparato la struttura per clip con altri ragazzi, momenti
-            in studio, produzione live e making-of del progetto.
+            Ho lasciato una base pulita per inserire clip verticali,
+            making-of, sessioni in studio e momenti con altri artisti senza
+            cambiare architettura del sito.
           </p>
         </article>
 
@@ -56,7 +60,7 @@
           <p class="eyebrow">Section 01</p>
           <h3>Studio sessions</h3>
           <p>
-            Video grezzi, estratti dalle sessioni, take vocali, prove e momenti
+            Video raw, take vocali, registrazioni, errori, prove e frammenti
             di produzione.
           </p>
         </article>
@@ -65,8 +69,8 @@
           <p class="eyebrow">Section 02</p>
           <h3>Process and production</h3>
           <p>
-            Breakdown dei beat, synth, strumenti, scelte di mix e frammenti del
-            lavoro dietro ogni traccia.
+            Breakdown dei beat, suoni, synth, catene di lavoro e parti del
+            processo creativo dietro alle tracce.
           </p>
         </article>
 
@@ -74,8 +78,8 @@
           <p class="eyebrow">Section 03</p>
           <h3>Collaborations</h3>
           <p>
-            Clip con featuring, prove, scene fuori studio e momenti catturati
-            durante la costruzione dell'album.
+            Clip con featuring, momenti fuori studio e tutto il materiale che
+            vuoi tenere riservato a chi ha comprato il tag NFC.
           </p>
         </article>
       </section>
@@ -83,11 +87,13 @@
       <section class="manifest-card subtle-card">
         <p class="eyebrow">Next step</p>
         <p>
-          Appena ricevo i video posso trasformare questa pagina in una vera
-          gallery privata con player video, thumbnail custom e testi di contesto
-          per ogni clip.
+          Quando arrivano i video, basta aggiungere gli URL nel database o nel
+          codice e fare push su GitHub: Vercel ridistribuisce senza cambiare il
+          dominio.
         </p>
       </section>
     </main>
+
+    <script type="module" src="./page.js"></script>
   </body>
 </html>
