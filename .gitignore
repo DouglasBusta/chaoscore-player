@@ -1,0 +1,10 @@
+.DS_Store
+import/
+downloads/chaoscore.zip
+*.wav
+*.aiff
+*.flac
+*.mp3
+downloads/
+audio/
+tracks/
