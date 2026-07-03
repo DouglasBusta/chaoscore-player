@@ -20,7 +20,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [36, 40, 40, 76, 88, 96, 100, 99, 99, 99, 99, 100, 100, 100, 100, 100, 100, 99, 100, 100, 100, 100, 87, 88, 95, 100, 99, 100, 100, 100, 100, 100, 100, 99, 99, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
   },
@@ -33,7 +33,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [100, 99, 99, 99, 99, 97, 99, 99, 100, 99, 100, 100, 100, 99, 99, 100, 98, 100, 99, 98, 99, 99, 100, 100, 100, 99, 99, 98, 99, 100, 93, 99, 100, 98, 79, 87, 88, 100, 100, 100, 99, 98, 100, 99, 100, 100, 99, 95, 99, 99, 100, 100, 100, 99, 99, 47]
   },
@@ -46,7 +46,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [84, 55, 87, 88, 88, 94, 97, 99, 98, 98, 92, 93, 97, 96, 94, 98, 97, 97, 100, 88, 85, 90, 71, 65, 71, 100, 96, 100, 99, 98, 100, 99, 99, 99, 100, 90, 97, 82, 93, 96, 97, 97, 92, 100, 92, 77, 100, 99, 94, 97, 68, 69, 81, 67, 68, 50]
   },
@@ -59,7 +59,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta · 39Redboy",
+    credits: "Lyrics by Douglas Busta, 39redboy. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [48, 97, 99, 100, 98, 97, 99, 100, 99, 99, 100, 99, 100, 98, 98, 97, 100, 98, 100, 98, 99, 98, 98, 98, 99, 99, 98, 99, 99, 98, 97, 94, 93, 84, 95, 95, 98, 98, 97, 97, 98, 98, 97, 96, 96, 95, 97, 97, 96, 97, 96, 97, 97, 96, 98, 97]
   },
@@ -72,7 +72,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [35, 57, 32, 64, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 99, 100, 100, 100, 100, 100, 99, 99, 99, 100, 100, 99, 99, 99, 99, 99, 99, 100, 100, 100, 99, 100, 100, 99, 99, 99, 100, 100, 100, 100, 100, 100, 30, 46, 52, 54, 60, 80, 82]
   },
@@ -85,7 +85,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [90, 92, 98, 100, 100, 100, 100, 100, 100, 99, 100, 100, 99, 100, 100, 100, 100, 100, 100, 84, 100, 74, 100, 100, 100, 100, 100, 100, 98, 99, 92, 99, 99, 99, 99, 99, 99, 99, 99, 95, 91, 86, 95, 99, 99, 99, 99, 99, 99, 98, 98, 99, 99, 99, 99, 99]
   },
@@ -98,7 +98,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [85, 66, 88, 88, 91, 95, 96, 100, 100, 91, 100, 100, 100, 100, 100, 100, 100, 100, 96, 98, 100, 93, 100, 95, 100, 100, 99, 75, 79, 85, 100, 99, 100, 100, 100, 97, 100, 91, 97, 85, 86, 86, 100, 87, 100, 98, 89, 100, 100, 100, 100, 100, 100, 99, 98, 64]
   },
@@ -111,7 +111,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta · Gador",
+    credits: "Lyrics by Douglas Busta, Gador. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [75, 92, 97, 90, 95, 98, 95, 96, 96, 96, 99, 97, 91, 96, 98, 95, 94, 92, 98, 96, 97, 99, 94, 99, 97, 95, 98, 93, 90, 92, 90, 93, 97, 99, 96, 96, 97, 98, 99, 98, 98, 100, 97, 97, 99, 94, 100, 86, 92, 88, 97, 94, 97, 92, 93, 86]
   },
@@ -124,7 +124,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [60, 73, 87, 98, 90, 92, 95, 87, 96, 99, 96, 100, 98, 99, 98, 99, 98, 91, 92, 100, 96, 99, 95, 100, 100, 100, 100, 100, 100, 98, 82, 82, 80, 100, 98, 96, 97, 99, 99, 98, 73, 100, 99, 97, 98, 94, 97, 96, 91, 90, 94, 90, 97, 93, 94, 71]
   },
@@ -137,7 +137,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta · Deffy",
+    credits: "Lyrics by Douglas Busta, Deffy. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [90, 85, 99, 100, 100, 99, 100, 100, 98, 80, 91, 98, 99, 97, 98, 99, 99, 99, 99, 100, 99, 99, 99, 100, 100, 99, 99, 99, 99, 99, 99, 100, 99, 96, 98, 97, 94, 98, 99, 99, 97, 99, 100, 100, 100, 100, 100, 98, 100, 100, 100, 99, 98, 100, 98, 55]
   },
@@ -150,7 +150,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [58, 45, 47, 52, 46, 76, 58, 99, 93, 96, 91, 89, 98, 100, 100, 100, 99, 97, 97, 98, 99, 94, 99, 97, 100, 97, 95, 90, 98, 98, 93, 94, 89, 98, 91, 99, 100, 100, 96, 100, 100, 100, 100, 99, 100, 95, 98, 97, 97, 94, 98, 96, 95, 65, 60, 8]
   },
@@ -163,7 +163,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [74, 66, 68, 66, 72, 100, 68, 70, 81, 74, 100, 100, 95, 100, 100, 95, 96, 90, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 98, 100, 98, 99, 70, 91, 100, 91, 100, 85, 100, 98, 100, 95, 100, 100, 98, 100, 97, 100, 93, 99, 96, 100, 100, 81]
   },
@@ -176,7 +176,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [62, 70, 93, 95, 98, 98, 93, 97, 96, 99, 100, 92, 92, 100, 99, 85, 73, 70, 71, 100, 91, 94, 98, 95, 96, 100, 100, 100, 98, 95, 93, 98, 99, 100, 99, 98, 96, 93, 79, 95, 96, 77, 71, 59, 81, 100, 100, 91, 93, 97, 89, 98, 90, 100, 96, 8]
   },
@@ -189,7 +189,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [76, 87, 97, 98, 93, 98, 100, 99, 100, 98, 98, 96, 99, 99, 95, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 97, 100, 99, 98, 100, 100, 100, 100, 100, 99, 100, 100, 99, 99, 98, 95, 100, 95, 98, 99, 98, 99, 99, 100, 100, 100, 92, 88]
   },
@@ -202,7 +202,7 @@ export const fallbackTracks = [
     audioUrl: "",
     downloadUrl: "",
     lyrics: "",
-    credits: "DouglasBusta · bonus track",
+    credits: "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.",
     isActive: true,
     peaks: [75, 45, 56, 55, 97, 98, 86, 98, 97, 90, 88, 83, 84, 97, 99, 100, 96, 97, 97, 99, 100, 99, 100, 100, 100, 99, 100, 98, 99, 100, 100, 95, 83, 88, 85, 82, 100, 100, 100, 100, 99, 100, 96, 96, 94, 97, 100, 100, 100, 99, 100, 100, 100, 100, 100, 92]
   }

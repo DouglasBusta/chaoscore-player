@@ -289,11 +289,9 @@ function updateAlbumUI() {
     state.album.release_note ||
     "Player privato installabile con contenuti caricati da sorgenti esterne.";
 
-  if (state.album.coverUrl || state.album.cover_url) {
-    const cover = state.album.coverUrl || state.album.cover_url;
-    els.albumArt.src = cover;
-    els.miniPlayerArt.src = cover;
-  }
+  const cover = state.album.coverUrl || state.album.cover_url || "./assets/chaoscore-spotify-cover.jpg";
+  els.albumArt.src = cover;
+  els.miniPlayerArt.src = cover;
 }
 
 function openFirstPlayableTrack() {
@@ -322,6 +320,12 @@ function renderTracks() {
       state.activeIndex = index;
       renderTracks();
       updateNowPlaying(track, false);
+    });
+
+
+    item.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      openCreditsPopup(track);
     });
 
     item.addEventListener("dblclick", () => {
@@ -485,7 +489,20 @@ function updateWaveformTooltip(clientX) {
   els.waveformTooltip.style.left = `${clientX - rect.left}px`;
 }
 
-async function validateAccessCode(code) {
+async 
+function getTrackCredits(track) {
+  const cleanTrack = sanitizeTrack(track || state.tracks[state.activeIndex], state.activeIndex);
+  return cleanTrack.credits || "Lyrics by Douglas Busta. Production by Douglas Busta. Mix & master by Douglas Busta.";
+}
+
+function openCreditsPopup(track = null) {
+  const cleanTrack = sanitizeTrack(track || state.tracks[state.activeIndex], state.activeIndex);
+  const title = cleanTrack?.title ? `Credits — ${cleanTrack.title}` : "Credits";
+  const credits = getTrackCredits(cleanTrack);
+  showSheet(title, credits);
+}
+
+function validateAccessCode(code) {
   const client = await getSupabaseClient();
   if (!client) {
     return code.trim().toLowerCase() === "chaoscore";
@@ -590,6 +607,14 @@ function registerServiceWorker() {
 }
 
 function bindEvents() {
+
+  document.querySelectorAll('[data-open-credits="true"], a[href$="credits.html"], a[href="/credits"], a[href="./credits"]').forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      openCreditsPopup();
+    });
+  });
+
   els.playButton.addEventListener("click", togglePlayback);
   els.heroPlayButton.addEventListener("click", () => {
     if (!els.audio.src) {

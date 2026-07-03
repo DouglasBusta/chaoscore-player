@@ -842,3 +842,21 @@ img {
 #sheet.is-manual-sheet {
   display: grid;
 }
+
+
+/* Cover safety */
+#album-art,
+#mini-player-art {
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Credits popup readability */
+#sheet-title {
+  text-transform: none;
+}
+
+#sheet-copy {
+  white-space: pre-line;
+  line-height: 1.5;
+}
