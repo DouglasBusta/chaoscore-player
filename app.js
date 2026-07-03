@@ -135,6 +135,24 @@ function closeSheet() {
   document.body.classList.remove("sheet-open");
 }
 
+function isStandaloneMode() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function updateInstallUI() {
+  if (!els.installAppButton || !els.installIosButton) return;
+
+  if (isStandaloneMode()) {
+    els.installAppButton.hidden = true;
+    els.installIosButton.hidden = true;
+    return;
+  }
+
+  const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  els.installAppButton.hidden = !state.deferredInstallPrompt && isIos;
+  els.installIosButton.hidden = !isIos;
+}
+
 function updatePlaybackButtons() {
   const icon = els.audio.paused ? "▶" : "❚❚";
   els.playButton.textContent = icon;
@@ -560,6 +578,7 @@ function bindEvents() {
       state.deferredInstallPrompt.prompt();
       await state.deferredInstallPrompt.userChoice.catch(() => null);
       state.deferredInstallPrompt = null;
+      updateInstallUI();
       showSheet("Installazione avviata", "Se il browser supporta il prompt nativo, la richiesta di installazione e' partita. Altrimenti usa il menu del browser e scegli “Installa app” o “Aggiungi a schermata Home”.");
       return;
     }
@@ -669,7 +688,15 @@ function bindEvents() {
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     state.deferredInstallPrompt = event;
+    updateInstallUI();
   });
+
+  window.addEventListener("appinstalled", () => {
+    state.deferredInstallPrompt = null;
+    updateInstallUI();
+  });
+
+  updateInstallUI();
 }
 
 async function initializeContent() {
@@ -689,6 +716,7 @@ async function init() {
   await initializeContent();
   els.audio.volume = 1;
   updatePlaybackButtons();
+  updateInstallUI();
 }
 
 init();
