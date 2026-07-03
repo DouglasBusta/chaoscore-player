@@ -995,10 +995,33 @@ init();
 })();
 
 
-/* CHAOSCORE FINAL CLEAN UI */
-(function chaoscoreFinalCleanUI() {
-  function hideUselessControls() {
-    const idsToHide = [
+
+
+/* CHAOSCORE REAL FINAL OVERRIDE */
+(function chaoscoreRealFinalOverride() {
+  const albumCreditsText = `#chaoscore credits
+
+All lyrics by Douglas Busta.
+All production by Douglas Busta.
+Mix & master by Douglas Busta.
+
+Track 4 — so ki 6... ft. 39Redboy
+Lyrics by Douglas Busta, 39redboy.
+Production by Douglas Busta, Gador.
+Mix & master by Douglas Busta.
+
+Track 8 — Patto d'Achille ft. Gador
+Lyrics by Douglas Busta, Gador.
+Production by Douglas Busta.
+Mix & master by Douglas Busta.
+
+Track 10 — sensibileh! ft. Deffy
+Lyrics by Douglas Busta, Deffy.
+Production by Douglas Busta.
+Mix & master by Douglas Busta.`;
+
+  function hideBadElements() {
+    const badIds = [
       "copy-link",
       "refresh-data",
       "access-card",
@@ -1006,7 +1029,7 @@ init();
       "audio-status"
     ];
 
-    idsToHide.forEach((id) => {
+    badIds.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.hidden = true;
@@ -1015,9 +1038,91 @@ init();
       el.style.opacity = "0";
       el.style.pointerEvents = "none";
     });
+
+    document.querySelectorAll("button, a, p, span, div").forEach((el) => {
+      const text = (el.textContent || "").trim().toLowerCase();
+
+      if (
+        text === "contenuto privato" ||
+        text === "aggiorna contenuti" ||
+        text === "copia link privato" ||
+        text === "+ copia link privato" ||
+        text === "stato sorgente" ||
+        text.includes("supabase") ||
+        text.includes("deploy") ||
+        text.includes("repository") ||
+        text.includes("url esterni")
+      ) {
+        el.hidden = true;
+        el.style.display = "none";
+      }
+    });
   }
 
-  function renderAppDownloadButtons() {
+  function forceCleanText() {
+    if (els.albumTitle) els.albumTitle.textContent = "#chaoscore";
+    if (els.albumMeta) els.albumMeta.textContent = "Douglas Busta";
+    if (els.releaseNote) els.releaseNote.textContent = "By Douglas Busta";
+
+    document.title = "#chaoscore — Douglas Busta";
+  }
+
+  function forceAlbumData() {
+    state.album = {
+      ...fallbackAlbumSettings,
+      title: "#chaoscore",
+      artist: "Douglas Busta",
+      releaseNote: "By Douglas Busta",
+      coverUrl: "/assets/chaoscore-spotify-cover.jpg",
+      isPrivate: false
+    };
+
+    state.tracks = [...fallbackTracks];
+    state.isPrivate = false;
+    state.accessGranted = true;
+  }
+
+  function forceCover() {
+    const cover = "/assets/chaoscore-spotify-cover.jpg";
+    const albumArt = document.getElementById("album-art");
+    const miniArt = document.getElementById("mini-player-art");
+
+    if (albumArt) albumArt.src = cover;
+    if (miniArt) miniArt.src = cover;
+  }
+
+  function forceTracksVisible() {
+    const list = document.getElementById("track-list");
+    const empty = document.getElementById("empty-state");
+    const waveform = document.getElementById("waveform-wrap");
+
+    if (list) {
+      list.hidden = false;
+      list.style.display = "";
+      list.style.visibility = "visible";
+      list.style.opacity = "1";
+    }
+
+    if (empty) {
+      empty.hidden = true;
+      empty.style.display = "none";
+    }
+
+    if (waveform) {
+      waveform.hidden = false;
+      waveform.style.display = "";
+      waveform.style.visibility = "visible";
+      waveform.style.opacity = "1";
+    }
+
+    if (typeof renderTracks === "function") renderTracks();
+
+    if (state.tracks.length && typeof updateNowPlaying === "function") {
+      updateNowPlaying(sanitizeTrack(state.tracks[state.activeIndex] || state.tracks[0], state.activeIndex || 0), false);
+    }
+  }
+
+  function renderAppButtons() {
     const albumArt = document.getElementById("album-art");
     if (!albumArt || !albumArt.parentElement) return;
 
@@ -1031,22 +1136,22 @@ init();
 
     actions.innerHTML = "";
 
-    const iosButton = document.createElement("button");
-    iosButton.type = "button";
-    iosButton.className = "hero-download-button";
-    iosButton.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
-    iosButton.addEventListener("click", () => {
+    const ios = document.createElement("button");
+    ios.type = "button";
+    ios.className = "hero-download-button";
+    ios.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
+    ios.addEventListener("click", () => {
       showSheet(
         "Download iOS",
-        "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”. È il player ufficiale #chaoscore installato come app."
+        "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”."
       );
     });
 
-    const androidButton = document.createElement("button");
-    androidButton.type = "button";
-    androidButton.className = "hero-download-button";
-    androidButton.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
-    androidButton.addEventListener("click", async () => {
+    const android = document.createElement("button");
+    android.type = "button";
+    android.className = "hero-download-button";
+    android.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
+    android.addEventListener("click", async () => {
       if (state.deferredInstallPrompt) {
         state.deferredInstallPrompt.prompt();
         await state.deferredInstallPrompt.userChoice.catch(() => null);
@@ -1057,29 +1162,68 @@ init();
 
       showSheet(
         "Download Android",
-        "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”. È il player ufficiale #chaoscore installato come app."
+        "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”."
       );
     });
 
-    actions.append(iosButton, androidButton);
+    actions.append(ios, android);
   }
 
-  function forceCleanAlbumState() {
-    hideUselessControls();
-    renderAppDownloadButtons();
+  function renderMinimalCreditsButton() {
+    let button = document.getElementById("album-credits-button");
 
-    const albumArt = document.getElementById("album-art");
-    const miniArt = document.getElementById("mini-player-art");
-    const cover = "/assets/chaoscore-spotify-cover.jpg";
+    if (!button) {
+      button = document.createElement("button");
+      button.id = "album-credits-button";
+      button.type = "button";
+      button.className = "minimal-credits-button";
+      button.textContent = "credits";
 
-    if (albumArt) albumArt.src = cover;
-    if (miniArt) miniArt.src = cover;
+      const heroInfo = document.querySelector(".hero-info, .album-info, .hero-copy, header, main");
+      if (heroInfo) {
+        heroInfo.appendChild(button);
+      }
+    }
+
+    button.onclick = () => {
+      showSheet("Credits", albumCreditsText);
+    };
   }
 
-  window.addEventListener("DOMContentLoaded", forceCleanAlbumState);
+  function bindCreditsClicks() {
+    document.querySelectorAll('[data-open-credits="true"], a[href*="credits"], button').forEach((el) => {
+      const text = (el.textContent || "").toLowerCase();
+      const href = (el.getAttribute("href") || "").toLowerCase();
+
+      if (text.includes("credits") || href.includes("credits") || el.matches('[data-open-credits="true"]')) {
+        el.addEventListener("click", (event) => {
+          event.preventDefault();
+          showSheet("Credits", albumCreditsText);
+        });
+      }
+    });
+  }
+
+  function applyFinalState() {
+    forceAlbumData();
+    forceCleanText();
+    forceCover();
+    hideBadElements();
+    renderAppButtons();
+    renderMinimalCreditsButton();
+    bindCreditsClicks();
+    forceTracksVisible();
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    applyFinalState();
+    setTimeout(applyFinalState, 250);
+  });
+
   window.addEventListener("load", () => {
-    forceCleanAlbumState();
-    setTimeout(forceCleanAlbumState, 300);
-    setTimeout(forceCleanAlbumState, 1200);
+    applyFinalState();
+    setTimeout(applyFinalState, 500);
+    setTimeout(applyFinalState, 1500);
+    setTimeout(applyFinalState, 3000);
   });
 })();

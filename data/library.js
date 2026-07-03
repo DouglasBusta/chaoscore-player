@@ -1,11 +1,12 @@
 export const fallbackAlbumSettings = {
   "title": "#chaoscore",
-  "artist": "DouglasBusta",
-  "releaseNote": "Player ufficiale #chaoscore.",
+  "artist": "Douglas Busta",
+  "releaseNote": "By Douglas Busta",
   "coverUrl": "/assets/chaoscore-spotify-cover.jpg",
   "theme": "chaoscore",
   "isPrivate": false,
-  "updatedAt": "2026-07-03"
+  "updatedAt": "2026-07-03",
+  "credits": "#chaoscore credits\n\nAll lyrics by Douglas Busta.\nAll production by Douglas Busta.\nMix & master by Douglas Busta.\n\nTrack 4 — so ki 6... ft. 39Redboy\nLyrics by Douglas Busta, 39redboy.\nProduction by Douglas Busta, Gador.\nMix & master by Douglas Busta.\n\nTrack 8 — Patto d'Achille ft. Gador\nLyrics by Douglas Busta, Gador.\nProduction by Douglas Busta.\nMix & master by Douglas Busta.\n\nTrack 10 — sensibileh! ft. Deffy\nLyrics by Douglas Busta, Deffy.\nProduction by Douglas Busta.\nMix & master by Douglas Busta."
 };
 
 export const fallbackTracks = [
