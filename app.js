@@ -140,14 +140,31 @@ function isStandaloneMode() {
 }
 
 function updateInstallUI() {
-  if (!els.installAppButton || !els.installIosButton) return;
+  if (els.installAppButton) {
+    els.installAppButton.hidden = true;
+    els.installAppButton.style.display = "none";
+  }
 
-  els.installAppButton.hidden = false;
-  els.installIosButton.hidden = false;
+  if (els.installIosButton) {
+    els.installIosButton.hidden = true;
+    els.installIosButton.style.display = "none";
+  }
 }
 
 function setupDownloadActions() {
   if (!els.albumArt) return;
+
+  // Nasconde definitivamente i vecchi bottoni installazione originali.
+  // I vecchi bottoni restano nel DOM solo come fallback tecnico, ma non si vedono più.
+  if (els.installAppButton) {
+    els.installAppButton.hidden = true;
+    els.installAppButton.style.display = "none";
+  }
+
+  if (els.installIosButton) {
+    els.installIosButton.hidden = true;
+    els.installIosButton.style.display = "none";
+  }
 
   const coverParent = els.albumArt.parentElement;
   if (!coverParent) return;
@@ -160,48 +177,66 @@ function setupDownloadActions() {
     coverParent.appendChild(actions);
   }
 
-  if (els.installIosButton) {
-    els.installIosButton.hidden = false;
-    els.installIosButton.classList.add("hero-download-button");
-    els.installIosButton.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
-    actions.appendChild(els.installIosButton);
-  }
+  actions.innerHTML = "";
 
-  if (els.installAppButton) {
-    els.installAppButton.hidden = false;
-    els.installAppButton.classList.add("hero-download-button");
-    els.installAppButton.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
-    actions.appendChild(els.installAppButton);
-  }
+  const iosButton = document.createElement("button");
+  iosButton.type = "button";
+  iosButton.className = "hero-download-button";
+  iosButton.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
+  iosButton.addEventListener("click", () => {
+    showSheet(
+      "Download iOS",
+      "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”. Non e' un file sospetto: e' il sito #chaoscore installato come app."
+    );
+  });
 
-  let contentButton = document.getElementById("download-content");
-  if (!contentButton) {
-    contentButton = document.createElement("button");
-    contentButton.type = "button";
-    contentButton.id = "download-content";
-    contentButton.className = "hero-download-button hero-download-button--content";
-    contentButton.innerHTML = '<span class="download-icon">⬇</span><span>Download contenuto</span>';
-    contentButton.addEventListener("click", () => {
-      const url =
-        publicConfig.CONTENT_DOWNLOAD_URL ||
-        publicConfig.contentDownloadUrl ||
-        state.album.downloadUrl ||
-        state.album.download_url ||
-        "";
-
-      if (url) {
-        window.open(url, "_blank", "noopener,noreferrer");
-        return;
-      }
-
+  const androidButton = document.createElement("button");
+  androidButton.type = "button";
+  androidButton.className = "hero-download-button";
+  androidButton.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
+  androidButton.addEventListener("click", async () => {
+    if (state.deferredInstallPrompt) {
+      state.deferredInstallPrompt.prompt();
+      await state.deferredInstallPrompt.userChoice.catch(() => null);
+      state.deferredInstallPrompt = null;
       showSheet(
-        "Download contenuto",
-        "Il pacchetto download non e' ancora collegato. Carica il contenuto su uno storage esterno e inserisci il link in public-config.js o nel database."
+        "Download Android",
+        "Installazione avviata. Se il browser non mostra il prompt, usa il menu di Chrome e scegli “Installa app”."
       );
-    });
-  }
+      return;
+    }
 
-  actions.appendChild(contentButton);
+    showSheet(
+      "Download Android",
+      "Su Android apri il menu del browser e scegli “Installa app” o “Aggiungi a schermata Home”. Non e' un APK: e' il sito #chaoscore installato come app sicura."
+    );
+  });
+
+  const contentButton = document.createElement("button");
+  contentButton.type = "button";
+  contentButton.id = "download-content";
+  contentButton.className = "hero-download-button hero-download-button--content";
+  contentButton.innerHTML = '<span class="download-icon">⬇</span><span>Download contenuto</span>';
+  contentButton.addEventListener("click", () => {
+    const url =
+      publicConfig.CONTENT_DOWNLOAD_URL ||
+      publicConfig.contentDownloadUrl ||
+      state.album.downloadUrl ||
+      state.album.download_url ||
+      "";
+
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    showSheet(
+      "Download contenuto",
+      "Il pacchetto download non e' ancora collegato. Carica il contenuto su uno storage esterno e inserisci il link in public-config.js o nel database."
+    );
+  });
+
+  actions.append(iosButton, androidButton, contentButton);
 }
 
 function updatePlaybackButtons() {
