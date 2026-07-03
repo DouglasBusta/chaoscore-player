@@ -67,6 +67,30 @@
       background: rgba(255,255,255,0.05);
     }
 
+
+    .cover-picker {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .cover-option {
+      min-height: 38px;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.82);
+      background: rgba(255,255,255,0.055);
+      cursor: pointer;
+      font-size: 0.86rem;
+    }
+
+    .cover-option.active {
+      color: #fff;
+      background: rgba(115,17,29,0.72);
+      border-color: rgba(255,255,255,0.22);
+    }
+
     .install-buttons {
       margin-top: 14px;
       display: grid;
@@ -374,8 +398,9 @@
   <main class="shell">
     <section class="hero">
       <div class="cover-wrap">
-        <img class="cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
+        <img class="cover" id="main-cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
         <p class="cover-credit">Cover by @tuma.zz</p>
+        <div class="cover-picker" id="cover-picker"></div>
 
         <div class="install-buttons">
           <button class="clean-button" id="ios-download"> Download iOS</button>
@@ -428,6 +453,13 @@
   </dialog>
 
   <script type="module">
+    const coverOptions = [
+      {
+            "label": "Spotify cover",
+            "src": "/assets/chaoscore-spotify-cover.jpg"
+      }
+];
+
     const tracks = [
       { title: "banale", file: "/audio-mp3/1. banale.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
       { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
@@ -461,6 +493,41 @@
     const modalClose = document.getElementById("modal-close");
 
     let current = 0;
+
+
+    function applyCover(src) {
+      const finalSrc = src || coverOptions[0]?.src || "/assets/chaoscore-spotify-cover.jpg";
+
+      document.querySelectorAll(".cover, .now img").forEach((img) => {
+        img.src = finalSrc;
+      });
+
+      localStorage.setItem("chaoscore-selected-cover", finalSrc);
+
+      document.querySelectorAll(".cover-option").forEach((button) => {
+        button.classList.toggle("active", button.dataset.src === finalSrc);
+      });
+    }
+
+    function renderCoverPicker() {
+      const picker = document.getElementById("cover-picker");
+      if (!picker) return;
+
+      picker.innerHTML = "";
+
+      coverOptions.forEach((cover, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "cover-option";
+        button.dataset.src = cover.src;
+        button.textContent = cover.label || `Cover ${index + 1}`;
+        button.addEventListener("click", () => applyCover(cover.src));
+        picker.appendChild(button);
+      });
+
+      const saved = localStorage.getItem("chaoscore-selected-cover");
+      applyCover(saved || coverOptions[0]?.src);
+    }
 
     function fmt(seconds) {
       if (!Number.isFinite(seconds)) return "0:00";
@@ -633,6 +700,7 @@ Mixed and mastered by Douglas Busta.`);
       caches.keys().then((keys) => keys.forEach((key) => caches.delete(key))).catch(() => {});
     }
 
+    renderCoverPicker();
     renderTracks();
     renderWave(0);
     loadTrack(0, false);

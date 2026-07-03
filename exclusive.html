@@ -246,7 +246,7 @@
       <div class="badge" id="status-badge">NFC exclusive</div>
     </div>
 
-    <section id="locked-view" class="locked" hidden>
+    <section id="locked-view" class="locked" hidden style="display:none;">
       <div class="lock-card">
         <div class="lock-icon">🔒</div>
         <h1>Exclusive locked</h1>
@@ -260,14 +260,14 @@
       </div>
     </section>
 
-    <section id="exclusive-view" hidden>
+    <section id="exclusive-view">
       <section class="hero">
         <img class="cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
 
         <div>
           <h1>exclusive</h1>
           <p class="subtitle">
-            NFC pass unlocked. Questa è l’area privata per chi ha ricevuto il tag fisico di #chaoscore:
+            Area exclusive di #chaoscore:
             foto, contenuti extra, dietro le quinte e piccoli dettagli solo per i fan più vicini.
           </p>
 
@@ -298,8 +298,8 @@
         <article class="card">
           <img src="/exclusive/photo-3.jpg" alt="Exclusive photo 3" onerror="this.src='/assets/chaoscore-spotify-cover.jpg';" />
           <div class="card-body">
-            <h2>NFC owners only</h2>
-            <p>Contenuto pensato solo per chi ha ricevuto l’oggettino fisico con il tag NFC.</p>
+            <h2>Fan exclusive</h2>
+            <p>Contenuto pensato per i fan più vicini al mondo #chaoscore.</p>
           </div>
         </article>
       </section>
@@ -307,7 +307,7 @@
       <section class="note">
         <h2>Messaggio per chi ha il tag</h2>
         <p>
-          Se sei arrivato qui, hai un pezzo fisico di #chaoscore.
+          Se sei arrivato qui, sei dentro l’area exclusive di #chaoscore.
           Questa pagina potrà cambiare nel tempo: nuove foto, video, messaggi, versioni alternative e contenuti nascosti.
         </p>
       </section>
@@ -315,38 +315,24 @@
   </main>
 
   <script>
-    const SECRET_KEY = "chaoscore-nfc-2026";
-    const ACCESS_STORAGE_KEY = "chaoscore-exclusive-unlocked";
-
-    const params = new URLSearchParams(window.location.search);
-    const key = params.get("key");
-
-    if (key === SECRET_KEY) {
-      localStorage.setItem(ACCESS_STORAGE_KEY, "yes");
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, "", cleanUrl);
-    }
-
-    const unlocked = localStorage.getItem(ACCESS_STORAGE_KEY) === "yes";
-
+    const statusBadge = document.getElementById("status-badge");
     const lockedView = document.getElementById("locked-view");
     const exclusiveView = document.getElementById("exclusive-view");
-    const statusBadge = document.getElementById("status-badge");
 
-    if (unlocked) {
-      exclusiveView.hidden = false;
+    if (lockedView) {
       lockedView.hidden = true;
-      statusBadge.textContent = "NFC pass unlocked";
-    } else {
-      exclusiveView.hidden = true;
-      lockedView.hidden = false;
-      statusBadge.textContent = "NFC required";
+      lockedView.style.display = "none";
     }
 
-    document.getElementById("reset-access")?.addEventListener("click", () => {
-      localStorage.removeItem(ACCESS_STORAGE_KEY);
-      window.location.reload();
-    });
+    if (exclusiveView) {
+      exclusiveView.hidden = false;
+    }
+
+    if (statusBadge) {
+      statusBadge.textContent = "exclusive unlocked";
+    }
+
+    document.getElementById("reset-access")?.remove();
   </script>
 </body>
 </html>
