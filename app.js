@@ -579,8 +579,11 @@ function syncPrivateState() {
 
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => null);
+
+  // Temporaneamente disattivo la PWA cache per evitare versioni vecchie bloccate.
+  window.addEventListener("load", async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations().catch(() => []);
+    registrations.forEach((registration) => registration.unregister());
   });
 }
 
