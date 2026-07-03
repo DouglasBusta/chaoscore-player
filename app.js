@@ -343,7 +343,7 @@ function renderTracks() {
         return;
       }
       if (!isPlayable) {
-        showSheet("Audio non collegato", "Questa traccia non ha ancora un audio_url. Carica gli audio su uno storage esterno oppure metti MP3/M4A leggeri nella cartella audio e rifai il deploy.");
+        showSheet("Audio non collegato", "Audio non disponibile per questa traccia.");
         return;
       }
       loadTrack(index, true);
@@ -427,7 +427,7 @@ function loadTrack(index, shouldAutoplay) {
   els.audio.src = track.audioUrl;
   els.audio.load();
   els.audioStatus.textContent =
-    "Audio in streaming da URL esterno. Nessun file pesante e' incluso nella repo.";
+    "";
 
   if (shouldAutoplay) {
     els.audio
@@ -453,7 +453,7 @@ function togglePlayback() {
 
   if (!currentTrack.audioUrl) {
     els.nowSubtitle.textContent =
-      "Questa build non ha ancora un audio_url per la traccia selezionata.";
+      "Audio non disponibile per questa traccia.";
     return;
   }
 
@@ -550,69 +550,28 @@ function unlockPrivateAccess() {
 }
 
 async function loadRemoteContent() {
-  const client = await getSupabaseClient();
+  state.album = { ...fallbackAlbumSettings };
+  state.tracks = [...fallbackTracks];
+  state.isPrivate = false;
 
-  if (!client) {
-    state.album = { ...fallbackAlbumSettings };
-    state.tracks = [...fallbackTracks];
-    state.isPrivate = Boolean(state.album.isPrivate);
-    els.dataStatus.textContent =
-      "Supabase non configurato: sto usando i contenuti di fallback dal codice.";
-    return;
+  if (els.dataStatus) {
+    els.dataStatus.textContent = "";
+    els.dataStatus.hidden = true;
   }
 
-  try {
-    const [{ data: albumData, error: albumError }, { data: tracksData, error: tracksError }] =
-      await Promise.all([
-        client
-          .from("album_settings")
-          .select("*")
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        client
-          .from("tracks")
-          .select("*")
-          .eq("is_active", true)
-          .order("track_number", { ascending: true })
-      ]);
-
-    if (albumError) throw albumError;
-    if (tracksError) throw tracksError;
-
-    state.album = albumData
-      ? {
-          title: albumData.title || fallbackAlbumSettings.title,
-          artist: albumData.artist || fallbackAlbumSettings.artist,
-          releaseNote:
-            albumData.release_note || fallbackAlbumSettings.releaseNote,
-          coverUrl: albumData.cover_url || fallbackAlbumSettings.coverUrl,
-          theme: albumData.theme || fallbackAlbumSettings.theme,
-          isPrivate: Boolean(albumData.is_private),
-          updatedAt: albumData.updated_at || fallbackAlbumSettings.updatedAt
-        }
-      : { ...fallbackAlbumSettings };
-
-    state.tracks = Array.isArray(tracksData) && tracksData.length
-      ? tracksData.map(sanitizeTrack)
-      : [...fallbackTracks];
-
-    state.isPrivate = Boolean(state.album.isPrivate);
-    els.dataStatus.textContent =
-      "Contenuti caricati da Supabase. Se cambi tracklist o testi nel database, il sito li rilegge senza cambiare struttura.";
-  } catch (_error) {
-    state.album = { ...fallbackAlbumSettings };
-    state.tracks = [...fallbackTracks];
-    state.isPrivate = Boolean(state.album.isPrivate);
-    els.dataStatus.textContent =
-      "Supabase non raggiungibile o dati non validi: sto usando il fallback locale per tenere il sito online.";
+  if (els.audioStatus) {
+    els.audioStatus.textContent = "";
+    els.audioStatus.hidden = true;
   }
 }
 
 function syncPrivateState() {
-  const hasSessionAccess = sessionStorage.getItem(ACCESS_STORAGE_KEY) === "ok";
-  state.accessGranted = !state.isPrivate || hasSessionAccess;
-  els.accessCard.hidden = !state.isPrivate || state.accessGranted;
+  state.isPrivate = false;
+  state.accessGranted = true;
+
+  if (els.accessCard) {
+    els.accessCard.hidden = true;
+  }
 }
 
 function registerServiceWorker() {
@@ -1032,5 +991,95 @@ init();
     setTimeout(closeStartupSheet, 250);
     setTimeout(closeStartupSheet, 1000);
     setTimeout(closeStartupSheet, 2500);
+  });
+})();
+
+
+/* CHAOSCORE FINAL CLEAN UI */
+(function chaoscoreFinalCleanUI() {
+  function hideUselessControls() {
+    const idsToHide = [
+      "copy-link",
+      "refresh-data",
+      "access-card",
+      "data-status",
+      "audio-status"
+    ];
+
+    idsToHide.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.hidden = true;
+      el.style.display = "none";
+      el.style.visibility = "hidden";
+      el.style.opacity = "0";
+      el.style.pointerEvents = "none";
+    });
+  }
+
+  function renderAppDownloadButtons() {
+    const albumArt = document.getElementById("album-art");
+    if (!albumArt || !albumArt.parentElement) return;
+
+    let actions = document.getElementById("hero-download-actions");
+    if (!actions) {
+      actions = document.createElement("div");
+      actions.id = "hero-download-actions";
+      actions.className = "hero-download-actions";
+      albumArt.parentElement.appendChild(actions);
+    }
+
+    actions.innerHTML = "";
+
+    const iosButton = document.createElement("button");
+    iosButton.type = "button";
+    iosButton.className = "hero-download-button";
+    iosButton.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
+    iosButton.addEventListener("click", () => {
+      showSheet(
+        "Download iOS",
+        "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”. È il player ufficiale #chaoscore installato come app."
+      );
+    });
+
+    const androidButton = document.createElement("button");
+    androidButton.type = "button";
+    androidButton.className = "hero-download-button";
+    androidButton.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
+    androidButton.addEventListener("click", async () => {
+      if (state.deferredInstallPrompt) {
+        state.deferredInstallPrompt.prompt();
+        await state.deferredInstallPrompt.userChoice.catch(() => null);
+        state.deferredInstallPrompt = null;
+        showSheet("Download Android", "Installazione avviata.");
+        return;
+      }
+
+      showSheet(
+        "Download Android",
+        "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”. È il player ufficiale #chaoscore installato come app."
+      );
+    });
+
+    actions.append(iosButton, androidButton);
+  }
+
+  function forceCleanAlbumState() {
+    hideUselessControls();
+    renderAppDownloadButtons();
+
+    const albumArt = document.getElementById("album-art");
+    const miniArt = document.getElementById("mini-player-art");
+    const cover = "/assets/chaoscore-spotify-cover.jpg";
+
+    if (albumArt) albumArt.src = cover;
+    if (miniArt) miniArt.src = cover;
+  }
+
+  window.addEventListener("DOMContentLoaded", forceCleanAlbumState);
+  window.addEventListener("load", () => {
+    forceCleanAlbumState();
+    setTimeout(forceCleanAlbumState, 300);
+    setTimeout(forceCleanAlbumState, 1200);
   });
 })();
