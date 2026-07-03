@@ -810,3 +810,110 @@ async function init() {
 }
 
 init();
+
+/* FORCE FIX: elimina vecchi bottoni installazione, pulisce cache PWA e crea CTA sicure */
+(function forceChaoscoreDownloadCTAs() {
+  async function killOldPwaCache() {
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations().catch(() => []);
+      registrations.forEach((registration) => registration.unregister());
+    }
+
+    if ("caches" in window) {
+      const keys = await caches.keys().catch(() => []);
+      await Promise.all(keys.map((key) => caches.delete(key))).catch(() => null);
+    }
+  }
+
+  function renderCleanDownloadButtons() {
+    const oldInstall = document.getElementById("install-app");
+    const oldIos = document.getElementById("install-ios");
+
+    [oldInstall, oldIos].forEach((button) => {
+      if (!button) return;
+      button.hidden = true;
+      button.style.display = "none";
+      button.style.visibility = "hidden";
+      button.style.opacity = "0";
+      button.style.pointerEvents = "none";
+    });
+
+    const albumArt = document.getElementById("album-art");
+    if (!albumArt || !albumArt.parentElement) return;
+
+    let actions = document.getElementById("hero-download-actions");
+    if (!actions) {
+      actions = document.createElement("div");
+      actions.id = "hero-download-actions";
+      actions.className = "hero-download-actions";
+      albumArt.parentElement.appendChild(actions);
+    }
+
+    actions.innerHTML = "";
+
+    const iosButton = document.createElement("button");
+    iosButton.type = "button";
+    iosButton.className = "hero-download-button";
+    iosButton.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
+    iosButton.addEventListener("click", () => {
+      showSheet(
+        "Download iOS",
+        "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”. È il sito #chaoscore installato come app, non un file esterno."
+      );
+    });
+
+    const androidButton = document.createElement("button");
+    androidButton.type = "button";
+    androidButton.className = "hero-download-button";
+    androidButton.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
+    androidButton.addEventListener("click", async () => {
+      if (state.deferredInstallPrompt) {
+        state.deferredInstallPrompt.prompt();
+        await state.deferredInstallPrompt.userChoice.catch(() => null);
+        state.deferredInstallPrompt = null;
+        showSheet(
+          "Download Android",
+          "Installazione avviata. Se non appare il prompt, apri il menu del browser e scegli “Installa app”."
+        );
+        return;
+      }
+
+      showSheet(
+        "Download Android",
+        "Su Android apri il menu di Chrome e scegli “Installa app” o “Aggiungi a schermata Home”. Non è un APK: è il sito #chaoscore installato come app sicura."
+      );
+    });
+
+    const contentButton = document.createElement("button");
+    contentButton.type = "button";
+    contentButton.className = "hero-download-button";
+    contentButton.innerHTML = '<span class="download-icon">⬇</span><span>Download contenuto</span>';
+    contentButton.addEventListener("click", () => {
+      const url =
+        publicConfig.CONTENT_DOWNLOAD_URL ||
+        publicConfig.contentDownloadUrl ||
+        state.album.downloadUrl ||
+        state.album.download_url ||
+        "";
+
+      if (url) {
+        window.open(url, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      showSheet(
+        "Download contenuto",
+        "Il pacchetto download non è ancora collegato. Lo collegheremo tramite link esterno, non dentro GitHub."
+      );
+    });
+
+    actions.append(iosButton, androidButton, contentButton);
+  }
+
+  window.addEventListener("load", async () => {
+    await killOldPwaCache();
+    renderCleanDownloadButtons();
+    setTimeout(renderCleanDownloadButtons, 500);
+    setTimeout(renderCleanDownloadButtons, 1500);
+  });
+})();
