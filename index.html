@@ -1,219 +1,634 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Player privato e installabile di #chaoscore."
-    />
-    <meta
-      name="robots"
-      content="noindex, nofollow, noarchive, nosnippet, noimageindex"
-    />
-    <meta name="theme-color" content="#181516" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <meta name="apple-mobile-web-app-title" content="#chaoscore" />
-    <title>#chaoscore</title>
-    <link rel="icon" href="./assets/chaoscore-spotify-cover.jpg" />
-    <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body class="player-page">
-    <main class="player-shell">
-      <section class="album-column">
-        <img
-          class="album-art"
-          id="album-art"
-          src="./assets/chaoscore-spotify-cover.jpg"
-          alt="Cover di #chaoscore"
-        />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>#chaoscore — Douglas Busta</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#13070a" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090608;
+      --panel: rgba(255,255,255,0.055);
+      --panel-2: rgba(255,255,255,0.085);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.62);
+      --soft: rgba(255,255,255,0.12);
+      --red: #6f101a;
+    }
 
-        <div class="install-panel">
-          <button class="install-action install-primary" id="install-app" hidden type="button">
-            installa applicazione
-          </button>
-          <button class="install-action" id="install-ios" hidden type="button">
-            guida installazione iPhone
-          </button>
-          <a class="install-action" href="./exclusive.html">contenuto privato</a>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(120, 0, 20, 0.24), transparent 36%),
+        radial-gradient(circle at 90% 75%, rgba(90, 0, 18, 0.18), transparent 38%),
+        #080608;
+    }
+
+    button, a {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 42px 0 128px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(240px, 340px) 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .cover-wrap {
+      width: 100%;
+    }
+
+    .cover {
+      width: 100%;
+      display: block;
+      border-radius: 24px;
+      box-shadow: 0 22px 70px rgba(0,0,0,0.42);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .install-buttons {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .clean-button {
+      border: 1px solid var(--soft);
+      border-radius: 14px;
+      min-height: 44px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: rgba(16, 14, 16, 0.78);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .clean-button:hover {
+      background: rgba(255,255,255,0.095);
+    }
+
+    .info {
+      padding-top: 8px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      border: 1px solid var(--soft);
+      border-radius: 999px;
+      padding: 9px 13px;
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .pill:hover {
+      background: rgba(255,255,255,0.11);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.65rem, 7vw, 5.4rem);
+      letter-spacing: -0.08em;
+      line-height: 0.86;
+    }
+
+    .artist {
+      margin: 10px 0 0;
+      color: var(--text);
+      font-weight: 650;
+    }
+
+    .by {
+      margin: 4px 0 24px;
+      color: var(--muted);
+    }
+
+    .tracks {
+      display: grid;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .track {
+      display: grid;
+      grid-template-columns: 36px 42px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      border: 1px solid rgba(255,255,255,0.075);
+      border-radius: 16px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.042);
+      cursor: pointer;
+    }
+
+    .track:hover,
+    .track.active {
+      background: rgba(120, 15, 28, 0.23);
+      border-color: rgba(255,255,255,0.13);
+    }
+
+    .num {
+      color: var(--muted);
+      text-align: right;
+      font-size: 0.9rem;
+    }
+
+    .play-small {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+    }
+
+    .track-title {
+      font-weight: 760;
+      line-height: 1.12;
+    }
+
+    .track-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .credit-link {
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      text-transform: lowercase;
+      padding: 8px;
+    }
+
+    .credit-link:hover {
+      color: white;
+    }
+
+    .player {
+      position: fixed;
+      left: 18px;
+      right: 18px;
+      bottom: 16px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: minmax(160px, 260px) 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      background: rgba(12, 10, 12, 0.86);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.46);
+    }
+
+    .now {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .now img {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .now-title {
+      font-weight: 760;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .now-sub {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .wave {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 42px;
+      padding: 0 4px;
+      cursor: pointer;
+    }
+
+    .bar {
+      flex: 1;
+      min-width: 4px;
+      height: calc(8px + var(--h) * 34px);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .bar.on {
+      background: rgba(255,255,255,0.58);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .round {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 999px;
+      background: white;
+      color: black;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .round.secondary {
+      width: 34px;
+      height: 34px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+
+    .time {
+      color: var(--muted);
+      font-size: 0.82rem;
+      min-width: 82px;
+      text-align: right;
+    }
+
+    dialog {
+      width: min(520px, calc(100% - 32px));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      color: white;
+      background: rgba(22, 20, 23, 0.96);
+      box-shadow: 0 28px 90px rgba(0,0,0,0.55);
+      padding: 0;
+    }
+
+    dialog::backdrop {
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-inner {
+      padding: 22px;
+    }
+
+    .modal-inner h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .modal-inner p {
+      white-space: pre-line;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.55;
+      margin: 0 0 18px;
+    }
+
+    .modal-inner button {
+      width: 100%;
+    }
+
+    @media (max-width: 820px) {
+      .shell {
+        padding-top: 22px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .player {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .controls {
+        justify-content: center;
+      }
+
+      .track {
+        grid-template-columns: 28px 38px 1fr;
+      }
+
+      .credit-link {
+        grid-column: 3;
+        justify-self: start;
+        padding-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="cover-wrap">
+        <img class="cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
+
+        <div class="install-buttons">
+          <button class="clean-button" id="ios-download"> Download iOS</button>
+          <button class="clean-button" id="android-download">🤖 Download Android</button>
         </div>
-
-        <section class="access-card" id="access-card" hidden>
-          <p class="eyebrow">Accesso privato</p>
-          <h2>Inserisci il codice</h2>
-          <p class="support-copy">
-            Se l'album e' impostato come privato nel database, basta un codice
-            semplice per entrare. Il link puo' restare lo stesso.
-          </p>
-          <form id="access-form" class="access-form">
-            <label class="sr-only" for="access-code">Codice accesso</label>
-            <input
-              id="access-code"
-              name="access-code"
-              class="access-input"
-              type="password"
-              autocomplete="one-time-code"
-              placeholder="codice accesso"
-            />
-            <button class="playlist-bar access-submit" type="submit">
-              entra
-            </button>
-          </form>
-          <p class="status-note" id="access-status"></p>
-        </section>
-
-        <section class="status-card">
-          <p class="eyebrow"></p>
-          <p class="status-note" id="data-status">
-            Caricamento dati album in corso...
-          </p>
-          <p class="status-note" id="audio-status">
-            Gli audio arrivano da URL esterni, non dalla repository GitHub.
-          </p>
-        </section>
-      </section>
-
-      <section class="library-column">
-        <header class="library-head">
-          <div>
-            <h1 id="album-title">#chaoscore</h1>
-            <p class="album-meta" id="album-meta">
-              DouglasBusta · player privato pronto per il deploy
-            </p>
-            <p class="release-note" id="release-note">
-              Player installabile, codice portabile, audio esterni collegabili
-              da Supabase.
-            </p>
-          </div>
-
-          <div class="head-actions">
-            <a class="nav-pill" href="./exclusive.html">exclusive</a>
-            <a class="nav-pill" href="#" data-open-credits="true">credits</a>
-            <button
-              class="hero-play"
-              id="hero-play"
-              type="button"
-              aria-label="Riproduci o metti in pausa"
-            >
-              ▶
-            </button>
-          </div>
-        </header>
-
-        <div class="library-actions">
-          <button class="playlist-bar" id="copy-link" type="button">
-            
-          </button>
-          <button class="playlist-bar" id="refresh-data" type="button">
-            aggiorna contenuti
-          </button>
-        </div>
-
-        <section class="tracks-panel" aria-label="Tracklist completa">
-          <div class="track-list" id="track-list"></div>
-          <div class="empty-state" id="empty-state" hidden>
-            <p class="empty-copy">
-              Nessuna traccia attiva trovata. Appena colleghi Supabase o aggiungi
-              tracce di fallback, la libreria comparira' qui.
-            </p>
-          </div>
-        </section>
-      </section>
-    </main>
-
-    <section class="mini-player">
-      <audio id="audio-player" preload="metadata" crossorigin="anonymous"></audio>
-
-      <div class="mini-player-main">
-        <div class="mini-player-track">
-          <img
-            class="mini-player-art"
-            id="mini-player-art"
-            src="./assets/chaoscore-spotify-cover.jpg"
-            alt="Cover mini player"
-          />
-          <div class="mini-player-copy">
-            <h2 id="now-title">banale</h2>
-            <p id="now-subtitle">#chaoscore</p>
-          </div>
-        </div>
-
-        <div class="waveform-panel">
-          <button
-            class="waveform-wrap"
-            id="waveform-wrap"
-            type="button"
-            aria-label="Sposta la riproduzione nella traccia"
-          >
-            <div class="waveform" id="waveform"></div>
-          </button>
-          <div class="time-readout" id="time-readout">0:00 / 0:00</div>
-        </div>
-
-        <div class="mini-player-controls">
-          <button type="button" data-action="prev" class="control-button" aria-label="Traccia precedente">
-            ⏮
-          </button>
-          <button type="button" data-action="play" class="control-button play-button" aria-label="Play / Pausa">
-            ▶
-          </button>
-          <button type="button" data-action="next" class="control-button" aria-label="Traccia successiva">
-            ⏭
-          </button>
-          <button type="button" data-action="shuffle" class="icon-button" aria-label="Shuffle">
-            ⤮
-          </button>
-          <button type="button" data-action="repeat" class="icon-button" aria-label="Repeat">
-            ↻
-          </button>
-          <button type="button" id="menu-button" class="icon-button" aria-label="Vai alla traccia attiva">
-            ☰
-          </button>
-          <div class="volume-cluster">
-            <button type="button" id="mute-button" class="icon-button" aria-label="Mute">
-              🔊
-            </button>
-            <input
-              id="volume-slider"
-              class="volume-slider"
-              type="range"
-              min="0"
-              max="100"
-              value="100"
-              aria-label="Volume"
-            />
-          </div>
-        </div>
-
-        <a class="download-link" href="#" data-open-credits="true">credits</a>
       </div>
 
-      <input id="seekbar" type="range" min="0" max="100" value="0" hidden />
-      <div class="waveform-tooltip" id="waveform-tooltip" hidden>0:00</div>
-    </section>
-
-    <div class="sheet" id="sheet" hidden>
-      <div class="sheet-card">
-        <h2 id="sheet-title">#chaoscore</h2>
-        <p id="sheet-copy">
-          Scegli il percorso migliore per aprire il player come app sul tuo
-          dispositivo.
-        </p>
-        <div class="sheet-actions">
-          <button class="playlist-bar sheet-close" id="sheet-close" type="button">
-            chiudi
-          </button>
+      <div class="info">
+        <div class="top-actions">
+          <a class="pill" href="./exclusive.html">exclusive</a>
+          <button class="pill" id="album-credits">credits</button>
+          <button class="round" id="hero-play">▶</button>
         </div>
+
+        <h1>#chaoscore</h1>
+        <p class="artist">Douglas Busta</p>
+        <p class="by">By Douglas Busta</p>
+
+        <div class="tracks" id="tracks"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="player">
+    <div class="now">
+      <img src="/assets/chaoscore-spotify-cover.jpg" alt="" />
+      <div>
+        <div class="now-title" id="now-title">banale</div>
+        <div class="now-sub">#chaoscore</div>
       </div>
     </div>
 
-    <script src="./public-config.js"></script>
-    <script type="module" src="./app.js"></script>
-  </body>
+    <div class="wave" id="wave"></div>
+
+    <div class="controls">
+      <button class="round secondary" id="prev">‹</button>
+      <button class="round" id="play">▶</button>
+      <button class="round secondary" id="next">›</button>
+      <div class="time" id="time">0:00 / 0:00</div>
+    </div>
+  </section>
+
+  <audio id="audio" preload="metadata"></audio>
+
+  <dialog id="modal">
+    <div class="modal-inner">
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <button class="clean-button" id="modal-close">chiudi</button>
+    </div>
+  </dialog>
+
+  <script type="module">
+    const tracks = [
+      { title: "banale", file: "/audio-mp3/1. banale.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3", credits: "Lyrics by Douglas Busta, 39redboy.\\nProduction by Douglas Busta, Gador.\\nMix & master by Douglas Busta." },
+      { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "PICCOLO me", file: "/audio-mp3/7. PICCOLO me.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3", credits: "Lyrics by Douglas Busta, Gador.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3", credits: "Lyrics by Douglas Busta, Deffy.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "ma che ho fatto mo??...", file: "/audio-mp3/11. ma che ho fatto mo??....mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." },
+      { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3", credits: "Lyrics by Douglas Busta.\\nProduction by Douglas Busta.\\nMix & master by Douglas Busta." }
+    ];
+
+    const audio = document.getElementById("audio");
+    const tracksEl = document.getElementById("tracks");
+    const nowTitle = document.getElementById("now-title");
+    const play = document.getElementById("play");
+    const heroPlay = document.getElementById("hero-play");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    const time = document.getElementById("time");
+    const wave = document.getElementById("wave");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modal-title");
+    const modalText = document.getElementById("modal-text");
+    const modalClose = document.getElementById("modal-close");
+
+    let current = 0;
+
+    function fmt(seconds) {
+      if (!Number.isFinite(seconds)) return "0:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+      return `${m}:${s}`;
+    }
+
+    function popup(title, text) {
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modal.showModal();
+    }
+
+    modalClose.addEventListener("click", () => modal.close());
+
+    function renderWave(progress = 0) {
+      const heights = [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18];
+      wave.innerHTML = "";
+      heights.forEach((h, i) => {
+        const bar = document.createElement("span");
+        bar.className = "bar";
+        bar.style.setProperty("--h", h / 100);
+        if (i / heights.length <= progress) bar.classList.add("on");
+        wave.appendChild(bar);
+      });
+    }
+
+    function loadTrack(index, shouldPlay = false) {
+      current = index;
+      const track = tracks[current];
+      audio.src = track.file;
+      audio.load();
+      nowTitle.textContent = track.title;
+
+      document.querySelectorAll(".track").forEach((el, i) => {
+        el.classList.toggle("active", i === current);
+      });
+
+      renderWave(0);
+
+      if (shouldPlay) {
+        audio.play().catch(() => popup("Audio", "Riprova cliccando Play o cliccando la traccia."));
+      }
+    }
+
+    function renderTracks() {
+      tracksEl.innerHTML = "";
+
+      tracks.forEach((track, index) => {
+        const row = document.createElement("article");
+        row.className = "track";
+        if (index === current) row.classList.add("active");
+
+        row.innerHTML = `
+          <div class="num">${index + 1}</div>
+          <button class="play-small">▶</button>
+          <div>
+            <div class="track-title"></div>
+            <div class="track-sub">Douglas Busta</div>
+          </div>
+          <button class="credit-link">credits</button>
+        `;
+
+        row.querySelector(".track-title").textContent = track.title;
+
+        row.addEventListener("click", () => loadTrack(index, true));
+
+        row.querySelector(".play-small").addEventListener("click", (event) => {
+          event.stopPropagation();
+          loadTrack(index, true);
+        });
+
+        row.querySelector(".credit-link").addEventListener("click", (event) => {
+          event.stopPropagation();
+          popup("Credits — " + track.title, track.credits);
+        });
+
+        tracksEl.appendChild(row);
+      });
+    }
+
+    function togglePlay() {
+      if (!audio.src) loadTrack(current, false);
+
+      if (audio.paused) {
+        audio.play().catch(() => popup("Audio", "Riprova cliccando una traccia."));
+      } else {
+        audio.pause();
+      }
+    }
+
+    play.addEventListener("click", togglePlay);
+    heroPlay.addEventListener("click", togglePlay);
+
+    prev.addEventListener("click", () => {
+      const nextIndex = (current - 1 + tracks.length) % tracks.length;
+      loadTrack(nextIndex, true);
+    });
+
+    next.addEventListener("click", () => {
+      const nextIndex = (current + 1) % tracks.length;
+      loadTrack(nextIndex, true);
+    });
+
+    audio.addEventListener("play", () => {
+      play.textContent = "❚❚";
+      heroPlay.textContent = "❚❚";
+    });
+
+    audio.addEventListener("pause", () => {
+      play.textContent = "▶";
+      heroPlay.textContent = "▶";
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      const progress = audio.duration ? audio.currentTime / audio.duration : 0;
+      renderWave(progress);
+      time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+    });
+
+    audio.addEventListener("ended", () => {
+      const nextIndex = (current + 1) % tracks.length;
+      loadTrack(nextIndex, true);
+    });
+
+    wave.addEventListener("click", (event) => {
+      if (!audio.duration) return;
+      const rect = wave.getBoundingClientRect();
+      const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
+      audio.currentTime = ratio * audio.duration;
+    });
+
+    document.getElementById("album-credits").addEventListener("click", () => {
+      popup("Credits", `#chaoscore credits
+
+All lyrics by Douglas Busta.
+All production by Douglas Busta.
+Mix & master by Douglas Busta.
+
+Track 4 — so ki 6... ft. 39Redboy
+Lyrics by Douglas Busta, 39redboy.
+Production by Douglas Busta, Gador.
+Mix & master by Douglas Busta.
+
+Track 8 — Patto d'Achille ft. Gador
+Lyrics by Douglas Busta, Gador.
+Production by Douglas Busta.
+Mix & master by Douglas Busta.
+
+Track 10 — sensibileh! ft. Deffy
+Lyrics by Douglas Busta, Deffy.
+Production by Douglas Busta.
+Mix & master by Douglas Busta.`);
+    });
+
+    document.getElementById("ios-download").addEventListener("click", () => {
+      popup("Download iOS", "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”.");
+    });
+
+    document.getElementById("android-download").addEventListener("click", () => {
+      popup("Download Android", "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”.");
+    });
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((reg) => reg.unregister())).catch(() => {});
+    }
+
+    if ("caches" in window) {
+      caches.keys().then((keys) => keys.forEach((key) => caches.delete(key))).catch(() => {});
+    }
+
+    renderTracks();
+    renderWave(0);
+    loadTrack(0, false);
+  </script>
+</body>
 </html>
