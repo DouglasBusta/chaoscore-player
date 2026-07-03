@@ -3,57 +3,350 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>#chaoscore — Exclusive</title>
+  <title>#chaoscore — Exclusive NFC</title>
+  <meta name="theme-color" content="#090608" />
   <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080608;
+      --card: rgba(255,255,255,0.06);
+      --card-2: rgba(255,255,255,0.095);
+      --line: rgba(255,255,255,0.12);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.64);
+      --red: #74111d;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-      color: white;
+      color: var(--text);
       background:
-        radial-gradient(circle at 20% 15%, rgba(120, 0, 20, 0.24), transparent 36%),
+        radial-gradient(circle at 18% 12%, rgba(145, 8, 30, 0.25), transparent 34%),
+        radial-gradient(circle at 85% 80%, rgba(100, 5, 24, 0.2), transparent 34%),
         #080608;
     }
-    main {
-      width: min(420px, calc(100% - 32px));
-      text-align: center;
-      display: grid;
-      gap: 16px;
+
+    a, button {
+      font: inherit;
     }
-    img {
-      width: 100%;
-      border-radius: 24px;
-      box-shadow: 0 22px 70px rgba(0,0,0,0.42);
+
+    .shell {
+      width: min(1080px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 30px 0 60px;
     }
-    h1 {
-      margin: 0;
-      font-size: clamp(2.2rem, 8vw, 4rem);
-      letter-spacing: -0.06em;
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
     }
-    p {
-      color: rgba(255,255,255,0.68);
-    }
-    a {
+
+    .back {
+      min-height: 42px;
+      padding: 0 14px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 46px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      border: 1px solid var(--line);
       color: white;
-      background: rgba(255,255,255,0.06);
       text-decoration: none;
+      background: rgba(255,255,255,0.055);
+    }
+
+    .badge {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      padding: 10px 13px;
+      color: rgba(255,255,255,0.78);
+      background: rgba(255,255,255,0.055);
+      font-size: 0.88rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(220px, 330px) 1fr;
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 34px;
+    }
+
+    .cover {
+      width: 100%;
+      display: block;
+      border-radius: 26px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.44);
+      background: rgba(255,255,255,0.04);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 7vw, 5.4rem);
+      letter-spacing: -0.075em;
+      line-height: 0.88;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.5;
+      max-width: 640px;
+    }
+
+    .locked {
+      min-height: 52vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .lock-card {
+      width: min(520px, 100%);
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255,255,255,0.055);
+      box-shadow: 0 24px 90px rgba(0,0,0,0.42);
+    }
+
+    .lock-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.08);
+      font-size: 1.75rem;
+    }
+
+    .lock-card h1 {
+      font-size: clamp(2rem, 8vw, 3.8rem);
+    }
+
+    .lock-card p {
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 14px 0 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .card {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.052);
+      box-shadow: 0 18px 55px rgba(0,0,0,0.24);
+    }
+
+    .card img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      display: block;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .card-body {
+      padding: 15px;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.02rem;
+      letter-spacing: -0.025em;
+    }
+
+    .card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.92rem;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .note h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .button {
+      min-height: 44px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      color: white;
+      background: rgba(255,255,255,0.065);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button.primary {
+      background: rgba(115,17,29,0.72);
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <img src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
-    <h1>Coming soon</h1>
-    <p>Contenuto esclusivo in arrivo.</p>
-    <a href="./index.html">Torna al player</a>
+  <main class="shell">
+    <div class="topbar">
+      <a class="back" href="./index.html">← torna al player</a>
+      <div class="badge" id="status-badge">NFC exclusive</div>
+    </div>
+
+    <section id="locked-view" class="locked" hidden>
+      <div class="lock-card">
+        <div class="lock-icon">🔒</div>
+        <h1>Exclusive locked</h1>
+        <p>
+          Questa pagina è riservata a chi ha il tag NFC ufficiale di #chaoscore.
+          Avvicina l’oggettino al telefono per sbloccare i contenuti esclusivi.
+        </p>
+        <div class="button-row" style="justify-content:center;">
+          <a class="button" href="./index.html">torna al player</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="exclusive-view" hidden>
+      <section class="hero">
+        <img class="cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
+
+        <div>
+          <h1>exclusive</h1>
+          <p class="subtitle">
+            NFC pass unlocked. Questa è l’area privata per chi ha ricevuto il tag fisico di #chaoscore:
+            foto, contenuti extra, dietro le quinte e piccoli dettagli solo per i fan più vicini.
+          </p>
+
+          <div class="button-row">
+            <a class="button primary" href="./index.html">ascolta #chaoscore</a>
+            <button class="button" id="reset-access">reset accesso</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <img src="/exclusive/photo-1.jpg" alt="Exclusive photo 1" onerror="this.src='/assets/chaoscore-spotify-cover.jpg';" />
+          <div class="card-body">
+            <h2>Photo drop 01</h2>
+            <p>Prima foto esclusiva del mondo #chaoscore. Qui possiamo mettere backstage, cover alternative o scatti personali.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="/exclusive/photo-2.jpg" alt="Exclusive photo 2" onerror="this.src='/assets/chaoscore-spotify-cover.jpg';" />
+          <div class="card-body">
+            <h2>Behind the chaos</h2>
+            <p>Spazio per contenuti dietro le quinte: studio, note, foto del processo creativo, dettagli dell’album.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="/exclusive/photo-3.jpg" alt="Exclusive photo 3" onerror="this.src='/assets/chaoscore-spotify-cover.jpg';" />
+          <div class="card-body">
+            <h2>NFC owners only</h2>
+            <p>Contenuto pensato solo per chi ha ricevuto l’oggettino fisico con il tag NFC.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="note">
+        <h2>Messaggio per chi ha il tag</h2>
+        <p>
+          Se sei arrivato qui, hai un pezzo fisico di #chaoscore.
+          Questa pagina potrà cambiare nel tempo: nuove foto, video, messaggi, versioni alternative e contenuti nascosti.
+        </p>
+      </section>
+    </section>
   </main>
+
+  <script>
+    const SECRET_KEY = "chaoscore-nfc-2026";
+    const ACCESS_STORAGE_KEY = "chaoscore-exclusive-unlocked";
+
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get("key");
+
+    if (key === SECRET_KEY) {
+      localStorage.setItem(ACCESS_STORAGE_KEY, "yes");
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+
+    const unlocked = localStorage.getItem(ACCESS_STORAGE_KEY) === "yes";
+
+    const lockedView = document.getElementById("locked-view");
+    const exclusiveView = document.getElementById("exclusive-view");
+    const statusBadge = document.getElementById("status-badge");
+
+    if (unlocked) {
+      exclusiveView.hidden = false;
+      lockedView.hidden = true;
+      statusBadge.textContent = "NFC pass unlocked";
+    } else {
+      exclusiveView.hidden = true;
+      lockedView.hidden = false;
+      statusBadge.textContent = "NFC required";
+    }
+
+    document.getElementById("reset-access")?.addEventListener("click", () => {
+      localStorage.removeItem(ACCESS_STORAGE_KEY);
+      window.location.reload();
+    });
+  </script>
 </body>
 </html>
