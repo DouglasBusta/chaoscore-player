@@ -276,6 +276,7 @@ function updateAlbumUI() {
     (sum, track) => sum + (track.durationSeconds || 0),
     0
   );
+
   const mins = Math.floor(totalSeconds / 60);
   const secs = Math.round(totalSeconds % 60)
     .toString()
@@ -290,8 +291,16 @@ function updateAlbumUI() {
     "Player privato installabile con contenuti caricati da sorgenti esterne.";
 
   const cover = state.album.coverUrl || state.album.cover_url || "./assets/chaoscore-spotify-cover.jpg";
-  els.albumArt.src = cover;
-  els.miniPlayerArt.src = cover;
+  els.albumArt.src = cover || "./assets/chaoscore-spotify-cover.jpg";
+  els.miniPlayerArt.src = cover || "./assets/chaoscore-spotify-cover.jpg";
+
+  els.albumArt.onerror = () => {
+    els.albumArt.src = "./assets/chaoscore-spotify-cover.jpg";
+  };
+
+  els.miniPlayerArt.onerror = () => {
+    els.miniPlayerArt.src = "./assets/chaoscore-spotify-cover.jpg";
+  };
 }
 
 function openFirstPlayableTrack() {
@@ -333,6 +342,10 @@ function renderTracks() {
         showSheet("Accesso richiesto", "Inserisci prima il codice accesso per sbloccare la riproduzione privata.");
         return;
       }
+      if (!isPlayable) {
+        showSheet("Audio non collegato", "Questa traccia non ha ancora un audio_url. Carica gli audio su uno storage esterno oppure metti MP3/M4A leggeri nella cartella audio e rifai il deploy.");
+        return;
+      }
       loadTrack(index, true);
     });
 
@@ -365,6 +378,12 @@ function renderTracks() {
     const duration = document.createElement("div");
     duration.className = "track-duration";
     duration.textContent = track.duration || formatTime(track.durationSeconds);
+    duration.title = "Apri credits";
+    duration.style.cursor = "pointer";
+    duration.addEventListener("click", (event) => {
+      event.stopPropagation();
+      openCreditsPopup(track);
+    });
 
     item.append(number, play, copy, duration);
     els.trackList.append(item);
@@ -608,6 +627,24 @@ function registerServiceWorker() {
 
 function bindEvents() {
 
+  document.addEventListener("click", (event) => {
+    const target = event.target.closest('a, button, [data-open-credits="true"]');
+    if (!target) return;
+
+    const text = (target.textContent || "").toLowerCase();
+    const href = (target.getAttribute("href") || "").toLowerCase();
+
+    if (
+      target.matches('[data-open-credits="true"]') ||
+      text.includes("credits") ||
+      href.includes("credits")
+    ) {
+      event.preventDefault();
+      openCreditsPopup();
+    }
+  });
+
+
   document.querySelectorAll('[data-open-credits="true"], a[href$="credits.html"], a[href="/credits"], a[href="./credits"]').forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
@@ -834,6 +871,9 @@ async function init() {
   updatePlaybackButtons();
   updateInstallUI();
   setupDownloadActions();
+  forceCoverVisible();
+  setTimeout(forceCoverVisible, 300);
+  setTimeout(forceCoverVisible, 1200);
 }
 
 init();

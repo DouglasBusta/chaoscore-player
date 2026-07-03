@@ -860,3 +860,33 @@ img {
   white-space: pre-line;
   line-height: 1.5;
 }
+
+
+/* FORCE COVER FIX */
+#album-art,
+#mini-player-art {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  object-fit: cover !important;
+  background: rgba(255,255,255,0.06);
+}
+
+#album-art {
+  min-height: 260px;
+}
+
+/* Credits popup */
+#sheet-title {
+  text-transform: none !important;
+}
+
+#sheet-copy {
+  white-space: pre-line !important;
+  line-height: 1.5 !important;
+}
+
+/* Durata cliccabile per credits */
+.track-duration {
+  cursor: pointer;
+}
