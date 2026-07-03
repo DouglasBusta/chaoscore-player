@@ -1,20 +1,28 @@
 {
-  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/chaoscore",
       "destination": "/index.html"
     },
     {
-      "source": "/chaoscore/exclusive",
-      "destination": "/exclusive.html"
-    }
-  ],
-  "redirects": [
+      "source": "/chaoscore/",
+      "destination": "/index.html"
+    },
     {
       "source": "/exclusive",
-      "destination": "/chaoscore/exclusive",
-      "permanent": false
+      "destination": "/exclusive.html"
+    },
+    {
+      "source": "/exclusive/",
+      "destination": "/exclusive.html"
+    },
+    {
+      "source": "/chaoscore/exclusive",
+      "destination": "/exclusive.html"
+    },
+    {
+      "source": "/chaoscore/exclusive/",
+      "destination": "/exclusive.html"
     }
   ]
 }
