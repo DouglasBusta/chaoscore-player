@@ -917,3 +917,31 @@ init();
     setTimeout(renderCleanDownloadButtons, 1500);
   });
 })();
+
+
+/* FINAL FIX: il vecchio popup installazione non deve apparire da solo */
+(function closeOldInstallPopupForever() {
+  function closeOnlyOldInstallPopup() {
+    const sheet = document.getElementById("sheet");
+    const title = document.getElementById("sheet-title");
+
+    if (!sheet || !title) return;
+
+    const titleText = (title.textContent || "").toLowerCase();
+
+    if (
+      titleText.includes("installa #chaoscore") ||
+      titleText.includes("installa applicazione")
+    ) {
+      sheet.hidden = true;
+      document.body.classList.remove("sheet-open");
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", closeOnlyOldInstallPopup);
+  window.addEventListener("load", () => {
+    closeOnlyOldInstallPopup();
+    setTimeout(closeOnlyOldInstallPopup, 300);
+    setTimeout(closeOnlyOldInstallPopup, 1200);
+  });
+})();
