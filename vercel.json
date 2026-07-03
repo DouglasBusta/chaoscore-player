@@ -1,0 +1,20 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/chaoscore",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/chaoscore/exclusive",
+      "destination": "/exclusive.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/exclusive",
+      "destination": "/chaoscore/exclusive",
+      "permanent": false
+    }
+  ]
+}
