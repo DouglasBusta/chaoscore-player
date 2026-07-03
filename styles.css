@@ -829,3 +829,16 @@ img {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+
+/* FINAL SHEET FIX: il popup non deve mai comparire da solo */
+#sheet:not(.is-manual-sheet) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#sheet.is-manual-sheet {
+  display: grid;
+}

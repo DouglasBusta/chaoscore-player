@@ -126,12 +126,14 @@ async function getSupabaseClient() {
 function showSheet(title, copy) {
   els.sheetTitle.textContent = title;
   els.sheetCopy.textContent = copy;
+  els.sheet.classList.add("is-manual-sheet");
   els.sheet.hidden = false;
   document.body.classList.add("sheet-open");
 }
 
 function closeSheet() {
   els.sheet.hidden = true;
+  els.sheet.classList.remove("is-manual-sheet");
   document.body.classList.remove("sheet-open");
 }
 
@@ -943,5 +945,27 @@ init();
     closeOnlyOldInstallPopup();
     setTimeout(closeOnlyOldInstallPopup, 300);
     setTimeout(closeOnlyOldInstallPopup, 1200);
+  });
+})();
+
+
+/* FINAL STARTUP FIX: nessun popup deve apparire da solo all'apertura */
+(function forceSheetClosedOnStartup() {
+  function closeStartupSheet() {
+    const sheet = document.getElementById("sheet");
+    if (!sheet) return;
+
+    sheet.hidden = true;
+    sheet.classList.remove("is-manual-sheet");
+    document.body.classList.remove("sheet-open");
+  }
+
+  closeStartupSheet();
+  window.addEventListener("DOMContentLoaded", closeStartupSheet);
+  window.addEventListener("load", () => {
+    closeStartupSheet();
+    setTimeout(closeStartupSheet, 250);
+    setTimeout(closeStartupSheet, 1000);
+    setTimeout(closeStartupSheet, 2500);
   });
 })();
