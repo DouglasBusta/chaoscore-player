@@ -724,5 +724,134 @@ Mixed and mastered by Douglas Busta.`);
     renderWave(0);
     loadTrack(0, false);
   </script>
+
+<script>
+/* FINAL TRACK PLAY / PAUSE FIX */
+(function () {
+  const tracks = [
+    { title: "banale", file: "/audio-mp3/1. banale.mp3" },
+    { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3" },
+    { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3" },
+    { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3" },
+    { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3" },
+    { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3" },
+    { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3" },
+    { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3" },
+    { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3" },
+    { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3" },
+    { title: "ma che ho fatto mo??...", file: "/audio-mp3/11. ma che ho fatto mo??....mp3" },
+    { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3" },
+    { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3" },
+    { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3" },
+    { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3" }
+  ];
+
+  function absoluteUrl(path) {
+    return new URL(path, window.location.origin).href;
+  }
+
+  function setButtonsPlaying(isPlaying) {
+    document.querySelectorAll("#play, #hero-play").forEach((button) => {
+      button.textContent = isPlaying ? "❚❚" : "▶";
+    });
+  }
+
+  function updateUI(index) {
+    const track = tracks[index];
+    if (!track) return;
+
+    const nowTitle = document.getElementById("now-title");
+    if (nowTitle) nowTitle.textContent = track.title;
+
+    document.querySelectorAll(".track").forEach((row, i) => {
+      row.classList.toggle("active", i === index);
+    });
+  }
+
+  async function toggleTrack(index) {
+    const audio = document.getElementById("audio");
+    if (!audio) return;
+
+    const track = tracks[index];
+    if (!track) return;
+
+    const src = absoluteUrl(track.file);
+    const sameTrack = audio.src === src;
+
+    updateUI(index);
+
+    if (sameTrack && !audio.paused) {
+      audio.pause();
+      setButtonsPlaying(false);
+      return;
+    }
+
+    if (!sameTrack) {
+      audio.pause();
+      audio.src = src;
+      audio.load();
+    }
+
+    try {
+      await audio.play();
+      setButtonsPlaying(true);
+    } catch (error) {
+      console.warn(error);
+      const status = document.getElementById("audio-status");
+      if (status) status.textContent = "Audio non partito: premi di nuovo play.";
+    }
+  }
+
+  document.addEventListener("click", function (event) {
+    const creditButton = event.target.closest(".credit-link");
+    if (creditButton) return;
+
+    const playButton = event.target.closest(".play-small");
+    const row = event.target.closest(".track");
+
+    if (!playButton && !row) return;
+
+    const allRows = Array.from(document.querySelectorAll(".track"));
+    const targetRow = row || event.target.closest(".track");
+    const index = allRows.indexOf(targetRow);
+
+    if (index < 0) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    toggleTrack(index);
+  }, true);
+
+  document.addEventListener("click", function (event) {
+    const mainPlay = event.target.closest("#play, #hero-play");
+    if (!mainPlay) return;
+
+    const audio = document.getElementById("audio");
+    if (!audio) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    const activeIndex = Math.max(0, Array.from(document.querySelectorAll(".track")).findIndex((row) => row.classList.contains("active")));
+
+    if (!audio.src || audio.paused) {
+      toggleTrack(activeIndex);
+    } else {
+      audio.pause();
+      setButtonsPlaying(false);
+    }
+  }, true);
+
+  const audio = document.getElementById("audio");
+  if (audio) {
+    audio.addEventListener("pause", () => setButtonsPlaying(false));
+    audio.addEventListener("play", () => setButtonsPlaying(true));
+  }
+})();
+</script>
+
 </body>
 </html>
