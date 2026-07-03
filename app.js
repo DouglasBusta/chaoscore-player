@@ -521,7 +521,7 @@ function openCreditsPopup(track = null) {
   showSheet(title, credits);
 }
 
-function validateAccessCode(code) {
+async function validateAccessCode(code) {
   const client = await getSupabaseClient();
   if (!client) {
     return code.trim().toLowerCase() === "chaoscore";
