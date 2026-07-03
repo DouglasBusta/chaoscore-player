@@ -1051,3 +1051,79 @@ img {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* CHAOSCORE EMERGENCY FINAL PLAYER CSS */
+#copy-link,
+#refresh-data,
+#access-card,
+#data-status,
+#audio-status {
+  display: none !important;
+}
+
+#hero-download-actions,
+.hero-download-actions {
+  width: 100% !important;
+  margin-top: 16px !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.hero-download-button {
+  appearance: none !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  border-radius: 14px !important;
+  padding: 11px 13px !important;
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  font: inherit !important;
+  font-weight: 650 !important;
+  color: #fff !important;
+  background: rgba(12,12,15,0.72) !important;
+  cursor: pointer !important;
+}
+
+#track-list {
+  display: grid !important;
+  gap: 8px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.track-item {
+  cursor: pointer !important;
+}
+
+.track-duration {
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(255,255,255,0.58) !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  font-size: 0.78rem !important;
+}
+
+#empty-state {
+  display: none !important;
+}
+
+#waveform-wrap,
+#waveform {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 720px) {
+  #hero-download-actions,
+  .hero-download-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

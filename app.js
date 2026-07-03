@@ -1336,3 +1336,325 @@ Mix & master by Douglas Busta.`;
     }
   });
 })();
+
+/* CHAOSCORE EMERGENCY FINAL PLAYER */
+(function chaoscoreEmergencyFinalPlayer() {
+  const tracks = [
+    { n: 1, title: "banale", file: "/audio-mp3/1. banale.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 2, title: "STAR II", file: "/audio-mp3/2. STAR II.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 3, title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 4, title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3", credits: "Lyrics by Douglas Busta, 39redboy.\nProduction by Douglas Busta, Gador.\nMix & master by Douglas Busta." },
+    { n: 5, title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 6, title: "blue hair", file: "/audio-mp3/6. blue hair.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 7, title: "PICCOLO me", file: "/audio-mp3/7. PICCOLO me.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 8, title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3", credits: "Lyrics by Douglas Busta, Gador.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 9, title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 10, title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3", credits: "Lyrics by Douglas Busta, Deffy.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 11, title: "ma che ho fatto mo??...", file: "/audio-mp3/11. ma che ho fatto mo??....mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 12, title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 13, title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 14, title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." },
+    { n: 15, title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3", credits: "Lyrics by Douglas Busta.\nProduction by Douglas Busta.\nMix & master by Douglas Busta." }
+  ];
+
+  let currentIndex = 0;
+
+  function $(selector) {
+    return document.querySelector(selector);
+  }
+
+  function openPopup(title, text) {
+    const sheet = document.getElementById("sheet");
+    const sheetTitle = document.getElementById("sheet-title");
+    const sheetCopy = document.getElementById("sheet-copy");
+
+    if (sheet && sheetTitle && sheetCopy) {
+      sheetTitle.textContent = title;
+      sheetCopy.textContent = text;
+      sheet.classList.add("is-manual-sheet");
+      sheet.hidden = false;
+      document.body.classList.add("sheet-open");
+      return;
+    }
+
+    alert(title + "\n\n" + text);
+  }
+
+  function closePopup() {
+    const sheet = document.getElementById("sheet");
+    if (!sheet) return;
+    sheet.hidden = true;
+    sheet.classList.remove("is-manual-sheet");
+    document.body.classList.remove("sheet-open");
+  }
+
+  function removeBadStuff() {
+    document.querySelectorAll("button, a, div, span, p, section").forEach((el) => {
+      const text = (el.textContent || "").trim().toLowerCase();
+
+      if (
+        text === "contenuto privato" ||
+        text.includes("contenuto privato") ||
+        text.includes("player privato pronto per il deploy") ||
+        text.includes("player installabile") ||
+        text.includes("codice portabile") ||
+        text.includes("supabase") ||
+        text.includes("stato sorgente") ||
+        text.includes("repository")
+      ) {
+        el.remove();
+      }
+    });
+  }
+
+  function forceHeader() {
+    const title = document.getElementById("album-title");
+    const meta = document.getElementById("album-meta");
+    const note = document.getElementById("release-note");
+    const cover = document.getElementById("album-art");
+    const miniCover = document.getElementById("mini-player-art");
+
+    if (title) title.textContent = "#chaoscore";
+    if (meta) meta.textContent = "Douglas Busta";
+    if (note) note.textContent = "By Douglas Busta";
+    if (cover) cover.src = "/assets/chaoscore-spotify-cover.jpg";
+    if (miniCover) miniCover.src = "/assets/chaoscore-spotify-cover.jpg";
+
+    document.title = "#chaoscore — Douglas Busta";
+  }
+
+  function renderInstallButtons() {
+    const cover = document.getElementById("album-art");
+    if (!cover || !cover.parentElement) return;
+
+    let actions = document.getElementById("hero-download-actions");
+    if (!actions) {
+      actions = document.createElement("div");
+      actions.id = "hero-download-actions";
+      actions.className = "hero-download-actions";
+      cover.parentElement.appendChild(actions);
+    }
+
+    actions.innerHTML = "";
+
+    const ios = document.createElement("button");
+    ios.type = "button";
+    ios.className = "hero-download-button";
+    ios.innerHTML = '<span class="download-icon"></span><span>Download iOS</span>';
+    ios.onclick = () => openPopup("Download iOS", "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”.");
+
+    const android = document.createElement("button");
+    android.type = "button";
+    android.className = "hero-download-button";
+    android.innerHTML = '<span class="download-icon">🤖</span><span>Download Android</span>';
+    android.onclick = () => openPopup("Download Android", "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”.");
+
+    actions.append(ios, android);
+  }
+
+  function setNowPlaying(track) {
+    const nowTitle = document.getElementById("now-title");
+    const nowSubtitle = document.getElementById("now-subtitle");
+    const audio = document.getElementById("audio-player");
+    const time = document.getElementById("time-readout");
+
+    if (nowTitle) nowTitle.textContent = track.title;
+    if (nowSubtitle) nowSubtitle.textContent = "#chaoscore";
+    if (audio) {
+      audio.src = track.file;
+      audio.load();
+    }
+    if (time) time.textContent = "0:00 / 0:00";
+
+    renderWaveform(0);
+  }
+
+  function renderWaveform(progress) {
+    const waveform = document.getElementById("waveform");
+    const wrap = document.getElementById("waveform-wrap");
+
+    if (wrap) {
+      wrap.hidden = false;
+      wrap.style.display = "block";
+      wrap.style.visibility = "visible";
+      wrap.style.opacity = "1";
+    }
+
+    if (!waveform) return;
+
+    const peaks = [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18];
+
+    waveform.innerHTML = "";
+    peaks.forEach((height, index) => {
+      const bar = document.createElement("span");
+      bar.className = "waveform-bar";
+      bar.style.setProperty("--bar-height", String(height / 100));
+      if (index / peaks.length <= progress) bar.classList.add("is-played");
+      waveform.appendChild(bar);
+    });
+  }
+
+  function renderTracks() {
+    const list = document.getElementById("track-list");
+    const empty = document.getElementById("empty-state");
+
+    if (!list) return;
+
+    if (empty) {
+      empty.hidden = true;
+      empty.style.display = "none";
+    }
+
+    list.hidden = false;
+    list.style.display = "grid";
+    list.style.visibility = "visible";
+    list.style.opacity = "1";
+    list.innerHTML = "";
+
+    tracks.forEach((track, index) => {
+      const item = document.createElement("article");
+      item.className = "track-item" + (index === currentIndex ? " is-active" : "");
+      item.dataset.index = String(index);
+
+      const number = document.createElement("div");
+      number.className = "track-number";
+      number.textContent = String(track.n);
+
+      const play = document.createElement("button");
+      play.type = "button";
+      play.className = "track-play";
+      play.textContent = "▶";
+      play.setAttribute("aria-label", "Play " + track.title);
+
+      const copy = document.createElement("div");
+      copy.className = "track-copy";
+      copy.innerHTML = '<span class="track-title"></span><div class="track-subtitle">Douglas Busta</div>';
+      copy.querySelector(".track-title").textContent = track.title;
+
+      const duration = document.createElement("button");
+      duration.type = "button";
+      duration.className = "track-duration";
+      duration.textContent = "credits";
+
+      function playThis() {
+        currentIndex = index;
+        setNowPlaying(track);
+        renderTracks();
+
+        const audio = document.getElementById("audio-player");
+        if (audio) {
+          audio.play().catch(() => {
+            openPopup("Audio", "Il browser non ha avviato l'audio. Riprova cliccando Play.");
+          });
+        }
+      }
+
+      item.addEventListener("click", playThis);
+      play.addEventListener("click", (event) => {
+        event.stopPropagation();
+        playThis();
+      });
+      duration.addEventListener("click", (event) => {
+        event.stopPropagation();
+        openPopup("Credits — " + track.title, track.credits);
+      });
+
+      item.append(number, play, copy, duration);
+      list.appendChild(item);
+    });
+  }
+
+  function bindPlayerButtons() {
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("button, a");
+      if (!target) return;
+
+      const text = (target.textContent || "").trim().toLowerCase();
+      const href = (target.getAttribute("href") || "").toLowerCase();
+      const action = target.getAttribute("data-action");
+
+      if (text === "exclusive" || href.includes("exclusive")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        window.location.href = "./exclusive.html";
+        return;
+      }
+
+      if (text === "credits" || href.includes("credits")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        openPopup("Credits", "#chaoscore credits\n\nAll lyrics by Douglas Busta.\nAll production by Douglas Busta.\nMix & master by Douglas Busta.\n\nTrack 4 — so ki 6... ft. 39Redboy\nLyrics by Douglas Busta, 39redboy.\nProduction by Douglas Busta, Gador.\nMix & master by Douglas Busta.\n\nTrack 8 — Patto d'Achille ft. Gador\nLyrics by Douglas Busta, Gador.\nProduction by Douglas Busta.\nMix & master by Douglas Busta.\n\nTrack 10 — sensibileh! ft. Deffy\nLyrics by Douglas Busta, Deffy.\nProduction by Douglas Busta.\nMix & master by Douglas Busta.");
+        return;
+      }
+
+      if (action === "play" || target.id === "hero-play") {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const audio = document.getElementById("audio-player");
+        if (!audio) return;
+
+        if (!audio.src) {
+          setNowPlaying(tracks[currentIndex]);
+        }
+
+        if (audio.paused) {
+          audio.play().catch(() => openPopup("Audio", "Riprova cliccando una traccia."));
+        } else {
+          audio.pause();
+        }
+      }
+    }, true);
+
+    const audio = document.getElementById("audio-player");
+    if (audio) {
+      audio.addEventListener("timeupdate", () => {
+        if (!audio.duration) return;
+        renderWaveform(audio.currentTime / audio.duration);
+
+        const time = document.getElementById("time-readout");
+        if (time) {
+          const fmt = (s) => {
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60).toString().padStart(2, "0");
+            return `${m}:${sec}`;
+          };
+          time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+        }
+      });
+
+      audio.addEventListener("loadedmetadata", () => {
+        const time = document.getElementById("time-readout");
+        if (time && audio.duration) {
+          const m = Math.floor(audio.duration / 60);
+          const s = Math.floor(audio.duration % 60).toString().padStart(2, "0");
+          time.textContent = `0:00 / ${m}:${s}`;
+        }
+      });
+    }
+  }
+
+  function run() {
+    removeBadStuff();
+    forceHeader();
+    renderInstallButtons();
+    renderTracks();
+    renderWaveform(0);
+    setNowPlaying(tracks[0]);
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    bindPlayerButtons();
+    run();
+    setTimeout(run, 300);
+    setTimeout(run, 1000);
+    setTimeout(run, 2500);
+  });
+
+  window.addEventListener("load", () => {
+    run();
+    setTimeout(run, 500);
+    setTimeout(run, 1500);
+    setTimeout(run, 3000);
+  });
+})();
