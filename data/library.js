@@ -12,228 +12,214 @@ export const fallbackAlbumSettings = {
 
 export const fallbackTracks = [
   {
-    id: 1,
-    trackNumber: 1,
-    title: "banale",
-    duration: "2:34",
-    durationSeconds: 154.28572916666667,
-    audioUrl: "./audio/01-banale.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-01",
+    "trackNumber": 1,
+    "title": "banale",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/1. banale.mp3",
+    "downloadUrl": "./audio-mp3/1. banale.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [36, 40, 40, 76, 88, 96, 100, 99, 99, 99, 99, 100, 100, 100, 100, 100, 100, 99, 100, 100, 100, 100, 87, 88, 95, 100, 99, 100, 100, 100, 100, 100, 100, 99, 99, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+    "isActive": true
   },
   {
-    id: 2,
-    trackNumber: 2,
-    title: "STAR II",
-    duration: "2:31",
-    durationSeconds: 150.66666666666666,
-    audioUrl: "./audio/02-star-ii.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-02",
+    "trackNumber": 2,
+    "title": "sensibileh! ft. Deffy",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/10. sensibileh! ft. Deffy.mp3",
+    "downloadUrl": "./audio-mp3/10. sensibileh! ft. Deffy.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [100, 99, 99, 99, 99, 97, 99, 99, 100, 99, 100, 100, 100, 99, 99, 100, 98, 100, 99, 98, 99, 99, 100, 100, 100, 99, 99, 98, 99, 100, 93, 99, 100, 98, 79, 87, 88, 100, 100, 100, 99, 98, 100, 99, 100, 100, 99, 95, 99, 99, 100, 100, 100, 99, 99, 47]
+    "isActive": true
   },
   {
-    id: 3,
-    trackNumber: 3,
-    title: "stella vera reale",
-    duration: "2:41",
-    durationSeconds: 161.14285714285714,
-    audioUrl: "./audio/03-stella-vera-reale.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-03",
+    "trackNumber": 3,
+    "title": "ma che ho fatto mo??...",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/11. ma che ho fatto mo??....mp3",
+    "downloadUrl": "./audio-mp3/11. ma che ho fatto mo??....mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [84, 55, 87, 88, 88, 94, 97, 99, 98, 98, 92, 93, 97, 96, 94, 98, 97, 97, 100, 88, 85, 90, 71, 65, 71, 100, 96, 100, 99, 98, 100, 99, 99, 99, 100, 90, 97, 82, 93, 96, 97, 97, 92, 100, 92, 77, 100, 99, 94, 97, 68, 69, 81, 67, 68, 50]
+    "isActive": true
   },
   {
-    id: 4,
-    trackNumber: 4,
-    title: "so ki 6... ft. 39Redboy",
-    duration: "2:48",
-    durationSeconds: 167.8195625,
-    audioUrl: "./audio/04-so-ki-6-ft-39redboy.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta, 39redboy.
-Production by Douglas Busta.
+    "id": "track-04",
+    "trackNumber": 4,
+    "title": "NO TIME!",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/12. NO TIME!.mp3",
+    "downloadUrl": "./audio-mp3/12. NO TIME!.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta, 39redboy.
+Production by Douglas Busta, Gador.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [48, 97, 99, 100, 98, 97, 99, 100, 99, 99, 100, 99, 100, 98, 98, 97, 100, 98, 100, 98, 99, 98, 98, 98, 99, 99, 98, 99, 99, 98, 97, 94, 93, 84, 95, 95, 98, 98, 97, 97, 98, 98, 97, 96, 96, 95, 97, 97, 96, 97, 96, 97, 97, 96, 98, 97]
+    "isActive": true
   },
   {
-    id: 5,
-    trackNumber: 5,
-    title: "sono triste e caco.",
-    duration: "2:29",
-    durationSeconds: 148.8,
-    audioUrl: "./audio/05-sono-triste-e-caco.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-05",
+    "trackNumber": 5,
+    "title": "GET OUT!",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/13. GET OUT!.mp3",
+    "downloadUrl": "./audio-mp3/13. GET OUT!.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [35, 57, 32, 64, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 99, 100, 100, 100, 100, 100, 99, 99, 99, 100, 100, 99, 99, 99, 99, 99, 99, 100, 100, 100, 99, 100, 100, 99, 99, 99, 100, 100, 100, 100, 100, 100, 30, 46, 52, 54, 60, 80, 82]
+    "isActive": true
   },
   {
-    id: 6,
-    trackNumber: 6,
-    title: "blue hair",
-    duration: "3:05",
-    durationSeconds: 185.37931972789116,
-    audioUrl: "./audio/06-blue-hair.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-06",
+    "trackNumber": 6,
+    "title": "LOOK UP!",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/14. LOOK UP!.mp3",
+    "downloadUrl": "./audio-mp3/14. LOOK UP!.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [90, 92, 98, 100, 100, 100, 100, 100, 100, 99, 100, 100, 99, 100, 100, 100, 100, 100, 100, 84, 100, 74, 100, 100, 100, 100, 100, 100, 98, 99, 92, 99, 99, 99, 99, 99, 99, 99, 99, 95, 91, 86, 95, 99, 99, 99, 99, 99, 99, 98, 98, 99, 99, 99, 99, 99]
+    "isActive": true
   },
   {
-    id: 7,
-    trackNumber: 7,
-    title: "piccolo ME",
-    duration: "2:06",
-    durationSeconds: 126.20691609977324,
-    audioUrl: "./audio/07-piccolo-me.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-07",
+    "trackNumber": 7,
+    "title": "1 normale (Bonus Track)",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/15. 1 normale (Bonus Track).mp3",
+    "downloadUrl": "./audio-mp3/15. 1 normale (Bonus Track).mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [85, 66, 88, 88, 91, 95, 96, 100, 100, 91, 100, 100, 100, 100, 100, 100, 100, 100, 96, 98, 100, 93, 100, 95, 100, 100, 99, 75, 79, 85, 100, 99, 100, 100, 100, 97, 100, 91, 97, 85, 86, 86, 100, 87, 100, 98, 89, 100, 100, 100, 100, 100, 100, 99, 98, 64]
+    "isActive": true
   },
   {
-    id: 8,
-    trackNumber: 8,
-    title: "Patto d'Achille ft. Gador",
-    duration: "2:58",
-    durationSeconds: 178.28571428571428,
-    audioUrl: "./audio/08-patto-d-achille-ft-gador.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta, Gador.
+    "id": "track-08",
+    "trackNumber": 8,
+    "title": "STAR II",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/2. STAR II.mp3",
+    "downloadUrl": "./audio-mp3/2. STAR II.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta, Gador.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [75, 92, 97, 90, 95, 98, 95, 96, 96, 96, 99, 97, 91, 96, 98, 95, 94, 92, 98, 96, 97, 99, 94, 99, 97, 95, 98, 93, 90, 92, 90, 93, 97, 99, 96, 96, 97, 98, 99, 98, 98, 100, 97, 97, 99, 94, 100, 86, 92, 88, 97, 94, 97, 92, 93, 86]
+    "isActive": true
   },
   {
-    id: 9,
-    trackNumber: 9,
-    title: "Stop the EMOTIONS",
-    duration: "2:07",
-    durationSeconds: 126.66546485260771,
-    audioUrl: "./audio/09-stop-the-emotions.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-09",
+    "trackNumber": 9,
+    "title": "stella vera reale.wav",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/3. stella vera reale.wav.mp3",
+    "downloadUrl": "./audio-mp3/3. stella vera reale.wav.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [60, 73, 87, 98, 90, 92, 95, 87, 96, 99, 96, 100, 98, 99, 98, 99, 98, 91, 92, 100, 96, 99, 95, 100, 100, 100, 100, 100, 100, 98, 82, 82, 80, 100, 98, 96, 97, 99, 99, 98, 73, 100, 99, 97, 98, 94, 97, 96, 91, 90, 94, 90, 97, 93, 94, 71]
+    "isActive": true
   },
   {
-    id: 10,
-    trackNumber: 10,
-    title: "sensibileh! ft. Deffy",
-    duration: "2:53",
-    durationSeconds: 173.03847916666666,
-    audioUrl: "./audio/10-sensibileh-ft-deffy.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta, Deffy.
+    "id": "track-10",
+    "trackNumber": 10,
+    "title": "so ki 6... ft. 39Redboy",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/4. so ki 6... ft. 39Redboy.mp3",
+    "downloadUrl": "./audio-mp3/4. so ki 6... ft. 39Redboy.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta, Deffy.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [90, 85, 99, 100, 100, 99, 100, 100, 98, 80, 91, 98, 99, 97, 98, 99, 99, 99, 99, 100, 99, 99, 99, 100, 100, 99, 99, 99, 99, 99, 99, 100, 99, 96, 98, 97, 94, 98, 99, 99, 97, 99, 100, 100, 100, 100, 100, 98, 100, 100, 100, 99, 98, 100, 98, 55]
+    "isActive": true
   },
   {
-    id: 11,
-    trackNumber: 11,
-    title: "ma che ho fatto mo??...",
-    duration: "2:26",
-    durationSeconds: 146.28571428571428,
-    audioUrl: "./audio/11-ma-che-ho-fatto-mo.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-11",
+    "trackNumber": 11,
+    "title": "sono triste e caco.",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/5. sono triste e caco..mp3",
+    "downloadUrl": "./audio-mp3/5. sono triste e caco..mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [58, 45, 47, 52, 46, 76, 58, 99, 93, 96, 91, 89, 98, 100, 100, 100, 99, 97, 97, 98, 99, 94, 99, 97, 100, 97, 95, 90, 98, 98, 93, 94, 89, 98, 91, 99, 100, 100, 96, 100, 100, 100, 100, 99, 100, 95, 98, 97, 97, 94, 98, 96, 95, 65, 60, 8]
+    "isActive": true
   },
   {
-    id: 12,
-    trackNumber: 12,
-    title: "NO TIME!",
-    duration: "2:02",
-    durationSeconds: 121.5,
-    audioUrl: "./audio/12-no-time.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-12",
+    "trackNumber": 12,
+    "title": "blue hair",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/6. blue hair.mp3",
+    "downloadUrl": "./audio-mp3/6. blue hair.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [74, 66, 68, 66, 72, 100, 68, 70, 81, 74, 100, 100, 95, 100, 100, 95, 96, 90, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 98, 100, 98, 99, 70, 91, 100, 91, 100, 85, 100, 98, 100, 95, 100, 100, 98, 100, 97, 100, 93, 99, 96, 100, 100, 81]
+    "isActive": true
   },
   {
-    id: 13,
-    trackNumber: 13,
-    title: "GET OUT!",
-    duration: "2:09",
-    durationSeconds: 128.8421088435374,
-    audioUrl: "./audio/13-get-out.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-13",
+    "trackNumber": 13,
+    "title": "PICCOLO me",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/7. PICCOLO me.mp3",
+    "downloadUrl": "./audio-mp3/7. PICCOLO me.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [62, 70, 93, 95, 98, 98, 93, 97, 96, 99, 100, 92, 92, 100, 99, 85, 73, 70, 71, 100, 91, 94, 98, 95, 96, 100, 100, 100, 98, 95, 93, 98, 99, 100, 99, 98, 96, 93, 79, 95, 96, 77, 71, 59, 81, 100, 100, 91, 93, 97, 89, 98, 90, 100, 96, 8]
+    "isActive": true
   },
   {
-    id: 14,
-    trackNumber: 14,
-    title: "LOOK UP!",
-    duration: "2:54",
-    durationSeconds: 173.55,
-    audioUrl: "./audio/14-look-up.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-14",
+    "trackNumber": 14,
+    "title": "Patto d'Achille ft. Gador",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/8. Patto d'Achille ft. Gador.mp3",
+    "downloadUrl": "./audio-mp3/8. Patto d'Achille ft. Gador.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [76, 87, 97, 98, 93, 98, 100, 99, 100, 98, 98, 96, 99, 99, 95, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 97, 100, 99, 98, 100, 100, 100, 100, 100, 99, 100, 100, 99, 99, 98, 95, 100, 95, 98, 99, 98, 99, 99, 100, 100, 100, 92, 88]
+    "isActive": true
   },
   {
-    id: 15,
-    trackNumber: 15,
-    title: "1 normale",
-    duration: "2:06",
-    durationSeconds: 126.31580498866214,
-    audioUrl: "./audio/15-1-normale-bonus-track.wav",
-    downloadUrl: "",
-    lyrics: "Lyrics by Douglas Busta",
-    credits: "Lyrics by Douglas Busta.
+    "id": "track-15",
+    "trackNumber": 15,
+    "title": "Stop the EMOTIONS",
+    "artist": "DouglasBusta",
+    "duration": "",
+    "audioUrl": "./audio-mp3/9. Stop the EMOTIONS.mp3",
+    "downloadUrl": "./audio-mp3/9. Stop the EMOTIONS.mp3",
+    "lyrics": "Lyrics by Douglas Busta",
+    "credits": "Lyrics by Douglas Busta.
 Production by Douglas Busta.
 Mix & master by Douglas Busta.",
-    isActive: true,
-    peaks: [75, 45, 56, 55, 97, 98, 86, 98, 97, 90, 88, 83, 84, 97, 99, 100, 96, 97, 97, 99, 100, 99, 100, 100, 100, 99, 100, 98, 99, 100, 100, 95, 83, 88, 85, 82, 100, 100, 100, 100, 99, 100, 96, 96, 94, 97, 100, 100, 100, 99, 100, 100, 100, 100, 100, 92]
+    "isActive": true
   }
 ];
+
