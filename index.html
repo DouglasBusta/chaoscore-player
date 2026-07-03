@@ -265,6 +265,46 @@
       }
     }
 
+
+    .track {
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .track.is-playing {
+      background: rgba(120, 15, 28, 0.34);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .track.is-playing .play-small {
+      background: rgba(255,255,255,0.94);
+      color: #080608;
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(255,255,255,0.14);
+    }
+
+    .track.play-pop {
+      animation: trackPlayPop 360ms ease;
+    }
+
+    .track.pause-pop {
+      animation: trackPausePop 280ms ease;
+    }
+
+    @keyframes trackPlayPop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.014); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes trackPausePop {
+      0% { transform: scale(1.01); }
+      100% { transform: scale(1); }
+    }
+
     .player {
       position: fixed;
       left: 18px;
@@ -435,6 +475,46 @@
       100% {
         transform: scale(1);
       }
+    }
+
+
+    .track {
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .track.is-playing {
+      background: rgba(120, 15, 28, 0.34);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .track.is-playing .play-small {
+      background: rgba(255,255,255,0.94);
+      color: #080608;
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(255,255,255,0.14);
+    }
+
+    .track.play-pop {
+      animation: trackPlayPop 360ms ease;
+    }
+
+    .track.pause-pop {
+      animation: trackPausePop 280ms ease;
+    }
+
+    @keyframes trackPlayPop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.014); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes trackPausePop {
+      0% { transform: scale(1.01); }
+      100% { transform: scale(1); }
     }
 
     .player {
@@ -782,112 +862,129 @@ Mixed and mastered by Douglas Busta.`);
     loadTrack(0, false);
   </script>
 
+
 <script>
-/* FINAL TRACK PLAY / PAUSE FIX */
+/* FINAL TRACK PLAY / PAUSE FIX V2 */
 (function () {
-  const tracks = [
-    { title: "banale", file: "/audio-mp3/1. banale.mp3" },
-    { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3" },
-    { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3" },
-    { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3" },
-    { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3" },
-    { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3" },
-    { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3" },
-    { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3" },
-    { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3" },
-    { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3" },
-    { title: "ma che ho fatto mo??...", file: "/audio-mp3/track11.mp3" },
-    { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3" },
-    { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3" },
-    { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3" },
-    { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3" }
+  const trackFiles = [
+    "/audio-mp3/1. banale.mp3",
+    "/audio-mp3/2. STAR II.mp3",
+    "/audio-mp3/3. stella vera reale.wav.mp3",
+    "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3",
+    "/audio-mp3/5. sono triste e caco..mp3",
+    "/audio-mp3/6. blue hair.mp3",
+    "/audio-mp3/7. PICCOLO me.mp3",
+    "/audio-mp3/8. Patto d'Achille ft. Gador.mp3",
+    "/audio-mp3/9. Stop the EMOTIONS.mp3",
+    "/audio-mp3/10. sensibileh! ft. Deffy.mp3",
+    "/audio-mp3/track11.mp3",
+    "/audio-mp3/12. NO TIME!.mp3",
+    "/audio-mp3/13. GET OUT!.mp3",
+    "/audio-mp3/14. LOOK UP!.mp3",
+    "/audio-mp3/15. 1 normale (Bonus Track).mp3"
   ];
 
   function absoluteUrl(path) {
     return new URL(path, window.location.origin).href;
   }
 
-  function setButtonsPlaying(isPlaying) {
-    document.querySelectorAll("#play, #hero-play").forEach((button) => {
-      button.textContent = isPlaying ? "❚❚" : "▶";
+  function getAudio() {
+    return document.getElementById("audio");
+  }
+
+  function getRows() {
+    return Array.from(document.querySelectorAll(".track"));
+  }
+
+  function getCurrentIndexFromAudio() {
+    const audio = getAudio();
+    if (!audio || !audio.src) return -1;
+
+    return trackFiles.findIndex((file) => {
+      return audio.src === absoluteUrl(file);
     });
   }
 
+  function animateRow(row, className) {
+    if (!row) return;
+    row.classList.remove("play-pop", "pause-pop");
+    void row.offsetWidth;
+    row.classList.add(className);
+    window.setTimeout(() => row.classList.remove(className), 420);
+  }
 
-  function setTrackButtonsPlaying(activeIndex, isPlaying) {
-    document.querySelectorAll(".track").forEach((row, index) => {
+  function syncTrackButtons(animationType) {
+    const audio = getAudio();
+    const rows = getRows();
+    const currentIndex = getCurrentIndexFromAudio();
+    const isPlaying = audio && !audio.paused && currentIndex >= 0;
+
+    rows.forEach((row, index) => {
       const button = row.querySelector(".play-small");
-      const active = index === activeIndex && isPlaying;
+      const activeAndPlaying = isPlaying && index === currentIndex;
 
-      row.classList.toggle("playing", active);
+      row.classList.toggle("is-playing", activeAndPlaying);
+      row.classList.toggle("active", index === currentIndex);
 
       if (button) {
-        button.textContent = active ? "❚❚" : "▶";
+        button.textContent = activeAndPlaying ? "❚❚" : "▶";
+        button.setAttribute("aria-label", activeAndPlaying ? "Pause track" : "Play track");
       }
     });
-  }
 
-  function updateUI(index) {
-    const track = tracks[index];
-    if (!track) return;
+    if (animationType === "play" && currentIndex >= 0) {
+      animateRow(rows[currentIndex], "play-pop");
+    }
 
-    const nowTitle = document.getElementById("now-title");
-    if (nowTitle) nowTitle.textContent = track.title;
-
-    document.querySelectorAll(".track").forEach((row, i) => {
-      row.classList.toggle("active", i === index);
-    });
+    if (animationType === "pause" && currentIndex >= 0) {
+      animateRow(rows[currentIndex], "pause-pop");
+    }
   }
 
   async function toggleTrack(index) {
-    const audio = document.getElementById("audio");
+    const audio = getAudio();
     if (!audio) return;
 
-    const track = tracks[index];
-    if (!track) return;
+    const targetFile = trackFiles[index];
+    if (!targetFile) return;
 
-    const src = absoluteUrl(track.file);
-    const sameTrack = audio.src === src;
-
-    updateUI(index);
+    const targetSrc = absoluteUrl(targetFile);
+    const sameTrack = audio.src === targetSrc;
 
     if (sameTrack && !audio.paused) {
       audio.pause();
-      setButtonsPlaying(false);
-      setTrackButtonsPlaying(activeIndex, false);
-      setTrackButtonsPlaying(index, false);
+      syncTrackButtons("pause");
       return;
     }
 
     if (!sameTrack) {
       audio.pause();
-      audio.src = src;
+      audio.src = targetSrc;
       audio.load();
     }
 
     try {
       await audio.play();
-      setButtonsPlaying(true);
-      setTrackButtonsPlaying(index, true);
+      syncTrackButtons("play");
     } catch (error) {
       console.warn(error);
       const status = document.getElementById("audio-status");
       if (status) status.textContent = "Audio non partito: premi di nuovo play.";
+      syncTrackButtons("pause");
     }
   }
 
   document.addEventListener("click", function (event) {
-    const creditButton = event.target.closest(".credit-link");
-    if (creditButton) return;
+    if (event.target.closest(".credit-link")) return;
 
     const playButton = event.target.closest(".play-small");
     const row = event.target.closest(".track");
 
     if (!playButton && !row) return;
 
-    const allRows = Array.from(document.querySelectorAll(".track"));
-    const targetRow = row || event.target.closest(".track");
-    const index = allRows.indexOf(targetRow);
+    const rows = getRows();
+    const targetRow = row || playButton.closest(".track");
+    const index = rows.indexOf(targetRow);
 
     if (index < 0) return;
 
@@ -902,29 +999,45 @@ Mixed and mastered by Douglas Busta.`);
     const mainPlay = event.target.closest("#play, #hero-play");
     if (!mainPlay) return;
 
-    const audio = document.getElementById("audio");
+    const audio = getAudio();
     if (!audio) return;
 
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
 
-    const activeIndex = Math.max(0, Array.from(document.querySelectorAll(".track")).findIndex((row) => row.classList.contains("active")));
+    const currentIndex = getCurrentIndexFromAudio();
+    const index = currentIndex >= 0 ? currentIndex : 0;
 
-    if (!audio.src || audio.paused) {
-      toggleTrack(activeIndex);
-    } else {
+    if (!audio.paused) {
       audio.pause();
-      setButtonsPlaying(false);
-      setTrackButtonsPlaying(activeIndex, false);
+      syncTrackButtons("pause");
+    } else {
+      toggleTrack(index);
     }
   }, true);
 
-  const audio = document.getElementById("audio");
+  const audio = getAudio();
+
   if (audio) {
-    audio.addEventListener("pause", () => setButtonsPlaying(false));
-    audio.addEventListener("play", () => setButtonsPlaying(true));
+    audio.addEventListener("play", () => syncTrackButtons("play"));
+    audio.addEventListener("pause", () => syncTrackButtons("pause"));
+    audio.addEventListener("ended", () => syncTrackButtons("pause"));
+    audio.addEventListener("loadedmetadata", () => syncTrackButtons());
+    audio.addEventListener("timeupdate", () => syncTrackButtons());
   }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    syncTrackButtons();
+    setTimeout(syncTrackButtons, 300);
+    setTimeout(syncTrackButtons, 1000);
+  });
+
+  window.addEventListener("load", () => {
+    syncTrackButtons();
+    setTimeout(syncTrackButtons, 300);
+    setTimeout(syncTrackButtons, 1000);
+  });
 })();
 </script>
 
