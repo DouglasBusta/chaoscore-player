@@ -66,32 +66,46 @@
       box-shadow: 0 22px 70px rgba(0,0,0,0.42);
       background: rgba(255,255,255,0.05);
     }
-
-
     .cover-picker {
       margin-top: 12px;
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 44px 1fr 44px;
       gap: 8px;
+      align-items: center;
     }
 
-    .cover-option {
-      min-height: 38px;
+    .cover-arrow {
+      width: 44px;
+      height: 38px;
       border: 1px solid rgba(255,255,255,0.13);
       border-radius: 12px;
-      color: rgba(255,255,255,0.82);
+      color: rgba(255,255,255,0.86);
       background: rgba(255,255,255,0.055);
       cursor: pointer;
-      font-size: 0.86rem;
+      font-size: 1.45rem;
+      line-height: 1;
     }
 
-    .cover-option.active {
+    .cover-arrow:hover {
+      background: rgba(255,255,255,0.11);
       color: #fff;
-      background: rgba(115,17,29,0.72);
-      border-color: rgba(255,255,255,0.22);
     }
 
-    .install-buttons {
+    .cover-current {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.54);
+      background: rgba(255,255,255,0.035);
+      font-size: 0.78rem;
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+    }
+
+.install-buttons {
       margin-top: 14px;
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -400,7 +414,11 @@
       <div class="cover-wrap">
         <img class="cover" id="main-cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
         <p class="cover-credit">Cover by @tuma.zz</p>
-        <div class="cover-picker" id="cover-picker"></div>
+        <div class="cover-picker" id="cover-picker">
+          <button class="cover-arrow" id="cover-prev" type="button" aria-label="Previous cover">‹</button>
+          <span class="cover-current" id="cover-current">cover</span>
+          <button class="cover-arrow" id="cover-next" type="button" aria-label="Next cover">›</button>
+        </div>
 
         <div class="install-buttons">
           <button class="clean-button" id="ios-download"> Download iOS</button>
