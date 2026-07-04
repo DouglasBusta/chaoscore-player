@@ -778,6 +778,72 @@
     }
     /* END CHAOSCORE CARD LEFT FIX */
 
+  
+    /* SAVE TICK NORMALIZER */
+    [data-save-file].saved-tick,
+    [data-save-file][data-saved="true"] {
+      width: 30px !important;
+      min-width: 30px !important;
+      max-width: 30px !important;
+      height: 30px !important;
+      min-height: 30px !important;
+      padding: 0 !important;
+      border-radius: 999px !important;
+      display: inline-grid !important;
+      place-items: center !important;
+      font-size: 0.95rem !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      text-transform: none !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      cursor: default !important;
+    }
+    /* END SAVE TICK NORMALIZER */
+
+  
+    /* BUSTA APP DOWNLOAD BUTTONS */
+    .busta-app-downloads {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 18px;
+      align-items: center;
+    }
+
+    .busta-app-downloads-label {
+      width: 100%;
+      color: rgba(231,224,210,0.52);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.68rem;
+    }
+
+    .busta-app-download-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid rgba(231,224,210,0.22);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.88);
+      padding: 10px 12px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .busta-app-download-button:hover {
+      color: #fff;
+      border-color: rgba(231,224,210,0.44);
+      background: rgba(255,255,255,0.08);
+    }
+    /* END BUSTA APP DOWNLOAD BUTTONS */
+
   </style>
 </head>
 <body>
@@ -1987,6 +2053,91 @@
       `;
 
       container.prepend(card);
+    });
+  </script>
+
+
+  <script id="busta-save-tick-normalizer">
+    window.addEventListener("DOMContentLoaded", () => {
+      function normalizeSavedButton(button) {
+        if (!button) return;
+
+        const text = (button.textContent || "").trim().toLowerCase();
+
+        if (
+          button.dataset.saved === "true" ||
+          text === "saved" ||
+          text === "✓"
+        ) {
+          button.dataset.saved = "true";
+          button.textContent = "✓";
+          button.title = "File already saved";
+          button.setAttribute("aria-label", "File already saved");
+          button.classList.add("saved-tick");
+          button.disabled = true;
+        }
+      }
+
+      function normalizeAllSavedButtons() {
+        document.querySelectorAll("[data-save-file]").forEach(normalizeSavedButton);
+      }
+
+      document.addEventListener("click", (event) => {
+        const saveButton = event.target.closest("[data-save-file]");
+        if (!saveButton) return;
+
+        setTimeout(() => normalizeSavedButton(saveButton), 250);
+        setTimeout(() => normalizeSavedButton(saveButton), 900);
+        setTimeout(() => normalizeSavedButton(saveButton), 1800);
+      }, true);
+
+      const observer = new MutationObserver(() => {
+        normalizeAllSavedButtons();
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+
+      normalizeAllSavedButtons();
+    });
+  </script>
+
+
+  <script id="busta-app-download-buttons">
+    window.addEventListener("DOMContentLoaded", () => {
+      if (document.querySelector(".busta-app-downloads")) return;
+
+      const downloads = document.createElement("div");
+      downloads.className = "busta-app-downloads";
+      downloads.innerHTML = `
+        <div class="busta-app-downloads-label">Download Look App</div>
+        <a class="busta-app-download-button" href="#" aria-disabled="true">Download iOS</a>
+        <a class="busta-app-download-button" href="#" aria-disabled="true">Download Android</a>
+      `;
+
+      const hero =
+        document.querySelector(".hero") ||
+        document.querySelector(".archive-hero") ||
+        document.querySelector("header") ||
+        document.querySelector("main");
+
+      if (!hero) {
+        document.body.prepend(downloads);
+        return;
+      }
+
+      const notice =
+        document.querySelector(".archive-notice") ||
+        document.querySelector("[class*='notice']");
+
+      if (notice && notice.parentNode) {
+        notice.parentNode.insertBefore(downloads, notice);
+      } else {
+        hero.insertAdjacentElement("afterend", downloads);
+      }
     });
   </script>
 
