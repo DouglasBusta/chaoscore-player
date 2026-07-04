@@ -119,24 +119,50 @@
     /*
       Dentro Busta Files eliminiamo SOLO eventuali player duplicati caricati
       dalla pagina iframe. Il player vero resta quello fuori: section.player.
+      Lo facciamo anche dopo il load, perché alcuni player vengono creati in ritardo.
     */
-    doc.querySelectorAll([
-      "audio",
-      "section.player",
-      ".player",
-      "[id*='mini-player']",
-      "[class*='mini-player']",
-      "[id*='safe-mini']",
-      "[class*='safe-mini']",
-      "[id*='persistent']",
-      "[class*='persistent']"
-    ].join(",")).forEach(function (el) {
-      try {
-        el.remove();
-      } catch (_) {
-        el.style.setProperty("display", "none", "important");
-      }
-    });
+    function cleanIframePlayers() {
+      doc.querySelectorAll([
+        "audio",
+        "section.player",
+        ".player",
+        "[id*='player']",
+        "[class*='player']",
+        "[id*='mini']",
+        "[class*='mini']",
+        "[id*='persistent']",
+        "[class*='persistent']",
+        "[id*='now-playing']",
+        "[class*='now-playing']"
+      ].join(",")).forEach(function (el) {
+        try {
+          el.remove();
+        } catch (_) {
+          el.style.setProperty("display", "none", "important");
+          el.style.setProperty("visibility", "hidden", "important");
+          el.style.setProperty("opacity", "0", "important");
+          el.style.setProperty("pointer-events", "none", "important");
+        }
+      });
+    }
+
+    cleanIframePlayers();
+    setTimeout(cleanIframePlayers, 300);
+    setTimeout(cleanIframePlayers, 900);
+    setTimeout(cleanIframePlayers, 1800);
+
+    if (!doc.__chaosNoIframePlayerObserver) {
+      doc.__chaosNoIframePlayerObserver = true;
+
+      const observer = new MutationObserver(function () {
+        cleanIframePlayers();
+      });
+
+      observer.observe(doc.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    }
 
     /*
       Se dentro Busta Files clicchi un link per tornare a chaoscore,
