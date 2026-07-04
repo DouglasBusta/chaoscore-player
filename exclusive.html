@@ -2927,5 +2927,49 @@
       setTimeout(mountUserSubmissions, 1200);
     });
   </script>
+
+  <script id="user-submissions-stable-link">
+    window.addEventListener("DOMContentLoaded", () => {
+      function norm(text) {
+        return (text || "").toLowerCase().replace(/\s+/g, " ").trim();
+      }
+
+      function mount() {
+        if (document.getElementById("user-submissions-stable-card")) return;
+
+        const headings = Array.from(document.querySelectorAll("h1,h2,h3"));
+        const other = headings.filter(h => norm(h.textContent) === "other busta files").pop();
+
+        if (!other) return;
+
+        const section = other.closest("section") || other.parentElement;
+
+        const card = document.createElement("a");
+        card.id = "user-submissions-stable-card";
+        card.href = "/user-submissions";
+        card.style.display = "grid";
+        card.style.alignContent = "end";
+        card.style.minHeight = "150px";
+        card.style.marginTop = "14px";
+        card.style.border = "1px solid rgba(231,224,210,0.18)";
+        card.style.borderRadius = "18px";
+        card.style.padding = "14px";
+        card.style.textDecoration = "none";
+        card.style.color = "#e7e0d2";
+        card.style.background = "radial-gradient(circle at 20% 0%, rgba(139,23,23,0.22), transparent 46%), linear-gradient(135deg, rgba(231,224,210,0.07), rgba(231,224,210,0.025)), rgba(0,0,0,0.34)";
+        card.innerHTML = `
+          <div style="width:fit-content;border:1px solid rgba(216,247,207,0.24);border-radius:999px;padding:4px 7px;color:rgba(216,247,207,0.82);text-transform:uppercase;letter-spacing:0.12em;font-size:0.56rem;margin-bottom:8px;">Subfolder</div>
+          <div style="color:rgba(231,224,210,0.95);font-size:0.9rem;line-height:1.2;text-transform:uppercase;letter-spacing:0.08em;">User Submissions</div>
+          <div style="color:rgba(231,224,210,0.58);font-size:0.66rem;line-height:1.35;margin-top:6px;">Approved user files</div>
+        `;
+
+        section.appendChild(card);
+      }
+
+      mount();
+      setTimeout(mount, 800);
+    });
+  </script>
+
 </body>
 </html>
