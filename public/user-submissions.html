@@ -315,7 +315,7 @@
       return new Set(result.data.map(row => row.file_id || row.file_key || row.id).filter(Boolean));
     }
 
-    async function save(item, button) {
+    async function toggleSave(item, button) {
       const sessionResult = await client.auth.getSession();
       const session = sessionResult.data?.session || null;
 
@@ -327,7 +327,7 @@
       button.disabled = true;
       button.textContent = "...";
 
-      const result = await client.rpc("save_busta_file", {
+      const result = await client.rpc("toggle_busta_saved_file", {
         p_file_id: fileId(item),
         p_file_title: item.title || item.file_name || "User Submission",
         p_file_type: "User Submission",
@@ -338,54 +338,43 @@
       button.disabled = false;
 
       if (result.error) {
-        button.textContent = "Save";
+        button.textContent = button.dataset.saved === "1" ? "✓" : "Save";
         alert("Save failed: " + result.error.message);
         return;
       }
 
-      button.dataset.saved = "1";
-      button.textContent = "✓";
-      button.classList.add("is-saved");
-    }
+      const savedNow = result.data === true;
 
-    async function unsave(item, button) {
-      const sessionResult = await client.auth.getSession();
-      const session = sessionResult.data?.session || null;
-
-      if (!session?.user) {
-        window.location.href = "/auth?mode=login";
-        return;
-      }
-
-      button.disabled = true;
-      button.textContent = "...";
-
-      const result = await client.rpc("unsave_busta_file", {
-        p_file_id: fileId(item)
-      });
-
-      button.disabled = false;
-
-      if (result.error) {
-        button.textContent = "✓";
-        alert("Remove failed: " + result.error.message);
-        return;
-      }
-
-      button.dataset.saved = "0";
-      button.textContent = "Save";
-      button.classList.remove("is-saved");
+      button.dataset.saved = savedNow ? "1" : "0";
+      button.textContent = savedNow ? "✓" : "Save";
+      button.classList.toggle("is-saved", savedNow);
     }
 
     async function share(item, button) {
       const link = perFileLink(item);
+      const title = item.title || item.file_name || "User Submission";
 
       try {
+        if (navigator.share) {
+          await navigator.share({
+            title: title,
+            text: "Busta Files / User Submissions",
+            url: link
+          });
+          return;
+        }
+
         await navigator.clipboard.writeText(link);
         button.textContent = "Copied";
         setTimeout(() => button.textContent = "Share", 900);
-      } catch (_) {
-        alert("Copy this link manually: " + link);
+      } catch (error) {
+        try {
+          await navigator.clipboard.writeText(link);
+          button.textContent = "Copied";
+          setTimeout(() => button.textContent = "Share", 900);
+        } catch (_) {
+          alert("Copy this link manually: " + link);
+        }
       }
     }
 
@@ -421,11 +410,7 @@
         event.preventDefault();
         event.stopPropagation();
 
-        if (saveButton.dataset.saved === "1") {
-          await unsave(item, saveButton);
-        } else {
-          await save(item, saveButton);
-        }
+        await toggleSave(item, saveButton);
       });
 
       shareButton.addEventListener("click", async (event) => {
