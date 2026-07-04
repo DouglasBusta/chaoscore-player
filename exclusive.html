@@ -738,7 +738,7 @@
           <label class="auth-label" for="auth-password">Password</label>
           <input id="auth-password" class="auth-input" type="password" placeholder="••••••••" minlength="8" required>
 
-          <button class="auth-submit" type="submit">Enter Archive</button>
+          <button id="auth-submit-btn" class="auth-submit" type="submit">Enter Archive</button>
         </form>
 
         <p id="auth-message" class="auth-message"></p>
@@ -1299,5 +1299,245 @@
     updateAuthUI();
 
   </script>
+
+  <script id="busta-auth-final-fix">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      const authModal = document.getElementById("auth-modal");
+      const authForm = document.getElementById("auth-form");
+      const authTitle = document.getElementById("auth-title");
+      const authCopy = document.getElementById("auth-copy");
+      const authEmail = document.getElementById("auth-email");
+      const authPassword = document.getElementById("auth-password");
+      const authMessage = document.getElementById("auth-message");
+      const authSubmit = document.getElementById("auth-submit-btn");
+      const accountLink = document.getElementById("account-link");
+      const showPassword = document.getElementById("auth-show-password");
+      const remember = document.getElementById("auth-remember");
+
+      let mode = "signup";
+
+      function showLoggedOut() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.remove("hidden"));
+        if (accountLink) accountLink.classList.add("hidden");
+      }
+
+      function showLoggedIn() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.add("hidden"));
+        if (accountLink) accountLink.classList.remove("hidden");
+      }
+
+      async function refreshSessionUI() {
+        if (!client) {
+          showLoggedOut();
+          return null;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (session?.user) {
+          showLoggedIn();
+        } else {
+          showLoggedOut();
+        }
+
+        return session;
+      }
+
+      function openAuth(nextMode) {
+        mode = nextMode || "signup";
+
+        if (authTitle) authTitle.textContent = mode === "login" ? "Log In" : "Sign Up";
+        if (authCopy) {
+          authCopy.textContent = mode === "login"
+            ? "Enter your email and password to access your private archive session."
+            : "Create your private Busta Files session.";
+        }
+
+        if (authMessage) authMessage.textContent = "";
+
+        const rememberedEmail = localStorage.getItem("bustaRememberedEmail") || "";
+        if (authEmail) authEmail.value = rememberedEmail;
+        if (remember) remember.checked = !!rememberedEmail;
+        if (authPassword) {
+          authPassword.value = "";
+          authPassword.type = "password";
+        }
+        if (showPassword) showPassword.checked = false;
+
+        if (authModal && !authModal.open) authModal.showModal();
+        setTimeout(() => authEmail?.focus(), 80);
+      }
+
+      document.querySelectorAll("[data-auth-open]").forEach(button => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          openAuth(button.dataset.authOpen);
+        });
+      });
+
+      document.querySelectorAll("[data-auth-close]").forEach(button => {
+        button.addEventListener("click", () => authModal?.close());
+      });
+
+      if (showPassword && authPassword) {
+        showPassword.addEventListener("change", () => {
+          authPassword.type = showPassword.checked ? "text" : "password";
+        });
+      }
+
+      async function submitAuth(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        if (!client) {
+          if (authMessage) authMessage.textContent = "Authentication service is not loaded. Refresh the page and try again.";
+          return;
+        }
+
+        const email = authEmail?.value.trim().toLowerCase() || "";
+        const password = authPassword?.value || "";
+
+        if (!email || !password) {
+          if (authMessage) authMessage.textContent = "Enter email and password.";
+          return;
+        }
+
+        if (password.length < 8) {
+          if (authMessage) authMessage.textContent = "Password must be at least 8 characters.";
+          return;
+        }
+
+        if (remember?.checked) {
+          localStorage.setItem("bustaRememberedEmail", email);
+        } else {
+          localStorage.removeItem("bustaRememberedEmail");
+        }
+
+        if (authSubmit) {
+          authSubmit.disabled = true;
+          authSubmit.textContent = mode === "login" ? "Checking..." : "Creating...";
+        }
+
+        if (authMessage) {
+          authMessage.textContent = mode === "login"
+            ? "Checking archive credentials..."
+            : "Creating archive account...";
+        }
+
+        let result;
+
+        try {
+          if (mode === "login") {
+            result = await client.auth.signInWithPassword({ email, password });
+          } else {
+            result = await client.auth.signUp({
+              email,
+              password,
+              options: {
+                emailRedirectTo: "https://lookapp.org/exclusive"
+              }
+            });
+          }
+        } catch (err) {
+          if (authMessage) authMessage.textContent = err.message || "Authentication failed.";
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        if (result?.error) {
+          if (authMessage) authMessage.textContent = result.error.message;
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || result?.data?.session || null;
+
+        if (!session?.user) {
+          if (authMessage) {
+            authMessage.textContent = mode === "signup"
+              ? "Account created. Now press Log In with the same email and password."
+              : "No active session found. Try again.";
+          }
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        showLoggedIn();
+
+        if (authMessage) {
+          authMessage.textContent = mode === "login"
+            ? "Access granted. Welcome back."
+            : "Account created. Archive session active.";
+        }
+
+        setTimeout(() => {
+          authModal?.close();
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+        }, 700);
+      }
+
+      if (authForm) {
+        authForm.addEventListener("submit", submitAuth);
+      }
+
+      if (authSubmit) {
+        authSubmit.addEventListener("click", submitAuth);
+      }
+
+      if (accountLink) {
+        accountLink.addEventListener("click", async (event) => {
+          event.preventDefault();
+
+          const session = await refreshSessionUI();
+
+          if (!session?.user) {
+            openAuth("login");
+            return;
+          }
+
+          window.location.href = "/account.html";
+        });
+      }
+
+      if (client) {
+        client.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) showLoggedIn();
+          else showLoggedOut();
+        });
+      }
+
+      refreshSessionUI();
+    });
+  </script>
+
 </body>
 </html>
