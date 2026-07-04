@@ -83,12 +83,14 @@
 
     const img = card.querySelector("img");
     if (img) {
-      img.removeAttribute("src");
       img.removeAttribute("srcset");
+      img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
       img.alt = "";
-      img.style.opacity = "0";
+      img.style.opacity = "1";
       img.style.background =
         "radial-gradient(circle at 20% 0%, rgba(139,23,23,0.34), transparent 44%), linear-gradient(135deg, rgba(231,224,210,0.08), rgba(231,224,210,0.025)), rgba(0,0,0,0.34)";
+      img.style.minHeight = "220px";
+      img.style.objectFit = "cover";
     }
 
     const all = Array.from(card.querySelectorAll("*"));
@@ -143,6 +145,8 @@
     replaceText(newOther, "NUMA Incident — 11 October 2025", "Other Busta Files");
     replaceText(newOther, "Villa Spada Case File", "Other Busta Files");
     replaceText(newOther, "BUSTA FILES / INCIDENT REPORT", "BUSTA FILES / EVIDENCE ROOM");
+    replaceText(newOther, "INCIDENT REPORT", "EVIDENCE ROOM");
+    replaceText(newOther, "CASE FILE", "EVIDENCE ROOM");
     replaceText(newOther, "BUSTA FILES / CASE FILE", "BUSTA FILES / EVIDENCE ROOM");
 
     const newGridData = findCardGrid(newOther);
