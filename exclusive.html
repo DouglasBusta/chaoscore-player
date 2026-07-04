@@ -396,6 +396,190 @@
         font-size: 2.5rem;
       }
     }
+  
+    .auth-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .auth-btn {
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.82);
+      font: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      text-decoration: none;
+    }
+
+    .auth-btn:hover {
+      border-color: rgba(231,224,210,0.48);
+      background: rgba(255,255,255,0.09);
+      color: #fff;
+    }
+
+    .auth-btn-primary {
+      border-color: rgba(179,34,34,0.58);
+      background: rgba(139,23,23,0.28);
+      color: rgba(255,226,226,0.94);
+    }
+
+    .account-link {
+      border-color: rgba(231,224,210,0.38);
+      background: rgba(231,224,210,0.09);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth-modal {
+      width: min(430px, calc(100% - 28px));
+      border: 1px solid rgba(231,224,210,0.2);
+      border-radius: 22px;
+      padding: 0;
+      background:
+        linear-gradient(135deg, rgba(231,224,210,0.09), rgba(231,224,210,0.03)),
+        rgba(7,7,6,0.97);
+      color: var(--paper);
+      box-shadow: 0 30px 100px rgba(0,0,0,0.62);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .auth-modal::backdrop {
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .auth-card {
+      position: relative;
+      padding: 28px;
+    }
+
+    .auth-close {
+      all: unset;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(231,224,210,0.22);
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+      color: rgba(231,224,210,0.82);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .auth-close:hover {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+    }
+
+    .auth-kicker {
+      color: rgba(231,224,210,0.54);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      margin-bottom: 12px;
+    }
+
+    .auth-card h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.2rem;
+      letter-spacing: -0.06em;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    .auth-card p {
+      color: rgba(231,224,210,0.68);
+      line-height: 1.55;
+      margin: 0 0 18px;
+    }
+
+    .auth-label {
+      display: block;
+      color: rgba(231,224,210,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+      margin-bottom: 8px;
+    }
+
+    .auth-input {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 14px;
+      background: rgba(231,224,210,0.08);
+      color: var(--paper);
+      padding: 14px 15px;
+      font: inherit;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .auth-submit {
+      width: 100%;
+      border: 1px solid rgba(179,34,34,0.58);
+      border-radius: 999px;
+      background: rgba(139,23,23,0.34);
+      color: rgba(255,236,236,0.94);
+      font: inherit;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      padding: 13px 15px;
+      cursor: pointer;
+    }
+
+    .auth-message {
+      margin-top: 14px !important;
+      margin-bottom: 0 !important;
+      color: rgba(231,224,210,0.72) !important;
+      font-size: 0.86rem;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .file-action {
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.72);
+      font: inherit;
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 7px 9px;
+      cursor: pointer;
+    }
+
+    .file-action:hover {
+      background: rgba(255,255,255,0.09);
+      color: #fff;
+      border-color: rgba(231,224,210,0.36);
+    }
+
   </style>
 </head>
 <body>
@@ -405,6 +589,11 @@
       <div class="agency">
         <div class="seal">DB</div>
         <div>Official Busta Archive</div>
+      </div>
+      <div class="auth-actions">
+        <button class="auth-btn" type="button" data-auth-open="login">Log In</button>
+        <button class="auth-btn auth-btn-primary" type="button" data-auth-open="signup">Sign Up</button>
+        <a class="auth-btn account-link hidden" id="account-link" href="/account.html">My Account</a>
       </div>
     </div>
 
@@ -439,6 +628,41 @@
 
     <section class="folder-grid" id="folder-grid"></section>
     <div id="sections"></div>
+
+    <dialog id="auth-modal" class="auth-modal">
+      <div class="auth-card">
+        <button class="auth-close" type="button" data-auth-close aria-label="Close">×</button>
+        <div class="auth-kicker">BUSTA FILES ACCESS TERMINAL</div>
+        <h3 id="auth-title">Sign Up</h3>
+        <p id="auth-copy">Create your private Busta Files session.</p>
+
+        <form id="auth-form">
+          <label class="auth-label" for="auth-email">Email address</label>
+          <input id="auth-email" class="auth-input" type="email" placeholder="your@email.com" required>
+          <button class="auth-submit" type="submit">Enter Archive</button>
+        </form>
+
+        <p id="auth-message" class="auth-message"></p>
+      </div>
+    </dialog>
+
+    <dialog id="share-modal" class="auth-modal">
+      <div class="auth-card">
+        <button class="auth-close" type="button" data-share-close aria-label="Close">×</button>
+        <div class="auth-kicker">BUSTA FILES INTERNAL TRANSFER</div>
+        <h3>Share File</h3>
+        <p id="share-file-name">Select a file to share inside the archive.</p>
+
+        <form id="share-form">
+          <label class="auth-label" for="share-email">Recipient email</label>
+          <input id="share-email" class="auth-input" type="email" placeholder="friend@email.com" required>
+          <button class="auth-submit" type="submit">Send Internal Share</button>
+        </form>
+
+        <p id="share-message" class="auth-message"></p>
+      </div>
+    </dialog>
+
   </main>
 
   <script>
@@ -616,6 +840,10 @@
                   <div class="evidence-body">
                     <div class="evidence-status">${item.status}</div>
                     <div class="evidence-name">${item.name}</div>
+                    <div class="file-actions">
+                      <button class="file-action" type="button" data-save-file="${item.name}">Save</button>
+                      <button class="file-action" type="button" data-share-file="${item.name}">Share</button>
+                    </div>
                   </div>
                 </a>
               `).join("")}
@@ -638,6 +866,143 @@
 
     search.addEventListener("input", () => render(search.value.trim()));
     render();
+  
+    // BUSTA ACCOUNT SYSTEM DEMO
+    const accountLink = document.getElementById("account-link");
+    const authModal = document.getElementById("auth-modal");
+    const authTitle = document.getElementById("auth-title");
+    const authCopy = document.getElementById("auth-copy");
+    const authForm = document.getElementById("auth-form");
+    const authEmail = document.getElementById("auth-email");
+    const authMessage = document.getElementById("auth-message");
+
+    const shareModal = document.getElementById("share-modal");
+    const shareForm = document.getElementById("share-form");
+    const shareEmail = document.getElementById("share-email");
+    const shareFileName = document.getElementById("share-file-name");
+    const shareMessage = document.getElementById("share-message");
+
+    let selectedShareFile = "";
+
+    function getAccount() {
+      return JSON.parse(localStorage.getItem("bustaAccount") || "null");
+    }
+
+    function setAccount(account) {
+      localStorage.setItem("bustaAccount", JSON.stringify(account));
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const account = getAccount();
+      if (!account) return;
+
+      document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.add("hidden"));
+      if (accountLink) accountLink.classList.remove("hidden");
+    }
+
+    function openAuth(mode) {
+      const isLogin = mode === "login";
+      authTitle.textContent = isLogin ? "Log In" : "Sign Up";
+      authCopy.textContent = isLogin
+        ? "Enter your email to reopen your private archive session."
+        : "Create your private Busta Files session.";
+      authMessage.textContent = "";
+      authEmail.value = "";
+      authModal.showModal();
+      window.setTimeout(() => authEmail.focus(), 80);
+    }
+
+    document.querySelectorAll("[data-auth-open]").forEach(button => {
+      button.addEventListener("click", () => openAuth(button.dataset.authOpen));
+    });
+
+    document.querySelectorAll("[data-auth-close]").forEach(button => {
+      button.addEventListener("click", () => authModal.close());
+    });
+
+    document.querySelectorAll("[data-share-close]").forEach(button => {
+      button.addEventListener("click", () => shareModal.close());
+    });
+
+    authForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const email = authEmail.value.trim().toLowerCase();
+      if (!email) return;
+
+      setAccount({
+        email,
+        access_level: "demo",
+        created_at: new Date().toISOString()
+      });
+
+      authMessage.textContent = "Archive session created. Backend authentication will be connected later.";
+      window.setTimeout(() => authModal.close(), 650);
+    });
+
+    document.addEventListener("click", event => {
+      const saveButton = event.target.closest("[data-save-file]");
+      const shareButton = event.target.closest("[data-share-file]");
+
+      if (saveButton) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const account = getAccount();
+        if (!account) {
+          openAuth("signup");
+          return;
+        }
+
+        const file = saveButton.dataset.saveFile;
+        const saved = JSON.parse(localStorage.getItem("bustaSavedFiles") || "[]");
+
+        if (!saved.includes(file)) {
+          saved.push(file);
+          localStorage.setItem("bustaSavedFiles", JSON.stringify(saved));
+        }
+
+        saveButton.textContent = "Saved";
+        return;
+      }
+
+      if (shareButton) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const account = getAccount();
+        if (!account) {
+          openAuth("signup");
+          return;
+        }
+
+        selectedShareFile = shareButton.dataset.shareFile;
+        shareFileName.textContent = selectedShareFile;
+        shareMessage.textContent = "";
+        shareEmail.value = "";
+        shareModal.showModal();
+      }
+    });
+
+    shareForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const recipient = shareEmail.value.trim().toLowerCase();
+      if (!recipient || !selectedShareFile) return;
+
+      const shares = JSON.parse(localStorage.getItem("bustaShares") || "[]");
+      shares.push({
+        file: selectedShareFile,
+        to: recipient,
+        created_at: new Date().toISOString()
+      });
+
+      localStorage.setItem("bustaShares", JSON.stringify(shares));
+      shareMessage.textContent = "Internal share saved in this demo session. Real delivery requires backend.";
+    });
+
+    updateAuthUI();
+
   </script>
 </body>
 </html>
