@@ -1539,5 +1539,160 @@
     });
   </script>
 
+
+  <script id="busta-save-share-supabase-fix">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      const shareModal = document.getElementById("share-modal");
+      const shareForm = document.getElementById("share-form");
+      const shareEmail = document.getElementById("share-email");
+      const shareFileName = document.getElementById("share-file-name");
+      const shareMessage = document.getElementById("share-message");
+
+      let selectedShareItem = null;
+
+      function findFileByName(fileName) {
+        if (!Array.isArray(window.files) && typeof files !== "undefined" && Array.isArray(files)) {
+          return files.find(item => item.name === fileName) || null;
+        }
+
+        if (Array.isArray(window.files)) {
+          return window.files.find(item => item.name === fileName) || null;
+        }
+
+        return null;
+      }
+
+      async function getRealSession() {
+        if (!client) return null;
+        const { data } = await client.auth.getSession();
+        return data?.session || null;
+      }
+
+      async function requireLogin() {
+        const session = await getRealSession();
+
+        if (!session?.user) {
+          const loginButton = document.querySelector('[data-auth-open="login"]');
+          if (loginButton) {
+            loginButton.click();
+          } else {
+            alert("Please log in first.");
+          }
+          return null;
+        }
+
+        return session;
+      }
+
+      document.addEventListener("click", async (event) => {
+        const saveButton = event.target.closest("[data-save-file]");
+        const shareButton = event.target.closest("[data-share-file]");
+
+        if (!saveButton && !shareButton) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const session = await requireLogin();
+        if (!session) return;
+
+        if (saveButton) {
+          const fileName = saveButton.dataset.saveFile;
+          const item = findFileByName(fileName);
+
+          saveButton.disabled = true;
+          saveButton.textContent = "Saving...";
+
+          const payload = {
+            user_id: session.user.id,
+            file_name: fileName,
+            file_url: item?.src || "",
+            folder: item?.folder || "Busta Files"
+          };
+
+          const { error } = await client
+            .from("saved_files")
+            .upsert(payload, { onConflict: "user_id,file_url" });
+
+          if (error) {
+            console.error(error);
+            saveButton.disabled = false;
+            saveButton.textContent = "Save";
+            alert("Save failed: " + error.message);
+            return;
+          }
+
+          saveButton.textContent = "Saved";
+          saveButton.disabled = false;
+          return;
+        }
+
+        if (shareButton) {
+          const fileName = shareButton.dataset.shareFile;
+          selectedShareItem = findFileByName(fileName) || {
+            name: fileName,
+            src: "",
+            folder: "Busta Files"
+          };
+
+          if (shareFileName) shareFileName.textContent = selectedShareItem.name;
+          if (shareMessage) shareMessage.textContent = "";
+          if (shareEmail) shareEmail.value = "";
+
+          if (shareModal && !shareModal.open) shareModal.showModal();
+        }
+      }, true);
+
+      if (shareForm) {
+        shareForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const session = await requireLogin();
+          if (!session || !selectedShareItem) return;
+
+          const recipient = shareEmail?.value.trim().toLowerCase() || "";
+
+          if (!recipient) {
+            if (shareMessage) shareMessage.textContent = "Enter recipient email.";
+            return;
+          }
+
+          if (shareMessage) shareMessage.textContent = "Sending internal share...";
+
+          const { error } = await client.from("shared_files").insert({
+            sender_id: session.user.id,
+            recipient_email: recipient,
+            file_name: selectedShareItem.name,
+            file_url: selectedShareItem.src || "",
+            folder: selectedShareItem.folder || "Busta Files",
+            message: "Shared from Busta Files archive."
+          });
+
+          if (error) {
+            console.error(error);
+            if (shareMessage) shareMessage.textContent = "Share failed: " + error.message;
+            return;
+          }
+
+          if (shareMessage) shareMessage.textContent = "File shared inside the archive.";
+        }, true);
+      }
+    });
+  </script>
+
 </body>
 </html>
