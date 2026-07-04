@@ -608,6 +608,35 @@ dialog {
         padding-left: 0;
       }
     }
+  
+    /* FORCE FINAL CREDITS SPACING */
+    .credits-block:has(a[href*="39redboy"]),
+    .credits-block:has(a[href*="ohmygador"]),
+    .credits-block:has(a[href*="dd_deffy"]),
+    .credits-block:has(a[href*="vitali.mp4"]) {
+      gap: 0.32rem !important;
+    }
+
+    .credits-block:has(a[href*="39redboy"]) .credits-tag,
+    .credits-block:has(a[href*="ohmygador"]) .credits-tag,
+    .credits-block:has(a[href*="dd_deffy"]) .credits-tag {
+      margin-top: -0.45rem !important;
+      padding-top: 0 !important;
+      line-height: 1.05 !important;
+    }
+
+    .credits-block:has(a[href*="39redboy"]) .credits-inline-tag,
+    .credits-block:has(a[href*="ohmygador"]) .credits-inline-tag,
+    .credits-block:has(a[href*="dd_deffy"]) .credits-inline-tag {
+      display: block !important;
+      margin-top: 0.18rem !important;
+      line-height: 1.05 !important;
+    }
+
+    .credits-block:has(a[href*="vitali.mp4"]) .credits-name {
+      margin-top: -0.25rem !important;
+    }
+
   </style>
 </head>
 <body>
