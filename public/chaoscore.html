@@ -1,0 +1,1666 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>#chaoscore — Douglas Busta</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#13070a" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090608;
+      --panel: rgba(255,255,255,0.055);
+      --panel-2: rgba(255,255,255,0.085);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.62);
+      --soft: rgba(255,255,255,0.12);
+      --red: #6f101a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(120, 0, 20, 0.24), transparent 36%),
+        radial-gradient(circle at 90% 75%, rgba(90, 0, 18, 0.18), transparent 38%),
+        #080608;
+    }
+
+    button, a {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 42px 0 128px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(240px, 340px) 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .cover-wrap {
+      width: 100%;
+    }
+
+    .cover-credit {
+      margin: 10px 0 0;
+      color: rgba(255,255,255,0.58);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+
+    .cover {
+      width: 100%;
+      display: block;
+      border-radius: 24px;
+      box-shadow: 0 22px 70px rgba(0,0,0,0.42);
+      background: rgba(255,255,255,0.05);
+    }
+    .cover-picker {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .cover-arrow {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 999px;
+      color: rgba(255,255,255,0.72);
+      background: rgba(255,255,255,0.035);
+      cursor: pointer;
+      font-size: 1.7rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 3px;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .cover-arrow:hover {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      transform: scale(1.04);
+    }
+
+    .cover-current {
+      display: none;
+    }
+
+.install-buttons {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .clean-button {
+      border: 1px solid var(--soft);
+      border-radius: 14px;
+      min-height: 44px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: rgba(16, 14, 16, 0.78);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .clean-button:hover {
+      background: rgba(255,255,255,0.095);
+    }
+
+
+    .quality-downloads {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .quality-button {
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.13);
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.045);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    .quality-button:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.09);
+    }
+
+    .info {
+      padding-top: 8px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      border: 1px solid var(--soft);
+      border-radius: 999px;
+      padding: 9px 13px;
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .pill:hover {
+      background: rgba(255,255,255,0.11);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.65rem, 7vw, 5.4rem);
+      letter-spacing: -0.08em;
+      line-height: 0.86;
+    }
+
+    .artist {
+      margin: 10px 0 0;
+      color: var(--text);
+      font-weight: 650;
+    }
+
+    .by {
+      margin: 4px 0 24px;
+      color: var(--muted);
+    }
+
+    .tracks {
+      display: grid;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .track {
+      display: grid;
+      grid-template-columns: 36px 42px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      border: 1px solid rgba(255,255,255,0.075);
+      border-radius: 16px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.042);
+      cursor: pointer;
+    }
+
+    .track:hover,
+    .track.active {
+      background: rgba(120, 15, 28, 0.23);
+      border-color: rgba(255,255,255,0.13);
+    }
+
+    .num {
+      color: var(--muted);
+      text-align: right;
+      font-size: 0.9rem;
+    }
+
+    .play-small {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+    }
+
+    .track-title {
+      font-weight: 760;
+      line-height: 1.12;
+    }
+
+    .track-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .credit-link {
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      text-transform: lowercase;
+      padding: 8px;
+    }
+
+    .credit-link:hover {
+      color: white;
+    }
+
+
+    .track.playing {
+      animation: trackPulse 420ms ease;
+    }
+
+    .track.playing .play-small {
+      background: rgba(255,255,255,0.92);
+      color: #080608;
+      transform: scale(1.04);
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    @keyframes trackPulse {
+      0% {
+        transform: scale(1);
+      }
+      45% {
+        transform: scale(1.012);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+
+    .track {
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .track.is-playing {
+      background: rgba(120, 15, 28, 0.34);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .track.is-playing .play-small {
+      background: rgba(255,255,255,0.94);
+      color: #080608;
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(255,255,255,0.14);
+    }
+
+    .track.play-pop {
+      animation: trackPlayPop 360ms ease;
+    }
+
+    .track.pause-pop {
+      animation: trackPausePop 280ms ease;
+    }
+
+    @keyframes trackPlayPop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.014); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes trackPausePop {
+      0% { transform: scale(1.01); }
+      100% { transform: scale(1); }
+    }
+
+    .player {
+      position: fixed;
+      left: 18px;
+      right: 18px;
+      bottom: 16px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: minmax(160px, 260px) 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      background: rgba(12, 10, 12, 0.86);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.46);
+    }
+
+    .now {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .now img {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .now-title {
+      font-weight: 760;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .now-sub {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .wave {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 42px;
+      padding: 0 4px;
+      cursor: pointer;
+    }
+
+    .bar {
+      flex: 1;
+      min-width: 4px;
+      height: calc(8px + var(--h) * 34px);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .bar.on {
+      background: rgba(255,255,255,0.58);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .round {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 999px;
+      background: white;
+      color: black;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .round.secondary {
+      width: 34px;
+      height: 34px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+
+    .time {
+      color: var(--muted);
+      font-size: 0.82rem;
+      min-width: 82px;
+      text-align: right;
+    }
+
+
+    .credits-roll {
+      text-align: center;
+      display: grid;
+      gap: 2rem;
+      padding: 4px 0 2px;
+    }
+
+    .credits-block {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .credits-role {
+      color: rgba(255,255,255,0.48);
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .credits-name {
+      color: rgba(255,255,255,0.88);
+      font-size: 0.98rem;
+      line-height: 1.35;
+      font-weight: 560;
+    }
+
+    .credits-name a {
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.26);
+    }
+
+    .credits-name a:hover {
+      color: #fff;
+      border-bottom-color: rgba(255,255,255,0.72);
+    }
+
+
+    .credits-block.credits-tight {
+      gap: 0.45rem;
+    }
+dialog {
+      width: min(520px, calc(100% - 32px));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      color: white;
+      background: rgba(22, 20, 23, 0.96);
+      box-shadow: 0 28px 90px rgba(0,0,0,0.55);
+      padding: 0;
+    }
+
+    dialog::backdrop {
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-inner {
+      padding: 22px;
+    }
+
+    .modal-inner h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .modal-inner p {
+      white-space: pre-line;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.55;
+      margin: 0 0 18px;
+    }
+
+    .modal-inner button {
+      width: 100%;
+    }
+
+    @media (max-width: 820px) {
+      .shell {
+        padding-top: 22px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+  
+    .track.playing {
+      animation: trackPulse 420ms ease;
+    }
+
+    .track.playing .play-small {
+      background: rgba(255,255,255,0.92);
+      color: #080608;
+      transform: scale(1.04);
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    @keyframes trackPulse {
+      0% {
+        transform: scale(1);
+      }
+      45% {
+        transform: scale(1.012);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+
+    .track {
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .play-small {
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .track.is-playing {
+      background: rgba(120, 15, 28, 0.34);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .track.is-playing .play-small {
+      background: rgba(255,255,255,0.94);
+      color: #080608;
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(255,255,255,0.14);
+    }
+
+    .track.play-pop {
+      animation: trackPlayPop 360ms ease;
+    }
+
+    .track.pause-pop {
+      animation: trackPausePop 280ms ease;
+    }
+
+    @keyframes trackPlayPop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.014); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes trackPausePop {
+      0% { transform: scale(1.01); }
+      100% { transform: scale(1); }
+    }
+
+    .player {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .controls {
+        justify-content: center;
+      }
+
+      .track {
+        grid-template-columns: 28px 38px 1fr;
+      }
+
+      .credit-link {
+        grid-column: 3;
+        justify-self: start;
+        padding-left: 0;
+      }
+    }
+  
+    /* FORCE FINAL CREDITS SPACING */
+    .credits-block:has(a[href*="39redboy"]),
+    .credits-block:has(a[href*="ohmygador"]),
+    .credits-block:has(a[href*="dd_deffy"]),
+    .credits-block:has(a[href*="vitali.mp4"]) {
+      gap: 0.32rem !important;
+    }
+
+    .credits-block:has(a[href*="39redboy"]) .credits-tag,
+    .credits-block:has(a[href*="ohmygador"]) .credits-tag,
+    .credits-block:has(a[href*="dd_deffy"]) .credits-tag {
+      margin-top: -0.45rem !important;
+      padding-top: 0 !important;
+      line-height: 1.05 !important;
+    }
+
+    .credits-block:has(a[href*="39redboy"]) .credits-inline-tag,
+    .credits-block:has(a[href*="ohmygador"]) .credits-inline-tag,
+    .credits-block:has(a[href*="dd_deffy"]) .credits-inline-tag {
+      display: block !important;
+      margin-top: 0.18rem !important;
+      line-height: 1.05 !important;
+    }
+
+    .credits-block:has(a[href*="vitali.mp4"]) .credits-name {
+      margin-top: -0.25rem !important;
+    }
+
+  
+    /* REAL CIRCLE CLOSE BUTTON */
+    dialog {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.26) transparent;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    dialog.modal-closing {
+      opacity: 0;
+      transform: translateY(8px) scale(0.985);
+    }
+
+    dialog::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    dialog::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 999px;
+      margin: 18px 0;
+    }
+
+    dialog::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.24);
+      border-radius: 999px;
+      border: 3px solid transparent;
+      background-clip: content-box;
+    }
+
+    dialog::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.38);
+      border: 3px solid transparent;
+      background-clip: content-box;
+    }
+
+    .modal-inner {
+      position: relative;
+    }
+
+    #modal-close-circle {
+      position: sticky;
+      top: 10px;
+      z-index: 9999;
+
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      min-height: 26px;
+      max-width: 26px;
+      max-height: 26px;
+
+      margin: -6px 0 -20px auto;
+
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.09);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+      user-select: none;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        0 8px 18px rgba(0,0,0,0.24);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      transition:
+        transform 140ms ease,
+        background 140ms ease,
+        border-color 140ms ease,
+        opacity 140ms ease;
+    }
+
+    #modal-close-circle:hover {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.34);
+      transform: scale(1.08);
+    }
+
+    #modal-close-circle:active {
+      transform: scale(0.92);
+      opacity: 0.82;
+    }
+
+    .modal-close-line {
+      position: absolute;
+      width: 12px;
+      height: 1.6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      pointer-events: none;
+    }
+
+    .modal-close-line.line-a {
+      transform: rotate(45deg);
+    }
+
+    .modal-close-line.line-b {
+      transform: rotate(-45deg);
+    }
+
+  
+    /* FORCE CLOSE CIRCLE CLICK */
+    #modal-close-circle {
+      pointer-events: auto !important;
+    }
+
+    #modal-close-circle * {
+      pointer-events: none !important;
+    }
+
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="cover-wrap">
+        <img class="cover" id="main-cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
+        <p class="cover-credit">Cover by @tuma.zz</p>
+        <div class="cover-picker" id="cover-picker">
+          <button class="cover-arrow" id="cover-prev" type="button" aria-label="Previous cover">‹</button>
+          <span class="cover-current" id="cover-current" aria-hidden="true"></span>
+          <button class="cover-arrow" id="cover-next" type="button" aria-label="Next cover">›</button>
+        </div>
+
+        <div class="install-buttons">
+          <button class="clean-button" id="ios-download"> Download iOS</button>
+          <button class="clean-button" id="android-download">🤖 Download Android</button>
+        </div>
+        <div class="quality-downloads">
+          <a class="quality-button" href="https://drive.google.com/drive/folders/1058oD--H9tKeTxN4ukLf_qZDHjH1gJqB?usp=drive_link" target="_blank" rel="noopener noreferrer">
+            Download
+          </a>
+        </div>
+      </div>
+
+      <div class="info">
+        <div class="top-actions">
+          <a class="pill" href="/exclusive">exclusive</a>
+          <button class="pill" id="album-credits">credits</button>
+          <button class="round" id="hero-play">▶</button>
+        </div>
+
+        <h1>#chaoscore</h1>
+        <p class="by">By Douglas Busta</p>
+
+        <div class="tracks" id="tracks"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="player">
+    <div class="now">
+      <img src="/assets/chaoscore-spotify-cover.jpg" alt="" />
+      <div>
+        <div class="now-title" id="now-title">banale</div>
+        <div class="now-sub">#chaoscore</div>
+      </div>
+    </div>
+
+    <div class="wave" id="wave"></div>
+
+    <div class="controls">
+      <button class="round secondary" id="prev">‹</button>
+      <button class="round" id="play">▶</button>
+      <button class="round secondary" id="next">›</button>
+      <div class="time" id="time">0:00 / 0:00</div>
+    </div>
+  </section>
+
+  <audio id="audio" preload="metadata"></audio>
+
+  <dialog id="modal">
+    <div class="modal-inner">
+      <div id="modal-close-circle"
+        aria-label="Close panel"
+        role="button"
+        tabindex="0"
+        onclick="this.closest('dialog').close()"
+        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); this.closest('dialog').close(); }">
+        <span class="modal-close-line line-a"></span>
+        <span class="modal-close-line line-b"></span>
+      </div>
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <button class="clean-button" id="modal-close">chiudi</button>
+    </div>
+  </dialog>
+
+  <script type="module">
+
+    const coverOptions = [
+      {
+            "label": "Spotify cover",
+            "src": "/assets/chaoscore-spotify-cover.jpg"
+      },
+      {
+            "label": "cover chaoscore",
+            "src": "/covers/cover chaoscore.png"
+      }
+];
+
+    const tracks = [
+      { title: "banale", file: "/audio-mp3/1. banale.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3", credits: "Lyrics written by Douglas Busta and 39Redboy.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3", credits: "Lyrics written by Douglas Busta and Gador.\nProduced by Douglas Busta and Gador.\nMixed and mastered by Douglas Busta." },
+      { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3", credits: "Lyrics written by Douglas Busta and Deffy.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "ma che ho fatto mo??...", file: "/audio-mp3/track11.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+      { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." }
+    ];
+
+    const audio = document.getElementById("audio");
+    const tracksEl = document.getElementById("tracks");
+    const nowTitle = document.getElementById("now-title");
+    const play = document.getElementById("play");
+    const heroPlay = document.getElementById("hero-play");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    const time = document.getElementById("time");
+    const wave = document.getElementById("wave");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modal-title");
+    const modalText = document.getElementById("modal-text");
+    const modalClose = document.getElementById("modal-close");
+
+    let current = 0;
+
+
+    function applyCover(src) {
+      const finalSrc = src || coverOptions[0]?.src || "/assets/chaoscore-spotify-cover.jpg";
+
+      document.querySelectorAll(".cover, .now img").forEach((img) => {
+        img.src = finalSrc;
+      });
+
+      localStorage.setItem("chaoscore-selected-cover", finalSrc);
+
+      document.querySelectorAll(".cover-option").forEach((button) => {
+        button.classList.toggle("active", button.dataset.src === finalSrc);
+      });
+    }
+
+    function renderCoverPicker() {
+      const picker = document.getElementById("cover-picker");
+      if (!picker) return;
+
+      picker.innerHTML = "";
+
+      coverOptions.forEach((cover, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "cover-option";
+        button.dataset.src = cover.src;
+        button.textContent = cover.label || `Cover ${index + 1}`;
+        button.addEventListener("click", () => applyCover(cover.src));
+        picker.appendChild(button);
+      });
+
+      const saved = localStorage.getItem("chaoscore-selected-cover");
+      applyCover(saved || coverOptions[0]?.src);
+    }
+
+    function fmt(seconds) {
+      if (!Number.isFinite(seconds)) return "0:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+      return `${m}:${s}`;
+    }
+
+    function popup(title, text, isHtml = false) {
+      modalTitle.textContent = title;
+
+      if (isHtml) {
+        modalText.innerHTML = text;
+      } else {
+        modalText.textContent = text;
+      }
+
+      modal.showModal();
+    }
+
+    modalClose.addEventListener("click", () => modal.close());
+
+    function renderWave(progress = 0) {
+      const heights = [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18];
+      wave.innerHTML = "";
+      heights.forEach((h, i) => {
+        const bar = document.createElement("span");
+        bar.className = "bar";
+        bar.style.setProperty("--h", h / 100);
+        if (i / heights.length <= progress) bar.classList.add("on");
+        wave.appendChild(bar);
+      });
+    }
+
+    function loadTrack(index, shouldPlay = false) {
+      current = index;
+      const track = tracks[current];
+      audio.src = track.file;
+      audio.load();
+      nowTitle.textContent = track.title;
+
+      document.querySelectorAll(".track").forEach((el, i) => {
+        el.classList.toggle("active", i === current);
+      });
+
+      renderWave(0);
+    updateTrackPlayButtons();
+
+      if (shouldPlay) {
+        audio.play().catch(() => popup("Audio", "Riprova cliccando Play o cliccando la traccia."));
+      }
+    }
+
+    function renderTracks() {
+      tracksEl.innerHTML = "";
+
+      tracks.forEach((track, index) => {
+        const row = document.createElement("article");
+        row.className = "track";
+        if (index === current) row.classList.add("active");
+
+        row.innerHTML = `
+          <div class="num">${index + 1}</div>
+          <button class="play-small">▶</button>
+          <div>
+            <div class="track-title"></div>
+            <div class="track-sub">Douglas Busta</div>
+          </div>
+          <button class="credit-link">credits</button>
+        `;
+
+        row.querySelector(".track-title").textContent = track.title;
+
+        row.addEventListener("click", () => loadTrack(index, true));
+
+        row.querySelector(".play-small").addEventListener("click", (event) => {
+          event.stopPropagation();
+          loadTrack(index, true);
+        });
+
+        row.querySelector(".credit-link").addEventListener("click", (event) => {
+          event.stopPropagation();
+          popup("Credits — " + track.title, track.credits);
+        });
+
+        tracksEl.appendChild(row);
+      });
+    }
+
+    function togglePlay() {
+      if (!audio.src) loadTrack(current, false);
+
+      if (audio.paused) {
+        audio.play().catch(() => popup("Audio", "Riprova cliccando una traccia."));
+      } else {
+        audio.pause();
+      }
+    }
+
+    play.addEventListener("click", togglePlay);
+    heroPlay.addEventListener("click", togglePlay);
+
+    prev.addEventListener("click", () => {
+      const nextIndex = (current - 1 + tracks.length) % tracks.length;
+      loadTrack(nextIndex, true);
+    });
+
+    next.addEventListener("click", () => {
+      const nextIndex = (current + 1) % tracks.length;
+      loadTrack(nextIndex, true);
+    });
+
+    audio.addEventListener("play", () => {
+      play.textContent = "❚❚";
+      heroPlay.textContent = "❚❚";
+          updateTrackPlayButtons();
+    });
+
+    audio.addEventListener("pause", () => {
+      play.textContent = "▶";
+      heroPlay.textContent = "▶";
+          updateTrackPlayButtons();
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      const progress = audio.duration ? audio.currentTime / audio.duration : 0;
+      renderWave(progress);
+      time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+    });
+
+    audio.addEventListener("ended", () => {
+      const nextIndex = (current + 1) % tracks.length;
+      loadTrack(nextIndex, true);
+    });
+
+    wave.addEventListener("click", (event) => {
+      if (!audio.duration) return;
+      const rect = wave.getBoundingClientRect();
+      const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
+      audio.currentTime = ratio * audio.duration;
+    });
+
+    document.getElementById("album-credits").addEventListener("click", () => {
+      popup("Credits", `
+        <div class="credits-roll">
+          <div class="credits-block">
+            <div class="credits-role">Album</div>
+            <div class="credits-name">#chaoscore</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">All Lyrics Written By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">All Tracks Produced and Composed By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Recorded By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Mixed and Mastered By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Track 4 — so ki 6... ft. 39Redboy</div>
+            <div class="credits-name">
+              Additional lyrics by 39Redboy
+              <a class="credits-feature-tag" href="https://instagram.com/39redboy" target="_blank" rel="noopener noreferrer">@39redboy</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Track 8 — Patto d'Achille ft. Gador</div>
+            <div class="credits-name">
+              Additional lyrics and production by Gador
+              <a class="credits-feature-tag" href="https://instagram.com/ohmygador" target="_blank" rel="noopener noreferrer">@ohmygador</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Track 10 — sensibileh! ft. Deffy</div>
+            <div class="credits-name">
+              Additional lyrics by Deffy
+              <a class="credits-feature-tag" href="https://instagram.com/dd_deffy" target="_blank" rel="noopener noreferrer">@dd_deffy</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Executive Producer</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Direction</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Cover</div>
+            <div class="credits-name">
+              Matteo Mazzetti
+              <a href="https://instagram.com/tuma.zz" target="_blank" rel="noopener noreferrer">@tuma.zz</a>
+              <br>
+              Douglas Busta
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Video Sound Design</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block credits-tight">
+            <div class="credits-role">Video Editing, Color and Camera</div>
+            <div class="credits-name">
+              Nicola Vitali
+              <a href="https://instagram.com/vitali.mp4" target="_blank" rel="noopener noreferrer">@vitali.mp4</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Video AI Prompter</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Management and Label</div>
+            <div class="credits-name">
+              Giacomo (KAMI) Andreoli
+              <a href="https://instagram.com/lovekxmi" target="_blank" rel="noopener noreferrer">@lovekxmi</a>
+              <br>
+              KYMA Label
+              <a href="https://instagram.com/kyma_label" target="_blank" rel="noopener noreferrer">@kyma_label</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Publishing</div>
+            <div class="credits-name">
+              KYMA Label
+              <a href="https://instagram.com/kyma_label" target="_blank" rel="noopener noreferrer">@kyma_label</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Original Idea</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+        </div>
+      `, true);
+    });
+
+    document.getElementById("ios-download").addEventListener("click", () => {
+      popup("Download iOS", "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”.");
+    });
+
+    document.getElementById("android-download").addEventListener("click", () => {
+      popup("Download Android", "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”.");
+    });
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((reg) => reg.unregister())).catch(() => {});
+    }
+
+    if ("caches" in window) {
+      caches.keys().then((keys) => keys.forEach((key) => caches.delete(key))).catch(() => {});
+    }
+
+    renderCoverPicker();
+    renderTracks();
+    renderWave(0);
+    loadTrack(0, false);
+
+  
+    // Real circle modal close
+    function closeModalPanel() {
+      if (!modal || !modal.open) return;
+
+      modal.classList.add("modal-closing");
+
+      window.setTimeout(() => {
+        modal.close();
+        modal.classList.remove("modal-closing");
+      }, 160);
+    }
+
+    document.addEventListener("click", (event) => {
+      const closeCircle = event.target.closest("#modal-close-circle");
+      if (!closeCircle) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      closeModalPanel();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+
+      const closeCircle = event.target.closest("#modal-close-circle");
+      if (!closeCircle) return;
+
+      event.preventDefault();
+      closeModalPanel();
+    });
+
+  </script>
+
+
+
+<script>
+/* FINAL MINI PLAYER + WAVEFORM FIX */
+(function () {
+  const tracks = [
+    { title: "banale", file: "/audio-mp3/1. banale.mp3" },
+    { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3" },
+    { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3" },
+    { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3" },
+    { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3" },
+    { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3" },
+    { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3" },
+    { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3" },
+    { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3" },
+    { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3" },
+    { title: "ma che ho fatto mo??...", file: "/audio-mp3/track11.mp3" },
+    { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3" },
+    { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3" },
+    { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3" },
+    { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3" }
+  ];
+
+  const wavePatterns = [
+    [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18],
+    [40,52,63,72,41,29,58,84,91,66,36,24,44,70,88,76,55,39,28,35,61,83,96,71,48,31,23,42,67,89,80,59,33,25,47,73,92,64,38,20],
+    [22,28,44,67,91,86,60,34,25,37,59,78,94,88,62,41,29,23,35,54,75,97,82,57,36,26,30,49,69,90,84,63,40,27,21,39,61,79,58,33],
+    [64,38,25,31,56,83,96,71,45,29,22,48,77,91,68,42,30,53,87,94,73,51,35,24,44,69,89,78,57,36,28,50,81,93,66,43,32,55,76,48],
+    [20,21,25,31,44,68,92,95,73,48,29,24,36,55,79,90,61,39,27,34,52,74,88,69,46,30,22,28,43,65,84,76,53,35,26,32,47,70,91,58]
+  ];
+
+  let activeIndex = 0;
+
+  function absoluteUrl(path) {
+    return new URL(path, window.location.origin).href;
+  }
+
+  function getAudio() {
+    return document.getElementById("audio");
+  }
+
+  function getRows() {
+    return Array.from(document.querySelectorAll(".track"));
+  }
+
+  function getIndexFromAudio() {
+    const audio = getAudio();
+    if (!audio || !audio.src) return activeIndex;
+
+    const found = tracks.findIndex((track) => audio.src === absoluteUrl(track.file));
+    return found >= 0 ? found : activeIndex;
+  }
+
+  function fmt(seconds) {
+    if (!Number.isFinite(seconds)) return "0:00";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  }
+
+  function setMiniPlayer(index) {
+    const track = tracks[index];
+    if (!track) return;
+
+    const nowTitle = document.getElementById("now-title");
+    const nowSubtitle = document.querySelector(".now-sub");
+
+    if (nowTitle) nowTitle.textContent = track.title;
+    if (nowSubtitle) nowSubtitle.textContent = "#chaoscore";
+  }
+
+  function renderWave(index, progress = 0) {
+    const wave = document.getElementById("wave");
+    if (!wave) return;
+
+    const pattern = wavePatterns[index % wavePatterns.length];
+    wave.innerHTML = "";
+
+    pattern.forEach((height, i) => {
+      const bar = document.createElement("span");
+      bar.className = "bar";
+      bar.style.setProperty("--h", height / 100);
+
+      if (i / pattern.length <= progress) {
+        bar.classList.add("on");
+      }
+
+      wave.appendChild(bar);
+    });
+  }
+
+  function animateRow(row, className) {
+    if (!row) return;
+    row.classList.remove("play-pop", "pause-pop");
+    void row.offsetWidth;
+    row.classList.add(className);
+    window.setTimeout(() => row.classList.remove(className), 430);
+  }
+
+  function syncUI(animationType) {
+    const audio = getAudio();
+    const rows = getRows();
+    const currentIndex = getIndexFromAudio();
+    const isPlaying = audio && !audio.paused;
+
+    activeIndex = currentIndex;
+    setMiniPlayer(currentIndex);
+
+    rows.forEach((row, index) => {
+      const button = row.querySelector(".play-small");
+      const currentAndPlaying = index === currentIndex && isPlaying;
+
+      row.classList.toggle("active", index === currentIndex);
+      row.classList.toggle("is-playing", currentAndPlaying);
+
+      if (button) {
+        button.textContent = currentAndPlaying ? "❚❚" : "▶";
+        button.setAttribute("aria-label", currentAndPlaying ? "Pause track" : "Play track");
+      }
+    });
+
+    const progress = audio && audio.duration ? audio.currentTime / audio.duration : 0;
+    renderWave(currentIndex, progress);
+
+    const time = document.getElementById("time");
+    if (time && audio) {
+      time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+    }
+
+    if (animationType === "play") {
+      animateRow(rows[currentIndex], "play-pop");
+    }
+
+    if (animationType === "pause") {
+      animateRow(rows[currentIndex], "pause-pop");
+    }
+  }
+
+  async function toggleTrack(index) {
+    const audio = getAudio();
+    if (!audio) return;
+
+    const track = tracks[index];
+    if (!track) return;
+
+    const targetSrc = absoluteUrl(track.file);
+    const sameTrack = audio.src === targetSrc;
+
+    activeIndex = index;
+    setMiniPlayer(index);
+    renderWave(index, 0);
+
+    if (sameTrack && !audio.paused) {
+      audio.pause();
+      syncUI("pause");
+      return;
+    }
+
+    if (!sameTrack) {
+      audio.pause();
+      audio.src = targetSrc;
+      audio.load();
+    }
+
+    try {
+      await audio.play();
+      syncUI("play");
+    } catch (error) {
+      console.warn(error);
+      const status = document.getElementById("audio-status");
+      if (status) status.textContent = "Audio non partito: premi di nuovo play.";
+      syncUI("pause");
+    }
+  }
+
+  document.addEventListener("click", function (event) {
+    if (event.target.closest(".credit-link")) return;
+
+    const playButton = event.target.closest(".play-small");
+    const row = event.target.closest(".track");
+
+    if (!playButton && !row) return;
+
+    const rows = getRows();
+    const targetRow = row || playButton.closest(".track");
+    const index = rows.indexOf(targetRow);
+
+    if (index < 0) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    toggleTrack(index);
+  }, true);
+
+  document.addEventListener("click", function (event) {
+    const mainPlay = event.target.closest("#play, #hero-play");
+    if (!mainPlay) return;
+
+    const audio = getAudio();
+    if (!audio) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    if (!audio.paused) {
+      audio.pause();
+      syncUI("pause");
+    } else {
+      toggleTrack(activeIndex);
+    }
+  }, true);
+
+  const audio = getAudio();
+
+  if (audio) {
+    audio.addEventListener("play", () => syncUI("play"));
+    audio.addEventListener("pause", () => syncUI("pause"));
+    audio.addEventListener("ended", () => syncUI("pause"));
+    audio.addEventListener("loadedmetadata", () => syncUI());
+    audio.addEventListener("timeupdate", () => syncUI());
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    setMiniPlayer(0);
+    renderWave(0, 0);
+    syncUI();
+    setTimeout(syncUI, 300);
+    setTimeout(syncUI, 1000);
+  });
+
+  window.addEventListener("load", () => {
+    setMiniPlayer(activeIndex);
+    renderWave(activeIndex, 0);
+    syncUI();
+    setTimeout(syncUI, 300);
+    setTimeout(syncUI, 1000);
+  });
+})();
+</script>
+
+
+  <script id="chaoscore-access-guard">
+    window.addEventListener("DOMContentLoaded", async () => {
+      const cleanPath = window.location.pathname.replace(/\/$/, "") || "/";
+      const isPrivateAlbumRoute = cleanPath === "/chaoscore" || cleanPath === "/chaoscore.html";
+      if (!isPrivateAlbumRoute) return;
+
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function lockPage(message) {
+        document.body.innerHTML = `
+          <main style="
+            min-height:100vh;
+            display:grid;
+            place-items:center;
+            padding:24px;
+            background:
+              radial-gradient(circle at 20% 0%, rgba(139,23,23,.34), transparent 35%),
+              radial-gradient(circle at 80% 20%, rgba(231,224,210,.08), transparent 28%),
+              linear-gradient(180deg,#0c0908 0%,#030303 72%);
+            color:#e7e0d2;
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;
+          ">
+            <section style="
+              width:min(680px,100%);
+              border:1px solid rgba(231,224,210,.2);
+              border-radius:28px;
+              padding:clamp(24px,6vw,48px);
+              background:
+                linear-gradient(135deg, rgba(231,224,210,.08), rgba(231,224,210,.025)),
+                rgba(0,0,0,.34);
+              box-shadow:0 32px 110px rgba(0,0,0,.48);
+              position:relative;
+              overflow:hidden;
+            ">
+              <div style="
+                position:absolute;
+                right:-20px;
+                top:26px;
+                transform:rotate(14deg);
+                border:3px solid rgba(179,34,34,.5);
+                color:rgba(179,34,34,.58);
+                border-radius:10px;
+                padding:4px 14px;
+                font-weight:900;
+                letter-spacing:.08em;
+                font-size:clamp(1.9rem,7vw,4.4rem);
+                pointer-events:none;
+              ">LOCKED</div>
+
+              <div style="
+                color:rgba(231,224,210,.56);
+                text-transform:uppercase;
+                letter-spacing:.18em;
+                font-size:.72rem;
+                margin-bottom:14px;
+              ">
+                Private NFC Album Access
+              </div>
+
+              <h1 style="
+                font-family:Georgia,'Times New Roman',serif;
+                font-size:clamp(3rem,11vw,6rem);
+                line-height:.86;
+                letter-spacing:-.08em;
+                margin:0 0 18px;
+                text-transform:uppercase;
+              ">#chaoscore<br>Locked</h1>
+
+              <p style="color:rgba(231,224,210,.78);line-height:1.7;margin:0 0 18px;font-size:1rem;">
+                ${message}
+              </p>
+
+              <div style="
+                border:1px solid rgba(231,224,210,.18);
+                border-radius:18px;
+                padding:16px;
+                background:rgba(255,255,255,.045);
+                margin:18px 0 22px;
+              ">
+                <div style="
+                  color:#d8f7cf;
+                  text-transform:uppercase;
+                  letter-spacing:.14em;
+                  font-size:.72rem;
+                  margin-bottom:8px;
+                ">
+                  How to unlock
+                </div>
+                <div style="color:rgba(231,224,210,.74);line-height:1.65;">
+                  Avvicina il tuo tag NFC Chaoscore al telefono. Il tag aprirà automaticamente il link privato di sblocco.
+                  Dopo il login, la chiave verrà collegata al tuo account e l’album si aprirà.
+                </div>
+              </div>
+
+              <div style="
+                border:1px solid rgba(231,224,210,.18);
+                border-radius:18px;
+                padding:16px;
+                background:rgba(255,255,255,.035);
+                margin:0 0 22px;
+              ">
+                <div style="
+                  color:rgba(231,224,210,.72);
+                  text-transform:uppercase;
+                  letter-spacing:.14em;
+                  font-size:.72rem;
+                  margin-bottom:8px;
+                ">
+                  Other ways to listen
+                </div>
+                <div style="color:rgba(231,224,210,.62);line-height:1.65;">
+                  Coming Soon. Quando l’album sarà disponibile fuori dal tag NFC, qui appariranno i link ufficiali per ascoltarlo.
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="/" style="
+                  display:inline-flex;
+                  border:1px solid rgba(231,224,210,.24);
+                  border-radius:999px;
+                  background:rgba(231,224,210,.08);
+                  color:#e7e0d2;
+                  padding:13px 15px;
+                  text-decoration:none;
+                  text-transform:uppercase;
+                  letter-spacing:.12em;
+                  font-size:.72rem;
+                ">Back to Busta Files</a>
+
+                <a href="/account" style="
+                  display:inline-flex;
+                  border:1px solid rgba(231,224,210,.16);
+                  border-radius:999px;
+                  background:rgba(0,0,0,.18);
+                  color:rgba(231,224,210,.76);
+                  padding:13px 15px;
+                  text-decoration:none;
+                  text-transform:uppercase;
+                  letter-spacing:.12em;
+                  font-size:.72rem;
+                ">My Account</a>
+              </div>
+            </section>
+          </main>
+        `;
+      }
+
+      if (!client) {
+        lockPage("Authentication could not be loaded. Scan your Chaoscore NFC key again.");
+        return;
+      }
+
+      const { data } = await client.auth.getSession();
+      const session = data?.session || null;
+
+      if (!session?.user) {
+        lockPage("This album is private. To unlock it, avvicina il tuo tag NFC Chaoscore al telefono. Il tag aprirà il link privato di sblocco e collegherà la key al tuo account.");
+        return;
+      }
+
+      try {
+        const { data: accessData, error } = await client.rpc("get_my_chaos_access");
+
+        if (error) throw error;
+
+        const access = Array.isArray(accessData) ? accessData[0] : accessData;
+
+        if (!access?.chaos_verified) {
+          lockPage("Your account is logged in, but it is not Chaos Verificato yet. Avvicina il tuo tag NFC Chaoscore al telefono per sbloccare l’album su questo account.");
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+        lockPage("Chaoscore access could not be verified. Try again or scan your NFC key.");
+      }
+    });
+  </script>
+
+</body>
+</html>

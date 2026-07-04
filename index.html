@@ -696,114 +696,41 @@
     }
 
   
-    .chaoscore-entry-button {
-      position: fixed;
-      left: 16px;
-      bottom: 16px;
-      z-index: 80;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid rgba(231,224,210,0.24);
-      border-radius: 999px;
-      background: rgba(10,8,7,0.82);
-      color: rgba(231,224,210,0.9);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      padding: 12px 14px;
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.68rem;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.38);
-    }
-
-    .chaoscore-entry-button:hover {
-      color: #fff;
-      border-color: rgba(231,224,210,0.45);
-      background: rgba(30,18,15,0.9);
-    }
-
-  
-    .chaoscore-listen-card {
+    .busta-chaoscore-cover-card {
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(231,224,210,0.26);
-      border-radius: 22px;
-      min-height: 260px;
-      padding: 22px;
-      display: grid;
-      align-content: end;
-      text-decoration: none;
-      color: #e7e0d2;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.72)),
-        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.55), transparent 42%),
-        linear-gradient(135deg, rgba(231,224,210,0.12), rgba(231,224,210,0.02));
-      box-shadow: 0 26px 80px rgba(0,0,0,0.38);
+      isolation: isolate;
     }
 
-    .chaoscore-listen-card::before {
+    .busta-chaoscore-cover-card::before {
       content: "";
       position: absolute;
       inset: 0;
       background-image: var(--chaos-cover);
       background-size: cover;
       background-position: center;
-      opacity: 0.42;
-      filter: contrast(1.08) saturate(0.9);
-      transform: scale(1.02);
+      opacity: 0.48;
+      filter: contrast(1.05) saturate(0.9);
+      z-index: -2;
     }
 
-    .chaoscore-listen-card::after {
-      content: "NFC ACCESS";
+    .busta-chaoscore-cover-card::after {
+      content: "";
       position: absolute;
-      top: 16px;
-      right: -8px;
-      transform: rotate(12deg);
-      border: 2px solid rgba(216,247,207,0.45);
-      color: rgba(216,247,207,0.72);
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      font-weight: 900;
-      background: rgba(0,0,0,0.18);
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.72)),
+        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.42), transparent 46%);
+      z-index: -1;
     }
 
-    .chaoscore-listen-card > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .chaoscore-listen-kicker {
-      color: rgba(216,247,207,0.78);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-size: 0.7rem;
-      margin-bottom: 8px;
-    }
-
-    .chaoscore-listen-title {
+    .busta-chaoscore-cover-card [data-chaos-title] {
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(2.6rem, 8vw, 5.4rem);
-      line-height: 0.84;
-      letter-spacing: -0.08em;
+      font-size: clamp(2.2rem, 7vw, 4.8rem);
+      line-height: 0.86;
+      letter-spacing: -0.07em;
       text-transform: uppercase;
-      margin: 0 0 12px;
-    }
-
-    .chaoscore-listen-copy {
-      color: rgba(231,224,210,0.76);
-      line-height: 1.55;
-      font-size: 0.86rem;
-      max-width: 520px;
-    }
-
-    .chaoscore-listen-card:hover {
-      border-color: rgba(231,224,210,0.48);
-      color: #fff;
+      margin: 0;
     }
 
   </style>
@@ -1961,32 +1888,11 @@
   </script>
 
 
-  <script id="busta-chaoscore-first-file">
+  <script id="busta-chaoscore-card-safe">
     window.addEventListener("DOMContentLoaded", () => {
-      if (document.querySelector(".chaoscore-listen-card")) return;
+      if (document.querySelector("[data-chaoscore-card]")) return;
 
-      const coverCandidates = [
-        "/cover.jpg",
-        "/cover.png",
-        "/chaoscore.jpg",
-        "/chaoscore.png",
-        "/assets/cover.jpg",
-        "/assets/cover.png"
-      ];
-
-      const card = document.createElement("a");
-      card.className = "chaoscore-listen-card";
-      card.href = "/chaoscore";
-      card.style.setProperty("--chaos-cover", `url("${coverCandidates[0]}")`);
-      card.innerHTML = `
-        <div class="chaoscore-listen-kicker">Private Album File</div>
-        <h2 class="chaoscore-listen-title">Listen to<br>#chaoscore</h2>
-        <div class="chaoscore-listen-copy">
-          NFC-only private album access. Scan your Chaoscore tag to unlock this file on your account.
-        </div>
-      `;
-
-      const possibleContainers = [
+      const containers = [
         document.querySelector(".folder-grid"),
         document.querySelector(".files-grid"),
         document.querySelector(".archive-grid"),
@@ -1994,7 +1900,47 @@
         document.querySelector("main")
       ].filter(Boolean);
 
-      const container = possibleContainers[0] || document.body;
+      const container = containers[0];
+      if (!container) return;
+
+      const firstRealCard = Array.from(container.children).find(el => {
+        return el instanceof HTMLElement && !el.hasAttribute("data-chaoscore-card");
+      });
+
+      let card;
+
+      if (firstRealCard) {
+        card = firstRealCard.cloneNode(true);
+      } else {
+        card = document.createElement("a");
+      }
+
+      card.setAttribute("data-chaoscore-card", "true");
+      card.classList.add("busta-chaoscore-cover-card");
+      card.style.setProperty("--chaos-cover", "url('/chaoscore-cover.png')");
+      card.href = "/chaoscore";
+
+      if (card.tagName.toLowerCase() !== "a") {
+        const wrapper = document.createElement("a");
+        wrapper.href = "/chaoscore";
+        wrapper.className = card.className;
+        wrapper.setAttribute("data-chaoscore-card", "true");
+        wrapper.style.cssText = card.style.cssText;
+        card = wrapper;
+      }
+
+      card.innerHTML = `
+        <div style="position:relative;z-index:1;">
+          <div style="color:rgba(216,247,207,0.86);text-transform:uppercase;letter-spacing:0.16em;font-size:0.7rem;margin-bottom:10px;">
+            Private Album File
+          </div>
+          <h2 data-chaos-title>Listen to<br>#chaoscore</h2>
+          <div style="color:rgba(231,224,210,0.78);line-height:1.55;font-size:0.82rem;margin-top:12px;max-width:420px;">
+            NFC-only access. Scan your Chaoscore tag to unlock the album on your account.
+          </div>
+        </div>
+      `;
+
       container.prepend(card);
     });
   </script>
