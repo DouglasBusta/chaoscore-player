@@ -872,12 +872,12 @@ dialog {
     .chaos-floating-player {
       position: fixed;
       left: 50%;
-      bottom: max(14px, env(safe-area-inset-bottom));
+      bottom: max(18px, env(safe-area-inset-bottom));
       transform: translateX(-50%) translateY(130%);
       z-index: 99999;
-      width: min(760px, calc(100% - 20px));
+      width: min(720px, calc(100% - 22px));
       border: 1px solid rgba(231,224,210,0.18);
-      border-radius: 30px;
+      border-radius: 28px;
       background:
         radial-gradient(circle at 18% 0%, rgba(139,23,23,0.34), transparent 40%),
         linear-gradient(135deg, rgba(24,19,18,0.94), rgba(5,5,5,0.94));
@@ -901,13 +901,13 @@ dialog {
       grid-template-columns: auto minmax(0, 1fr) auto auto;
       gap: 11px;
       align-items: center;
-      padding: 9px 11px;
+      padding: 8px 10px;
     }
 
     .chaos-floating-cover {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
       object-fit: cover;
       border: 1px solid rgba(231,224,210,0.14);
       background: rgba(255,255,255,0.035);
@@ -981,9 +981,10 @@ dialog {
     }
 
     .chaos-floating-progress {
-      height: 3px;
+      height: 4px;
       background: rgba(231,224,210,0.13);
       overflow: hidden;
+      cursor: pointer;
     }
 
     .chaos-floating-progress-fill {
@@ -2051,6 +2052,31 @@ dialog {
         return `${m}:${s}`;
       }
 
+      function prepareFilesFrame() {
+        const frame = document.getElementById("chaos-files-frame");
+        if (!frame) return;
+
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || doc.getElementById("chaos-frame-player-padding")) return;
+
+          const style = doc.createElement("style");
+          style.id = "chaos-frame-player-padding";
+          style.textContent = `
+            body {
+              padding-bottom: 120px !important;
+            }
+
+            @media (max-width: 620px) {
+              body {
+                padding-bottom: 170px !important;
+              }
+            }
+          `;
+          doc.head.appendChild(style);
+        } catch (_) {}
+      }
+
       function buildShell() {
         if (document.getElementById("chaos-files-shell")) return;
 
@@ -2091,6 +2117,15 @@ dialog {
         document.body.appendChild(shell);
         document.body.appendChild(topbar);
         document.body.appendChild(island);
+
+        const frame = document.getElementById("chaos-files-frame");
+        if (frame) {
+          frame.addEventListener("load", () => {
+            prepareFilesFrame();
+            setTimeout(prepareFilesFrame, 250);
+            setTimeout(prepareFilesFrame, 900);
+          });
+        }
       }
 
       function showIsland(force = false) {
@@ -2118,6 +2153,12 @@ dialog {
         if (sub && a) sub.textContent = `Douglas Busta · ${fmt(a.currentTime)} / ${fmt(a.duration)}`;
         if (play && a) play.textContent = a.paused ? "▶" : "Ⅱ";
         if (fill && a) fill.style.width = `${a.duration ? (a.currentTime / a.duration) * 100 : 0}%`;
+
+        const vol = document.getElementById("chaos-floating-volume");
+        if (vol && a && document.activeElement !== vol) {
+          vol.value = String(a.volume);
+        }
+
         if (cover && mainCover?.src) cover.src = mainCover.src;
 
         if ("mediaSession" in navigator && track) {
@@ -2176,6 +2217,9 @@ dialog {
         shell.classList.add("is-open");
         document.documentElement.classList.add("chaos-files-open");
         showIsland(true);
+        prepareFilesFrame();
+        setTimeout(prepareFilesFrame, 350);
+        setTimeout(prepareFilesFrame, 1000);
 
         if (push) {
           const url = new URL(window.location.href);
@@ -2230,6 +2274,16 @@ dialog {
         document.getElementById("chaos-floating-volume")?.addEventListener("input", event => {
           const a = audio();
           if (a) a.volume = Number(event.target.value);
+        });
+
+        document.querySelector(".chaos-floating-progress")?.addEventListener("click", event => {
+          const a = audio();
+          if (!a || !Number.isFinite(a.duration) || !a.duration) return;
+
+          const rect = event.currentTarget.getBoundingClientRect();
+          const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+          a.currentTime = ratio * a.duration;
+          syncIsland();
         });
 
         const a = audio();
