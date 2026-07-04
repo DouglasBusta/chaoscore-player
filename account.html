@@ -34,7 +34,39 @@
         badge.textContent = "Chaos status unavailable";
       }
     }
-</script>
+
+    async function loadAccountRoleBadge() {
+      const badge = document.getElementById("account-role-badge");
+      if (!badge) return;
+
+      try {
+        const { data, error } = await bustaSupabase.rpc("get_my_account_role");
+
+        if (error) throw error;
+
+        const roleData = Array.isArray(data) ? data[0] : data;
+        const role = roleData?.role || "user";
+
+        if (role === "owner") {
+          badge.className = "account-role-badge owner";
+          badge.textContent = "★ Owner Account";
+        } else if (role === "admin") {
+          badge.className = "account-role-badge admin";
+          badge.textContent = "Admin Account";
+        } else if (role === "manager") {
+          badge.className = "account-role-badge admin";
+          badge.textContent = "Manager Account";
+        } else {
+          badge.className = "account-role-badge";
+          badge.textContent = "User Account";
+        }
+      } catch (err) {
+        badge.className = "account-role-badge";
+        badge.textContent = "User Account";
+      }
+    }
+
+  </script>
   <style>
     :root {
       --paper: #e7e0d2;
@@ -356,6 +388,35 @@
       background: rgba(216,247,207,0.13);
     }
 
+  
+    .account-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      margin-right: 8px;
+      border: 1px solid rgba(231,224,210,0.24);
+      color: rgba(231,224,210,0.78);
+      background: rgba(231,224,210,0.045);
+      border-radius: 999px;
+      padding: 9px 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .account-role-badge.owner {
+      border-color: rgba(255,215,128,0.45);
+      color: #ffe0a3;
+      background: rgba(255,215,128,0.1);
+    }
+
+    .account-role-badge.admin {
+      border-color: rgba(216,247,207,0.34);
+      color: #d8f7cf;
+      background: rgba(216,247,207,0.08);
+    }
+
   </style>
 </head>
 <body>
@@ -373,6 +434,7 @@
       <div class="session">
         <strong id="account-email">Loading...</strong><br>
         This private account page is connected to Supabase Auth.
+        <div id="account-role-badge" class="account-role-badge">User Account</div>
         <div id="chaos-access-badge" class="chaos-badge locked">#Chaos Locked — Scan NFC</div>
         <a id="activate-chaos-account" class="activate-account-button" href="/claim">Activate Account</a>
       </div>
@@ -490,6 +552,7 @@
 
       await loadSavedFiles();
       await loadChaosAccessBadge();
+      await loadAccountRoleBadge();
     }
 
     logout.addEventListener("click", async () => {
