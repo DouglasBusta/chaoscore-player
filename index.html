@@ -1196,200 +1196,197 @@
       font-size: 0.78rem;
     }
     /* END BUSTA FILE UPLOAD SYSTEM */
-
-  
-    /* APPROVED BUSTA FILES */
-    .approved-busta-section {
-      margin: 24px 0;
+\n  
+    /* USER SUBMISSIONS SUBFOLDER */
+    .user-submissions-folder-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.26), transparent 44%),
+        linear-gradient(135deg, rgba(231,224,210,0.08), rgba(231,224,210,0.025)),
+        rgba(0,0,0,0.34);
+      color: #e7e0d2;
+      text-decoration: none;
       display: grid;
-      gap: 14px;
+      align-content: end;
+      padding: 14px;
+      cursor: pointer;
     }
 
-    .approved-busta-title {
-      color: rgba(231,224,210,0.92);
+    .user-submissions-folder-card:hover {
+      color: #fff;
+      border-color: rgba(231,224,210,0.42);
+    }
+
+    .user-submissions-folder-card::before {
+      content: "▣";
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      color: rgba(216,247,207,0.72);
+      font-size: 1.2rem;
+    }
+
+    .user-submissions-folder-copy {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 7px;
+    }
+
+    .user-submissions-folder-label {
+      width: fit-content;
+      border: 1px solid rgba(216,247,207,0.24);
+      border-radius: 999px;
+      padding: 4px 7px;
+      color: rgba(216,247,207,0.82);
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      font-size: 0.56rem;
     }
 
-    .approved-busta-grid {
+    .user-submissions-folder-title {
+      color: rgba(231,224,210,0.95);
+      font-size: 0.94rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .user-submissions-folder-meta {
+      color: rgba(231,224,210,0.6);
+      font-size: 0.66rem;
+      line-height: 1.35;
+    }
+
+    .user-submissions-panel {
+      display: none;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(231,224,210,0.12);
+    }
+
+    .user-submissions-panel.is-open {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 12px;
     }
 
-    .approved-busta-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 190px;
-      border: 1px solid rgba(231,224,210,0.18);
-      border-radius: 18px;
+    .user-submissions-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .user-submissions-panel-title {
+      color: rgba(231,224,210,0.92);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.76rem;
+    }
+
+    .user-submissions-close {
+      border: 1px solid rgba(231,224,210,0.2);
+      border-radius: 999px;
       background: rgba(255,255,255,0.04);
-      color: #e7e0d2;
-      text-decoration: none;
-      display: grid;
-      align-content: end;
-      padding: 14px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.28);
-    }
-
-    .approved-busta-card:hover {
-      color: #fff;
-      border-color: rgba(231,224,210,0.42);
-    }
-
-    .approved-busta-preview {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.52;
-      filter: contrast(1.05) saturate(0.92);
-    }
-
-    .approved-busta-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.76)),
-        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.34), transparent 46%);
-    }
-
-    .approved-busta-copy {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      gap: 7px;
-    }
-
-    .approved-busta-folder {
-      color: rgba(216,247,207,0.8);
+      color: rgba(231,224,210,0.72);
+      font: inherit;
+      cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      font-size: 0.6rem;
+      padding: 8px 10px;
     }
 
-    .approved-busta-name {
-      color: rgba(231,224,210,0.95);
-      font-size: 0.86rem;
-      line-height: 1.25;
-      word-break: break-word;
-    }
-
-    .approved-busta-by {
-      color: rgba(231,224,210,0.6);
-      font-size: 0.68rem;
-      line-height: 1.35;
-    }
-
-    .approved-busta-empty {
-      color: rgba(231,224,210,0.52);
-      font-size: 0.78rem;
-      line-height: 1.5;
-    }
-    /* END APPROVED BUSTA FILES */
-
-  
-    /* USER APPROVED OTHER BUSTA FILES */
-    .approved-busta-section {
-      margin: 24px 0;
-      display: grid;
-      gap: 14px;
-    }
-
-    .approved-busta-title {
-      color: rgba(231,224,210,0.92);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 0.78rem;
-    }
-
-    .approved-busta-grid {
+    .user-submissions-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 12px;
     }
 
-    .approved-busta-card {
+    .busta-user-file-card {
       position: relative;
       overflow: hidden;
-      min-height: 190px;
-      border: 1px solid rgba(231,224,210,0.18);
+      min-height: 220px;
+      border: 1px solid rgba(231,224,210,0.16);
       border-radius: 18px;
-      background:
-        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.24), transparent 46%),
-        rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.035);
       color: #e7e0d2;
       text-decoration: none;
       display: grid;
       align-content: end;
       padding: 14px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.28);
     }
 
-    .approved-busta-card:hover {
+    .busta-user-file-card:hover {
       color: #fff;
       border-color: rgba(231,224,210,0.42);
     }
 
-    .approved-busta-preview {
+    .busta-user-file-card img {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.52;
-      filter: contrast(1.05) saturate(0.92);
+      opacity: 0.62;
     }
 
-    .approved-busta-card::after {
+    .busta-user-file-card::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.76)),
-        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.34), transparent 46%);
+        linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.82)),
+        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.28), transparent 48%);
     }
 
-    .approved-busta-copy {
+    .busta-user-file-copy {
       position: relative;
       z-index: 1;
       display: grid;
       gap: 7px;
     }
 
-    .approved-busta-folder {
-      color: rgba(216,247,207,0.8);
+    .busta-user-file-badge {
+      width: fit-content;
+      border: 1px solid rgba(216,247,207,0.24);
+      border-radius: 999px;
+      padding: 4px 7px;
+      color: rgba(216,247,207,0.82);
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      font-size: 0.56rem;
     }
 
-    .approved-busta-name {
+    .busta-user-file-name {
       color: rgba(231,224,210,0.95);
-      font-size: 0.86rem;
+      font-size: 0.82rem;
       line-height: 1.25;
       word-break: break-word;
     }
 
-    .approved-busta-by {
+    .busta-user-file-by {
       color: rgba(231,224,210,0.6);
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       line-height: 1.35;
     }
 
-    .approved-busta-empty {
+    .busta-empty-folder-note {
       color: rgba(231,224,210,0.52);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       line-height: 1.5;
       border: 1px dashed rgba(231,224,210,0.14);
       border-radius: 16px;
       padding: 14px;
     }
-    /* END USER APPROVED OTHER BUSTA FILES */
-\n  </style>
+    /* END USER SUBMISSIONS SUBFOLDER */
+
+  </style>
 </head>
 <body>
   <main class="page">
@@ -2778,55 +2775,137 @@
       setTimeout(refreshSessionUI, 1600);
     });
   </script>
-
-
-  <script id="approved-busta-files-public">
+\n
+  <script id="user-submissions-subfolder">
     window.addEventListener("DOMContentLoaded", async () => {
       const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
       const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
 
-      const client = window.bustaSupabase ||
-        (window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function norm(text) {
+        return (text || "").toLowerCase().replace(/\s+/g, " ").trim();
+      }
+
+      function findOtherSection() {
+        const headings = Array.from(document.querySelectorAll("h1, h2, h3"));
+        const matches = headings.filter(h => norm(h.textContent) === "other busta files");
+        const heading = matches[matches.length - 1];
+
+        if (!heading) return null;
+        return heading.closest("section") || heading.parentElement;
+      }
+
+      function findGrid(section) {
+        if (!section) return null;
+
+        const candidates = Array.from(section.querySelectorAll("[class*='grid'], [class*='list'], div"));
+        let best = null;
+        let bestScore = -1;
+
+        candidates.forEach(el => {
+          const children = Array.from(el.children || []);
+          const score = children.filter(child => {
+            const text = child.textContent || "";
+            return child.querySelector?.("img") || /reviewed|share|\.jpe?g|\.png|user submission/i.test(text);
+          }).length;
+
+          if (score > bestScore) {
+            best = el;
+            bestScore = score;
           }
-        }) : null);
+        });
 
-      if (!client) return;
+        if (best) return best;
 
-      function makeSection() {
-        if (document.getElementById("approved-busta-section")) return document.getElementById("approved-busta-section");
-
-        const section = document.createElement("section");
-        section.id = "approved-busta-section";
-        section.className = "approved-busta-section";
-        section.innerHTML = `
-          <div class="approved-busta-title">Other Busta Files</div>
-          <div id="approved-busta-grid" class="approved-busta-grid"></div>
-        `;
-
-        const chaosCard = document.querySelector("[data-chaoscore-card]");
-        const parent = chaosCard?.parentElement;
-
-        if (parent && chaosCard) {
-          chaosCard.insertAdjacentElement("afterend", section);
-        } else {
-          const main = document.querySelector("main") || document.body;
-          main.appendChild(section);
-        }
-
-        return section;
+        const grid = document.createElement("div");
+        grid.className = "archive-grid";
+        section.appendChild(grid);
+        return grid;
       }
 
       function isImage(type, url) {
         return (type || "").startsWith("image/") || /\.(png|jpg|jpeg|webp|gif)$/i.test(url || "");
       }
 
-      async function loadApprovedFiles() {
-        const section = makeSection();
-        const grid = document.getElementById("approved-busta-grid");
+      function removeLooseUserCards() {
+        document.querySelectorAll("#approved-busta-section, .approved-busta-section").forEach(el => el.remove());
+
+        Array.from(document.querySelectorAll("a, article, div")).forEach(el => {
+          const text = el.textContent || "";
+          const isUserCard = /user submission/i.test(text) && /submitted by @/i.test(text);
+          if (!isUserCard) return;
+
+          if (el.closest("#user-submissions-panel")) return;
+
+          const card = el.closest("a") || el.closest("article") || el;
+          card.remove();
+        });
+      }
+
+      async function loadUserFilesIntoSubfolder() {
+        if (!client) return;
+
+        removeLooseUserCards();
+
+        const section = findOtherSection();
+        if (!section) return;
+
+        const grid = findGrid(section);
+        if (!grid) return;
+
+        let folderCard = document.getElementById("user-submissions-folder-card");
+        let panel = document.getElementById("user-submissions-panel");
+        let filesGrid = document.getElementById("user-submissions-grid");
+
+        if (!folderCard) {
+          folderCard = document.createElement("button");
+          folderCard.id = "user-submissions-folder-card";
+          folderCard.className = "user-submissions-folder-card";
+          folderCard.type = "button";
+          folderCard.innerHTML = `
+            <div class="user-submissions-folder-copy">
+              <div class="user-submissions-folder-label">Subfolder</div>
+              <div class="user-submissions-folder-title">User Submissions</div>
+              <div id="user-submissions-count" class="user-submissions-folder-meta">Loading approved user files...</div>
+            </div>
+          `;
+
+          grid.appendChild(folderCard);
+        }
+
+        if (!panel) {
+          panel = document.createElement("div");
+          panel.id = "user-submissions-panel";
+          panel.className = "user-submissions-panel";
+          panel.innerHTML = `
+            <div class="user-submissions-panel-head">
+              <div class="user-submissions-panel-title">Other Busta Files / User Submissions</div>
+              <button id="user-submissions-close" class="user-submissions-close" type="button">Close</button>
+            </div>
+            <div id="user-submissions-grid" class="user-submissions-grid"></div>
+          `;
+
+          section.appendChild(panel);
+          filesGrid = document.getElementById("user-submissions-grid");
+        }
+
+        folderCard.onclick = () => {
+          panel.classList.add("is-open");
+          panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
+
+        document.getElementById("user-submissions-close")?.addEventListener("click", () => {
+          panel.classList.remove("is-open");
+        });
 
         const { data, error } = await client
           .from("approved_busta_files")
@@ -2834,148 +2913,54 @@
           .order("created_at", { ascending: false })
           .limit(80);
 
+        const count = document.getElementById("user-submissions-count");
+
         if (error) {
-          grid.innerHTML = `<div class="approved-busta-empty">Could not load approved files.</div>`;
-          console.warn(error);
+          if (count) count.textContent = "Could not load user files.";
+          if (filesGrid) filesGrid.innerHTML = `<div class="busta-empty-folder-note">Could not load user files: ${error.message}</div>`;
           return;
         }
+
+        const total = data?.length || 0;
+        if (count) count.textContent = total + " approved file" + (total === 1 ? "" : "s");
+
+        if (!filesGrid) return;
+
+        filesGrid.innerHTML = "";
 
         if (!data || !data.length) {
-          section.style.display = "none";
+          filesGrid.innerHTML = `<div class="busta-empty-folder-note">No user files approved yet.</div>`;
           return;
         }
 
-        section.style.display = "";
-        grid.innerHTML = "";
-
-        data.forEach((item) => {
+        data.forEach(item => {
           const card = document.createElement("a");
-          card.className = "approved-busta-card";
+          card.className = "busta-user-file-card";
           card.href = item.file_url;
           card.target = "_blank";
           card.rel = "noopener noreferrer";
 
           const preview = isImage(item.file_type, item.file_url)
-            ? `<img class="approved-busta-preview" src="${item.file_url}" alt="">`
+            ? `<img src="${item.file_url}" alt="">`
             : "";
 
           card.innerHTML = `
             ${preview}
-            <div class="approved-busta-copy">
-              <div class="approved-busta-folder">${item.folder || "Other Busta Files"}</div>
-              <div class="approved-busta-name">${item.title || item.file_name}</div>
-              <div class="approved-busta-by">Submitted by @${item.submitted_by_username || "unknown"}</div>
+            <div class="busta-user-file-copy">
+              <div class="busta-user-file-badge">User Submission</div>
+              <div class="busta-user-file-name">${item.title || item.file_name || "Untitled file"}</div>
+              <div class="busta-user-file-by">Submitted by @${item.submitted_by_username || "unknown"}</div>
             </div>
           `;
 
-          grid.appendChild(card);
+          filesGrid.appendChild(card);
         });
       }
 
-      loadApprovedFiles();
+      await loadUserFilesIntoSubfolder();
+      setTimeout(loadUserFilesIntoSubfolder, 1200);
     });
   </script>
 
-
-  <script id="approved-busta-files-public">
-    window.addEventListener("DOMContentLoaded", async () => {
-      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
-      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
-
-      const client = window.bustaSupabase ||
-        (window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
-          }
-        }) : null);
-
-      if (!client) return;
-
-      function makeSection() {
-        let section = document.getElementById("approved-busta-section");
-        if (section) return section;
-
-        section = document.createElement("section");
-        section.id = "approved-busta-section";
-        section.className = "approved-busta-section";
-        section.innerHTML = `
-          <div class="approved-busta-title">Other Busta Files</div>
-          <div id="approved-busta-grid" class="approved-busta-grid">
-            <div class="approved-busta-empty">Loading user files...</div>
-          </div>
-        `;
-
-        const main = document.querySelector("main") || document.body;
-
-        const existingOther = Array.from(document.querySelectorAll("a, article, section, div"))
-          .find(el => /other\s+busta\s+files/i.test(el.textContent || ""));
-
-        if (existingOther && existingOther.parentElement) {
-          existingOther.insertAdjacentElement("afterend", section);
-        } else {
-          main.appendChild(section);
-        }
-
-        return section;
-      }
-
-      function isImage(type, url) {
-        return (type || "").startsWith("image/") || /\.(png|jpg|jpeg|webp|gif)$/i.test(url || "");
-      }
-
-      async function loadApprovedFiles() {
-        const section = makeSection();
-        const grid = document.getElementById("approved-busta-grid");
-
-        const { data, error } = await client
-          .from("approved_busta_files")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(80);
-
-        if (error) {
-          grid.innerHTML = `<div class="approved-busta-empty">Could not load approved files: ${error.message}</div>`;
-          console.warn("approved_busta_files error", error);
-          return;
-        }
-
-        if (!data || !data.length) {
-          grid.innerHTML = `<div class="approved-busta-empty">No user files approved yet.</div>`;
-          return;
-        }
-
-        section.style.display = "";
-        grid.innerHTML = "";
-
-        data.forEach((item) => {
-          const card = document.createElement("a");
-          card.className = "approved-busta-card";
-          card.href = item.file_url;
-          card.target = "_blank";
-          card.rel = "noopener noreferrer";
-
-          const preview = isImage(item.file_type, item.file_url)
-            ? `<img class="approved-busta-preview" src="${item.file_url}" alt="">`
-            : "";
-
-          card.innerHTML = `
-            ${preview}
-            <div class="approved-busta-copy">
-              <div class="approved-busta-folder">User Submission</div>
-              <div class="approved-busta-name">${item.title || item.file_name || "Untitled file"}</div>
-              <div class="approved-busta-by">Submitted by @${item.submitted_by_username || "unknown"}</div>
-            </div>
-          `;
-
-          grid.appendChild(card);
-        });
-      }
-
-      loadApprovedFiles();
-      setTimeout(loadApprovedFiles, 1200);
-    });
-  </script>
-\n</body>
+</body>
 </html>
