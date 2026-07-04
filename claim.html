@@ -169,7 +169,7 @@
   <main class="card">
     <div class="stamp">NFC</div>
     <div class="kicker">Busta Files Private Key</div>
-    <h1>Claim<br>#Chaoscore</h1>
+    <h1>Activate<br>#Chaos</h1>
     <p>
       This NFC key unlocks private #chaoscore access on one account only.
       Create an account or log in, then claim your Chaos Verificato status.
@@ -187,9 +187,9 @@
     </form>
 
     <div id="claim-area" class="hidden">
-      <div class="badge">✓ Ready to claim</div>
+      <div class="badge">✓ Ready to activate</div>
       <div class="row" style="margin-top:18px;">
-        <button id="claim" type="button">Unlock #Chaoscore</button>
+        <button id="claim" type="button">Activate Account</button>
         <a class="button" href="/exclusive">Back to Archive</a>
       </div>
     </div>
@@ -211,6 +211,9 @@
 
     const params = new URLSearchParams(window.location.search);
     const chaosKey = (params.get("key") || "").trim();
+    if (chaosKey) {
+      localStorage.setItem("bustaPendingChaosKey", chaosKey);
+    }
 
     const keyStatus = document.getElementById("key-status");
     const authForm = document.getElementById("auth-form");
@@ -313,7 +316,7 @@
 
       if (error) {
         claim.disabled = false;
-        claim.textContent = "Unlock #Chaoscore";
+        claim.textContent = "Activate Account";
         setMessage(error.message, "error");
         return;
       }
@@ -322,12 +325,12 @@
 
       if (!result?.success) {
         claim.disabled = false;
-        claim.textContent = "Unlock #Chaoscore";
+        claim.textContent = "Activate Account";
         setMessage(result?.message || "Chaos key could not be claimed.", "error");
         return;
       }
 
-      setMessage("✓ Chaos Verificato unlocked. Opening private #chaoscore...", "success");
+      setMessage("✓ #Chaos Verified activated. Opening private #Chaoscore...", "success");
 
       setTimeout(() => {
         window.location.href = "/chaoscore";
