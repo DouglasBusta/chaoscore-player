@@ -2,6 +2,8 @@
   "rewrites": [
     { "source": "/exclusive", "destination": "/exclusive.html" },
     { "source": "/exclusive/", "destination": "/exclusive.html" },
+    { "source": "/auth", "destination": "/auth.html" },
+    { "source": "/auth/", "destination": "/auth.html" },
     { "source": "/account", "destination": "/account.html" },
     { "source": "/account/", "destination": "/account.html" },
     { "source": "/claim", "destination": "/claim.html" },

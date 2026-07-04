@@ -2698,5 +2698,26 @@
     });
   </script>
 
+
+  <script id="auth-clean-page-link">
+    window.addEventListener("DOMContentLoaded", () => {
+      const modal = document.getElementById("auth-modal");
+      if (!modal || document.getElementById("open-clean-auth-page")) return;
+
+      const link = document.createElement("a");
+      link.id = "open-clean-auth-page";
+      link.href = "/auth";
+      link.textContent = "Open clean account page";
+      link.style.display = "inline-flex";
+      link.style.marginTop = "12px";
+      link.style.color = "rgba(231,224,210,0.62)";
+      link.style.fontSize = "0.72rem";
+      link.style.textTransform = "uppercase";
+      link.style.letterSpacing = "0.1em";
+
+      const form = document.getElementById("auth-form");
+      if (form) form.appendChild(link);
+    });
+  </script>
 </body>
 </html>

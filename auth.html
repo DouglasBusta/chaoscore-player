@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Busta Files Account</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.34), transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(231,224,210,0.08), transparent 28%),
+        linear-gradient(180deg, #0c0908 0%, #030303 72%);
+      color: #e7e0d2;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .card {
+      width: min(560px, 100%);
+      border: 1px solid rgba(231,224,210,0.2);
+      border-radius: 28px;
+      padding: clamp(24px, 6vw, 42px);
+      background:
+        linear-gradient(135deg, rgba(231,224,210,0.08), rgba(231,224,210,0.025)),
+        rgba(0,0,0,0.34);
+      box-shadow: 0 32px 110px rgba(0,0,0,0.48);
+    }
+
+    .kicker {
+      color: rgba(231,224,210,0.56);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.72rem;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 11vw, 6rem);
+      line-height: 0.86;
+      letter-spacing: -0.08em;
+      margin: 0 0 18px;
+      text-transform: uppercase;
+    }
+
+    p {
+      color: rgba(231,224,210,0.72);
+      line-height: 1.65;
+      margin: 0 0 18px;
+    }
+
+    form {
+      display: grid;
+      gap: 11px;
+      margin-top: 22px;
+    }
+
+    label {
+      color: rgba(231,224,210,0.56);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+      margin-top: 6px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.24);
+      color: #e7e0d2;
+      padding: 14px;
+      font: inherit;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus {
+      border-color: rgba(231,224,210,0.46);
+      background: rgba(0,0,0,0.32);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button, a.button {
+      flex: 1;
+      min-width: 150px;
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(231,224,210,0.08);
+      color: #e7e0d2;
+      padding: 13px 15px;
+      font: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    button.primary {
+      border-color: rgba(139,23,23,0.72);
+      background: rgba(139,23,23,0.42);
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 16px;
+      color: rgba(231,224,210,0.78);
+      line-height: 1.55;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="kicker">Busta Files Access Terminal</div>
+    <h1 id="title">Sign Up</h1>
+    <p id="copy">Create your private Busta Files account.</p>
+
+    <form id="form">
+      <label for="email">Email address</label>
+      <input id="email" type="email" autocomplete="email" required>
+
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="new-password" required>
+
+      <label id="confirm-label" for="confirm">Confirm password</label>
+      <input id="confirm" type="password" autocomplete="new-password">
+
+      <div class="row">
+        <button id="signup" class="primary" type="button">Create Account</button>
+        <button id="login" type="button">Log In</button>
+      </div>
+
+      <div class="row">
+        <button id="forgot" type="button">Forgot Password?</button>
+        <a class="button" href="/">Back to Busta Files</a>
+      </div>
+    </form>
+
+    <div id="message" class="message"></div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const confirm = document.getElementById("confirm");
+    const message = document.getElementById("message");
+
+    function setMessage(text) {
+      message.textContent = text || "";
+    }
+
+    function readableError(error) {
+      if (!error) return "Authentication failed.";
+      if (typeof error === "string") return error;
+      if (error.message) return error.message;
+      if (error.error_description) return error.error_description;
+      if (error.error) return error.error;
+      try {
+        const json = JSON.stringify(error);
+        if (json && json !== "{}") return json;
+      } catch (_) {}
+      return "Authentication failed.";
+    }
+
+    function checkEmailTypo(value) {
+      const v = (value || "").trim().toLowerCase();
+
+      if (!v.includes("@") || !v.includes(".")) {
+        return "Enter a valid email address.";
+      }
+
+      if (
+        v.endsWith("@gmail.cc") ||
+        v.endsWith("@gmai.com") ||
+        v.endsWith("@gmial.com") ||
+        v.endsWith("@gmail.con")
+      ) {
+        return "This email looks wrong. Did you mean @gmail.com?";
+      }
+
+      return "";
+    }
+
+    async function createAccount() {
+      const userEmail = email.value.trim().toLowerCase();
+      const userPassword = password.value;
+      const confirmPassword = confirm.value;
+
+      const emailWarning = checkEmailTypo(userEmail);
+      if (emailWarning) {
+        setMessage(emailWarning);
+        return;
+      }
+
+      if (userPassword.length < 8) {
+        setMessage("Password must be at least 8 characters.");
+        return;
+      }
+
+      if (userPassword !== confirmPassword) {
+        setMessage("Passwords do not match.");
+        return;
+      }
+
+      setMessage("Creating account...");
+
+      const result = await client.auth.signUp({
+        email: userEmail,
+        password: userPassword,
+        options: {
+          emailRedirectTo: "https://lookapp.org/account"
+        }
+      });
+
+      if (result.error) {
+        setMessage("Sign up failed: " + readableError(result.error));
+        return;
+      }
+
+      const sessionResult = await client.auth.getSession();
+      const session = sessionResult.data?.session || result.data?.session || null;
+
+      if (!session?.user) {
+        setMessage("Account created. Now press Log In with the same email and password.");
+        return;
+      }
+
+      setMessage("Account created. Opening your account...");
+      setTimeout(() => {
+        window.location.href = "/account.html";
+      }, 700);
+    }
+
+    async function login() {
+      const userEmail = email.value.trim().toLowerCase();
+      const userPassword = password.value;
+
+      const emailWarning = checkEmailTypo(userEmail);
+      if (emailWarning) {
+        setMessage(emailWarning);
+        return;
+      }
+
+      if (userPassword.length < 8) {
+        setMessage("Password must be at least 8 characters.");
+        return;
+      }
+
+      setMessage("Logging in...");
+
+      const result = await client.auth.signInWithPassword({
+        email: userEmail,
+        password: userPassword
+      });
+
+      if (result.error) {
+        setMessage("Login failed: " + readableError(result.error));
+        return;
+      }
+
+      setMessage("Access granted. Opening your account...");
+      setTimeout(() => {
+        window.location.href = "/account.html";
+      }, 700);
+    }
+
+    async function forgotPassword() {
+      const userEmail = email.value.trim().toLowerCase();
+
+      const emailWarning = checkEmailTypo(userEmail);
+      if (emailWarning) {
+        setMessage(emailWarning);
+        return;
+      }
+
+      setMessage("Sending password reset email...");
+
+      const result = await client.auth.resetPasswordForEmail(userEmail, {
+        redirectTo: "https://lookapp.org/account"
+      });
+
+      if (result.error) {
+        setMessage("Reset failed: " + readableError(result.error));
+        return;
+      }
+
+      setMessage("Password reset email sent. Check your inbox.");
+    }
+
+    document.getElementById("signup").addEventListener("click", createAccount);
+    document.getElementById("login").addEventListener("click", login);
+    document.getElementById("forgot").addEventListener("click", forgotPassword);
+  </script>
+</body>
+</html>
