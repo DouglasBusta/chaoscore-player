@@ -150,6 +150,18 @@
     replaceText(newOther, "CASE FILE", "EVIDENCE ROOM");
     replaceText(newOther, "BUSTA FILES / CASE FILE", "BUSTA FILES / EVIDENCE ROOM");
 
+    // Force right-side section label after cloning, even if original text is split or mutated.
+    Array.from(newOther.querySelectorAll("*")).forEach((el) => {
+      const value = (el.textContent || "").toUpperCase().replace(/\s+/g, " ").trim();
+
+      if (
+        value.includes("BUSTA FILES") &&
+        (value.includes("INCIDENT") || value.includes("CASE FILE") || value.includes("REPORT"))
+      ) {
+        el.textContent = "BUSTA FILES / EVIDENCE ROOM";
+      }
+    });
+
     const newGridData = findCardGrid(newOther);
     if (newGridData && newGridData.grid) {
       newGridData.grid.innerHTML = "";
