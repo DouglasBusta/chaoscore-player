@@ -160,10 +160,10 @@
   width: min(260px, 62vw);
 }
 
-/* Quando la shell unica è attiva, il vecchio player visivo non deve doppiare */
-body.chaos-single-shell-ready section.player {
-  display: none !important;
-}
+
+/* La pagina album deve restare visibile.
+   NON nascondere section.player: contiene anche tracklist/layout. */
+
 
 /* Ma l'audio deve restare vivo */
 #audio {
