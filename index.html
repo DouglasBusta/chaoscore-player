@@ -700,9 +700,7 @@ dialog {
 
   <dialog id="modal">
     <div class="modal-inner">
-      <button id="modal-x" class="modal-x" type="button" aria-label="Close panel">
-        <span></span>
-      </button>
+      <button id="modal-x" class="modal-x" type="button" aria-label="Close panel">×</button>
       <h2 id="modal-title"></h2>
       <p id="modal-text"></p>
       <button class="clean-button" id="modal-close">chiudi</button>
@@ -1070,9 +1068,8 @@ dialog {
     renderWave(0);
     loadTrack(0, false);
 
+  
     // Final animated modal close
-    const modalX = document.getElementById("modal-x");
-
     function closeModalPanel() {
       if (!modal || !modal.open) return;
 
@@ -1084,9 +1081,13 @@ dialog {
       }, 160);
     }
 
-    if (modalX) {
-      modalX.addEventListener("click", closeModalPanel);
-    }
+    document.addEventListener("click", (event) => {
+      const closeButton = event.target.closest("#modal-x");
+      if (!closeButton) return;
+      event.preventDefault();
+      event.stopPropagation();
+      closeModalPanel();
+    });
 
   </script>
 
