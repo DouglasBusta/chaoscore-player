@@ -417,6 +417,181 @@
       background: rgba(216,247,207,0.08);
     }
 
+  
+    /* PROFILE ACCOUNT V2 */
+    .profile-v2-panel {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .profile-v2-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .profile-v2-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 999px;
+      border: 1px solid rgba(231,224,210,0.26);
+      object-fit: cover;
+      background: rgba(255,255,255,0.045);
+      flex: 0 0 auto;
+    }
+
+    .profile-v2-copy {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .profile-v2-name {
+      color: rgba(231,224,210,0.96);
+      font-size: 1.08rem;
+      line-height: 1.22;
+      word-break: break-word;
+    }
+
+    .profile-v2-username,
+    .profile-v2-email {
+      color: rgba(231,224,210,0.55);
+      font-size: 0.76rem;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .profile-v2-bio {
+      color: rgba(231,224,210,0.68);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      max-width: 560px;
+    }
+
+    .profile-v2-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .profile-v2-button {
+      display: inline-flex;
+      width: fit-content;
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(231,224,210,0.045);
+      color: rgba(231,224,210,0.86);
+      padding: 10px 12px;
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      text-decoration: none;
+    }
+
+    .profile-v2-button:hover {
+      color: #fff;
+      border-color: rgba(231,224,210,0.44);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .profile-v2-dialog {
+      width: min(540px, calc(100% - 26px));
+      border: 1px solid rgba(231,224,210,0.22);
+      border-radius: 24px;
+      background: #100d0a;
+      color: #e7e0d2;
+      padding: 0;
+      box-shadow: 0 32px 110px rgba(0,0,0,0.62);
+    }
+
+    .profile-v2-dialog::backdrop {
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .profile-v2-inner {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .profile-v2-inner h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.15rem;
+      line-height: 0.92;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+
+    .profile-v2-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .profile-v2-field label {
+      color: rgba(231,224,210,0.56);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+    }
+
+    .profile-v2-field input,
+    .profile-v2-field textarea {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.24);
+      color: #e7e0d2;
+      padding: 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    .profile-v2-field textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .profile-v2-dialog-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .profile-v2-dialog-actions button {
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(231,224,210,0.065);
+      color: #e7e0d2;
+      padding: 11px 13px;
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .profile-v2-delete {
+      border-color: rgba(179,34,34,0.46) !important;
+      color: rgba(255,210,205,0.92) !important;
+      background: rgba(139,23,23,0.16) !important;
+    }
+
+    .profile-v2-message {
+      min-height: 20px;
+      color: rgba(231,224,210,0.64);
+      line-height: 1.5;
+      font-size: 0.78rem;
+    }
+    /* END PROFILE ACCOUNT V2 */
+
   </style>
 </head>
 <body>
@@ -639,6 +814,281 @@
       } else {
         activate.href = "/claim";
       }
+    });
+  </script>
+
+
+  <dialog id="profile-v2-dialog" class="profile-v2-dialog">
+    <form id="profile-v2-form" class="profile-v2-inner" method="dialog">
+      <h3>Personalize<br>Account</h3>
+
+      <div class="profile-v2-field">
+        <label for="profile-v2-avatar-input">Profile picture</label>
+        <input id="profile-v2-avatar-input" type="file" accept="image/*">
+      </div>
+
+      <div class="profile-v2-field">
+        <label for="profile-v2-display-name">Name</label>
+        <input id="profile-v2-display-name" type="text" maxlength="40" placeholder="Douglas Busta">
+      </div>
+
+      <div class="profile-v2-field">
+        <label for="profile-v2-username">Username</label>
+        <input id="profile-v2-username" type="text" maxlength="24" placeholder="douglasbusta">
+      </div>
+
+      <div class="profile-v2-field">
+        <label for="profile-v2-bio">Bio</label>
+        <textarea id="profile-v2-bio" maxlength="160" placeholder="Breve descrizione del tuo account..."></textarea>
+      </div>
+
+      <div id="profile-v2-message" class="profile-v2-message"></div>
+
+      <div class="profile-v2-dialog-actions">
+        <button id="profile-v2-save" type="submit">Save Profile</button>
+        <button id="profile-v2-close" type="button">Close</button>
+        <button id="profile-v2-delete" class="profile-v2-delete" type="button">Delete Account</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <script id="profile-account-v2">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      function getClient() {
+        if (typeof bustaSupabase !== "undefined") return bustaSupabase;
+        if (window.bustaSupabase) return window.bustaSupabase;
+        if (!window.__profileClient && window.supabase) {
+          window.__profileClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          });
+        }
+        return window.__profileClient;
+      }
+
+      function fallbackUsername(email) {
+        return (email || "user")
+          .split("@")[0]
+          .toLowerCase()
+          .replace(/[^a-z0-9._]/g, "")
+          .slice(0, 24) || "user";
+      }
+
+      function defaultAvatarUrl(name) {
+        const t = encodeURIComponent((name || "U").slice(0, 2).toUpperCase());
+        return "https://ui-avatars.com/api/?name=" + t + "&background=17120d&color=e7e0d2&size=160&bold=true";
+      }
+
+      const sessionBox = document.querySelector(".session") || document.querySelector(".hero") || document.querySelector("main");
+      if (!sessionBox || document.getElementById("profile-v2-panel")) return;
+
+      const panel = document.createElement("div");
+      panel.id = "profile-v2-panel";
+      panel.className = "profile-v2-panel";
+      panel.innerHTML = `
+        <div class="profile-v2-head">
+          <img id="profile-v2-avatar" class="profile-v2-avatar" alt="Profile picture">
+          <div class="profile-v2-copy">
+            <strong id="profile-v2-name" class="profile-v2-name">Loading profile...</strong>
+            <span id="profile-v2-username-display" class="profile-v2-username">@user</span>
+            <span id="profile-v2-email" class="profile-v2-email"></span>
+          </div>
+        </div>
+        <div id="profile-v2-bio-display" class="profile-v2-bio" style="display:none;"></div>
+        <div class="profile-v2-actions">
+          <button id="profile-v2-open" class="profile-v2-button" type="button">Personalize Account</button>
+        </div>
+      `;
+
+      sessionBox.prepend(panel);
+
+      const dialog = document.getElementById("profile-v2-dialog");
+      const form = document.getElementById("profile-v2-form");
+      const closeButton = document.getElementById("profile-v2-close");
+      const deleteButton = document.getElementById("profile-v2-delete");
+      const openButton = document.getElementById("profile-v2-open");
+      const nameDisplay = document.getElementById("profile-v2-name");
+      const usernameDisplay = document.getElementById("profile-v2-username-display");
+      const emailDisplay = document.getElementById("profile-v2-email");
+      const avatarDisplay = document.getElementById("profile-v2-avatar");
+      const bioDisplay = document.getElementById("profile-v2-bio-display");
+
+      const inputAvatar = document.getElementById("profile-v2-avatar-input");
+      const inputName = document.getElementById("profile-v2-display-name");
+      const inputUsername = document.getElementById("profile-v2-username");
+      const inputBio = document.getElementById("profile-v2-bio");
+      const message = document.getElementById("profile-v2-message");
+
+      let currentProfile = null;
+      let currentUser = null;
+
+      function renderProfile(profile, user) {
+        const email = user?.email || "";
+        const username = profile?.username || fallbackUsername(email);
+        const displayName = profile?.display_name || username || "Look App User";
+        const bio = profile?.bio || "";
+
+        nameDisplay.textContent = displayName;
+        usernameDisplay.textContent = "@" + username;
+        emailDisplay.textContent = email;
+        avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
+
+        bioDisplay.textContent = bio;
+        bioDisplay.style.display = bio ? "block" : "none";
+
+        inputName.value = displayName;
+        inputUsername.value = username;
+        inputBio.value = bio;
+      }
+
+      async function loadProfile() {
+        const client = getClient();
+        if (!client) return;
+
+        const { data: sessionData } = await client.auth.getSession();
+        const session = sessionData?.session || null;
+        if (!session?.user) return;
+
+        currentUser = session.user;
+
+        const { data, error } = await client
+          .from("profiles")
+          .select("username,display_name,bio,avatar_url")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        if (error) console.warn(error);
+
+        currentProfile = data || null;
+        renderProfile(currentProfile, currentUser);
+      }
+
+      async function saveProfile(event) {
+        event.preventDefault();
+
+        const client = getClient();
+        const { data: sessionData } = await client.auth.getSession();
+        const session = sessionData?.session || null;
+
+        if (!session?.user) {
+          message.textContent = "Log in required.";
+          return;
+        }
+
+        const username = inputUsername.value.trim().toLowerCase();
+        const displayName = inputName.value.trim();
+        const bio = inputBio.value.trim();
+
+        if (username.length < 3) {
+          message.textContent = "Username must be at least 3 characters.";
+          return;
+        }
+
+        if (!/^[a-z0-9._]+$/.test(username)) {
+          message.textContent = "Username can use only letters, numbers, dots and underscores.";
+          return;
+        }
+
+        message.textContent = "Saving profile...";
+
+        let avatarUrl = currentProfile?.avatar_url || null;
+        const file = inputAvatar.files?.[0] || null;
+
+        if (file) {
+          const ext = (file.name.split(".").pop() || "png").toLowerCase();
+          const storagePath = session.user.id + "/avatar-" + Date.now() + "." + ext;
+
+          const upload = await client.storage
+            .from("profile-avatars")
+            .upload(storagePath, file, {
+              cacheControl: "3600",
+              upsert: true
+            });
+
+          if (upload.error) {
+            message.textContent = "Avatar upload failed: " + upload.error.message;
+            return;
+          }
+
+          const publicUrl = client.storage.from("profile-avatars").getPublicUrl(storagePath);
+          avatarUrl = publicUrl?.data?.publicUrl || avatarUrl;
+        }
+
+        const payload = {
+          user_id: session.user.id,
+          username,
+          display_name: displayName || username,
+          bio,
+          avatar_url: avatarUrl,
+          updated_at: new Date().toISOString()
+        };
+
+        const { data, error } = await client
+          .from("profiles")
+          .upsert(payload, { onConflict: "user_id" })
+          .select("username,display_name,bio,avatar_url")
+          .single();
+
+        if (error) {
+          message.textContent = "Save failed: " + error.message;
+          return;
+        }
+
+        currentProfile = data;
+        renderProfile(currentProfile, session.user);
+        message.textContent = "Profile saved.";
+        setTimeout(() => dialog.close(), 650);
+      }
+
+      async function requestDeleteAccount() {
+        const first = confirm("Delete this account? This creates a deletion request.");
+        if (!first) return;
+
+        const typed = prompt("Type DELETE to confirm.");
+        if (typed !== "DELETE") return;
+
+        const reason = prompt("Optional: why are you deleting the account?") || "";
+
+        const client = getClient();
+        const { data, error } = await client.rpc("request_delete_my_account", {
+          p_reason: reason
+        });
+
+        if (error) {
+          alert("Delete request failed: " + error.message);
+          return;
+        }
+
+        const result = Array.isArray(data) ? data[0] : data;
+
+        if (!result?.success) {
+          alert(result?.message || "Could not create delete request.");
+          return;
+        }
+
+        alert("Delete request created. You will be logged out.");
+        await client.auth.signOut();
+        window.location.href = "/";
+      }
+
+      openButton.addEventListener("click", () => {
+        message.textContent = "";
+        renderProfile(currentProfile, currentUser);
+        dialog.showModal();
+      });
+
+      closeButton.addEventListener("click", () => dialog.close());
+      form.addEventListener("submit", saveProfile);
+      deleteButton.addEventListener("click", requestDeleteAccount);
+
+      loadProfile();
     });
   </script>
 
