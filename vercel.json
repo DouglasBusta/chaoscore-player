@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/", "destination": "/exclusive.html" },
     { "source": "/exclusive", "destination": "/exclusive.html" },
     { "source": "/exclusive/", "destination": "/exclusive.html" },
     { "source": "/account", "destination": "/account.html" },

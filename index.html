@@ -1475,7 +1475,7 @@ dialog {
   <script id="chaoscore-access-guard">
     window.addEventListener("DOMContentLoaded", async () => {
       const cleanPath = window.location.pathname.replace(/\/$/, "") || "/";
-      const isPrivateAlbumRoute = cleanPath === "/" || cleanPath === "/chaoscore";
+      const isPrivateAlbumRoute = cleanPath === "/chaoscore";
       if (!isPrivateAlbumRoute) return;
 
       const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
@@ -1506,10 +1506,10 @@ dialog {
             font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;
           ">
             <section style="
-              width:min(620px,100%);
+              width:min(680px,100%);
               border:1px solid rgba(231,224,210,.2);
               border-radius:28px;
-              padding:clamp(24px,6vw,46px);
+              padding:clamp(24px,6vw,48px);
               background:
                 linear-gradient(135deg, rgba(231,224,210,.08), rgba(231,224,210,.025)),
                 rgba(0,0,0,.34);
@@ -1551,12 +1551,34 @@ dialog {
                 text-transform:uppercase;
               ">#chaoscore<br>Locked</h1>
 
-              <p style="color:rgba(231,224,210,.72);line-height:1.65;margin:0 0 22px;">
+              <p style="color:rgba(231,224,210,.78);line-height:1.7;margin:0 0 18px;font-size:1rem;">
                 ${message}
               </p>
 
+              <div style="
+                border:1px solid rgba(231,224,210,.18);
+                border-radius:18px;
+                padding:16px;
+                background:rgba(255,255,255,.045);
+                margin:18px 0 22px;
+              ">
+                <div style="
+                  color:#d8f7cf;
+                  text-transform:uppercase;
+                  letter-spacing:.14em;
+                  font-size:.72rem;
+                  margin-bottom:8px;
+                ">
+                  How to unlock
+                </div>
+                <div style="color:rgba(231,224,210,.74);line-height:1.65;">
+                  Avvicina il tuo tag NFC Chaoscore al telefono. Il tag aprirà automaticamente il link privato di sblocco.
+                  Dopo il login, la chiave verrà collegata al tuo account e l’album si aprirà.
+                </div>
+              </div>
+
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <a href="/exclusive" style="
+                <a href="/" style="
                   display:inline-flex;
                   border:1px solid rgba(231,224,210,.24);
                   border-radius:999px;
@@ -1589,7 +1611,7 @@ dialog {
                 font-size:.72rem;
                 line-height:1.55;
               ">
-                To unlock this album, scan your physical Chaoscore NFC tag. The tag can be claimed by one account only.
+                Nota: il sito non può leggere un tag NFC già aperto dentro la pagina. Devi scannerizzare il tag fisico: il tag apre il link /claim con la tua chiave.
               </p>
             </section>
           </main>
@@ -1605,7 +1627,7 @@ dialog {
       const session = data?.session || null;
 
       if (!session?.user) {
-        lockPage("This album is private. Scan your physical Chaoscore NFC tag and create or log in to your account to unlock it.");
+        lockPage("This album is private. Only accounts unlocked with a physical Chaoscore NFC key can listen to it.");
         return;
       }
 
@@ -1617,7 +1639,7 @@ dialog {
         const access = Array.isArray(accessData) ? accessData[0] : accessData;
 
         if (!access?.chaos_verified) {
-          lockPage("Your account is not Chaos Verificato yet. Scan your Chaoscore NFC key to unlock the album.");
+          lockPage("Your account is not Chaos Verificato yet. Scan your physical Chaoscore NFC key to unlock this album.");
           return;
         }
       } catch (err) {

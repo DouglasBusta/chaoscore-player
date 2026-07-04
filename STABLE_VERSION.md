@@ -37,3 +37,14 @@ Current intended structure:
 - `/claim?key=...` is the NFC claim route.
 - Only Chaos Verificato accounts can access the album.
 - Each NFC key can be claimed by one account only.
+
+
+## Updated public/private structure
+
+Current intended structure:
+- `/` opens the public Busta Files archive.
+- `/exclusive` opens the public Busta Files archive.
+- `/chaoscore` opens the private #chaoscore album page.
+- `/claim?key=...` is the NFC claim route.
+- Only Chaos Verificato accounts can access `/chaoscore`.
+- Each NFC key can be claimed by one account only.
