@@ -1487,9 +1487,8 @@
       }
     }
     /* END USER SUBMISSIONS FINAL VISUAL FIX */
-
   
-    /* USER SUBMISSIONS ARCHIVE CARD MATCH */
+    /* USER SUBMISSIONS TRUE ARCHIVE ACTIONS */
     #user-submissions-grid.user-submissions-grid {
       display: grid !important;
       grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
@@ -1500,9 +1499,6 @@
     #user-submissions-grid .busta-user-file-card {
       position: relative !important;
       overflow: hidden !important;
-      min-height: 0 !important;
-      height: auto !important;
-      max-height: none !important;
       aspect-ratio: 1 / 1.22 !important;
       width: 100% !important;
       border: 1px solid rgba(231,224,210,0.16) !important;
@@ -1516,27 +1512,21 @@
       box-shadow: none !important;
     }
 
-    #user-submissions-grid .busta-user-file-card:hover {
-      border-color: rgba(231,224,210,0.38) !important;
-      color: #fff !important;
-    }
-
-    #user-submissions-grid .busta-user-file-card::after {
-      display: none !important;
-    }
-
     #user-submissions-grid .busta-user-file-card img {
       position: relative !important;
       inset: auto !important;
       width: 100% !important;
       height: 100% !important;
       min-height: 0 !important;
-      aspect-ratio: 1 / 0.74 !important;
       object-fit: cover !important;
       opacity: 1 !important;
       display: block !important;
-      filter: contrast(1.02) saturate(0.95) !important;
       border-radius: 12px 12px 0 0 !important;
+      filter: contrast(1.02) saturate(0.95) !important;
+    }
+
+    #user-submissions-grid .busta-user-file-card::after {
+      display: none !important;
     }
 
     #user-submissions-grid .busta-user-file-copy {
@@ -1568,7 +1558,6 @@
       line-height: 1.22 !important;
       word-break: break-word !important;
       font-family: inherit !important;
-      letter-spacing: 0 !important;
     }
 
     #user-submissions-grid .busta-user-file-by {
@@ -1585,6 +1574,8 @@
     }
 
     #user-submissions-grid .busta-user-file-action {
+      appearance: none !important;
+      -webkit-appearance: none !important;
       border: 1px solid rgba(231,224,210,0.16) !important;
       border-radius: 999px !important;
       background: rgba(255,255,255,0.035) !important;
@@ -1615,6 +1606,11 @@
       font-size: 0.58rem !important;
     }
 
+    #user-submissions-grid .busta-user-file-save.is-saved {
+      border-color: rgba(216,247,207,0.34) !important;
+      color: rgba(216,247,207,0.92) !important;
+    }
+
     @media (max-width: 760px) {
       #user-submissions-grid.user-submissions-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -1626,7 +1622,7 @@
         grid-template-columns: 1fr !important;
       }
     }
-    /* END USER SUBMISSIONS ARCHIVE CARD MATCH */
+    /* END USER SUBMISSIONS TRUE ARCHIVE ACTIONS */
 
   </style>
 </head>
@@ -3223,9 +3219,30 @@
   </script>
 
 
-  <script id="user-submissions-archive-card-match">
+  <script id="user-submissions-true-archive-actions">
     window.addEventListener("DOMContentLoaded", () => {
-      function enhanceUserSubmissionCards() {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function titleFromCard(card) {
+        return card.querySelector(".busta-user-file-name")?.textContent?.trim() || "User Submission";
+      }
+
+      function byFromCard(card) {
+        return card.querySelector(".busta-user-file-by")?.textContent?.trim() || "";
+      }
+
+      function enhanceCards() {
         document.querySelectorAll("#user-submissions-grid .busta-user-file-card").forEach((card) => {
           const copy = card.querySelector(".busta-user-file-copy");
           if (!copy) return;
@@ -3233,17 +3250,135 @@
           const badge = card.querySelector(".busta-user-file-badge");
           if (badge) badge.textContent = "Reviewed";
 
-          if (!copy.querySelector(".busta-user-file-actions")) {
-            const actions = document.createElement("div");
+          let actions = copy.querySelector(".busta-user-file-actions");
+
+          if (!actions) {
+            actions = document.createElement("div");
             actions.className = "busta-user-file-actions";
-            actions.innerHTML = `
-              <button class="busta-user-file-action busta-user-file-save" type="button" title="Save">✓</button>
-              <button class="busta-user-file-action busta-user-file-share" type="button">Share</button>
-            `;
             copy.appendChild(actions);
+          }
+
+          if (!actions.querySelector(".busta-user-file-save")) {
+            const save = document.createElement("button");
+            save.className = "busta-user-file-action busta-user-file-save";
+            save.type = "button";
+            save.textContent = "+";
+            save.title = "Save";
+            actions.appendChild(save);
+          }
+
+          if (!actions.querySelector(".busta-user-file-share")) {
+            const share = document.createElement("button");
+            share.className = "busta-user-file-action busta-user-file-share";
+            share.type = "button";
+            share.textContent = "Share";
+            actions.appendChild(share);
           }
         });
 
+        bindActions();
+      }
+
+      async function saveUserSubmission(card, button) {
+        if (!client) {
+          alert("Login required.");
+          return;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (!session?.user) {
+          window.location.href = "/auth?mode=login";
+          return;
+        }
+
+        const fileUrl = card.href || "";
+        const title = titleFromCard(card);
+        const meta = byFromCard(card);
+
+        button.disabled = true;
+        button.textContent = "...";
+
+        try {
+          const payloads = [
+            {
+              file_id: "user-submission:" + fileUrl,
+              file_title: title,
+              file_type: "User Submission",
+              file_url: fileUrl,
+              file_meta: meta
+            },
+            {
+              p_file_id: "user-submission:" + fileUrl,
+              p_file_title: title,
+              p_file_type: "User Submission",
+              p_file_url: fileUrl,
+              p_file_meta: meta
+            },
+            {
+              p_file_key: "user-submission:" + fileUrl,
+              p_title: title,
+              p_type: "User Submission",
+              p_url: fileUrl,
+              p_meta: meta
+            }
+          ];
+
+          let lastError = null;
+
+          for (const payload of payloads) {
+            const result = await client.rpc("save_busta_file", payload);
+
+            if (!result.error) {
+              button.textContent = "✓";
+              button.classList.add("is-saved");
+              button.title = "Saved";
+              button.disabled = false;
+              return;
+            }
+
+            lastError = result.error;
+          }
+
+          throw lastError || new Error("Could not save file.");
+        } catch (err) {
+          console.error("SAVE USER SUBMISSION ERROR", err);
+          button.textContent = "+";
+          button.disabled = false;
+          alert("Save failed: " + (err.message || "Unknown error"));
+        }
+      }
+
+      async function shareUserSubmission(card, button) {
+        const url = card.href || window.location.href;
+
+        try {
+          if (navigator.clipboard) {
+            await navigator.clipboard.writeText(url);
+            button.textContent = "Copied";
+            setTimeout(() => {
+              button.textContent = "Share";
+            }, 900);
+          } else {
+            const temp = document.createElement("input");
+            temp.value = url;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand("copy");
+            temp.remove();
+            button.textContent = "Copied";
+            setTimeout(() => {
+              button.textContent = "Share";
+            }, 900);
+          }
+        } catch (err) {
+          console.error("SHARE USER SUBMISSION ERROR", err);
+          alert("Share failed. Copy this link manually: " + url);
+        }
+      }
+
+      function bindActions() {
         document.querySelectorAll("#user-submissions-grid .busta-user-file-save").forEach((button) => {
           if (button.dataset.bound === "1") return;
           button.dataset.bound = "1";
@@ -3251,40 +3386,37 @@
           button.addEventListener("click", (event) => {
             event.preventDefault();
             event.stopPropagation();
+            event.stopImmediatePropagation();
 
-            button.textContent = "✓";
-            button.title = "Saved";
-          });
+            const card = button.closest(".busta-user-file-card");
+            if (!card) return;
+
+            saveUserSubmission(card, button);
+          }, true);
         });
 
         document.querySelectorAll("#user-submissions-grid .busta-user-file-share").forEach((button) => {
           if (button.dataset.bound === "1") return;
           button.dataset.bound = "1";
 
-          button.addEventListener("click", async (event) => {
+          button.addEventListener("click", (event) => {
             event.preventDefault();
             event.stopPropagation();
+            event.stopImmediatePropagation();
 
             const card = button.closest(".busta-user-file-card");
-            const url = card?.href || window.location.href;
+            if (!card) return;
 
-            try {
-              if (navigator.share) {
-                await navigator.share({ title: "Busta Files", url });
-              } else if (navigator.clipboard) {
-                await navigator.clipboard.writeText(url);
-                button.textContent = "Copied";
-                setTimeout(() => button.textContent = "Share", 900);
-              }
-            } catch (_) {}
-          });
+            shareUserSubmission(card, button);
+          }, true);
         });
       }
 
-      enhanceUserSubmissionCards();
-      setTimeout(enhanceUserSubmissionCards, 400);
-      setTimeout(enhanceUserSubmissionCards, 1000);
-      setTimeout(enhanceUserSubmissionCards, 1800);
+      enhanceCards();
+      setTimeout(enhanceCards, 400);
+      setTimeout(enhanceCards, 1000);
+      setTimeout(enhanceCards, 1800);
+      setTimeout(enhanceCards, 2600);
     });
   </script>
 
