@@ -783,33 +783,23 @@ dialog {
       border-color: rgba(231,224,210,0.45);
       background: rgba(30,18,15,0.9);
     }
-
   
-    /* COVER ARROW CLEANUP */
+    /* CLEAN COVER ARROWS */
+    button:has-text,
     .cover-arrow-clean {
       border: 0 !important;
       outline: 0 !important;
       box-shadow: none !important;
       background: transparent !important;
-      padding: 4px 8px !important;
-      min-width: auto !important;
-      width: auto !important;
-      height: auto !important;
-      color: rgba(231,224,210,0.9) !important;
-      font-size: 1rem !important;
-      line-height: 1 !important;
-      letter-spacing: 0 !important;
-      text-transform: none !important;
-      border-radius: 0 !important;
     }
 
-    .cover-arrow-clean:hover {
-      color: #fff !important;
-      background: transparent !important;
+    [aria-label="<★"],
+    [aria-label="★>"] {
       border: 0 !important;
+      background: transparent !important;
       box-shadow: none !important;
     }
-    /* END COVER ARROW CLEANUP */
+    /* END CLEAN COVER ARROWS */
 
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -818,7 +808,7 @@ dialog {
   <main class="shell">
     <section class="hero">
       <div class="cover-wrap">
-        <img class="cover" id="main-cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
+        <img class="cover" id="main-cover" src="/chaoscore-cover.png" alt="#chaoscore cover" />
         <p class="cover-credit">Cover by @tuma.zz</p>
         <div class="cover-picker" id="cover-picker">
           <button class="cover-arrow" id="cover-prev" type="button" aria-label="Previous cover">‹</button>
@@ -854,7 +844,7 @@ dialog {
 
   <section class="player">
     <div class="now">
-      <img src="/assets/chaoscore-spotify-cover.jpg" alt="" />
+      <img src="/chaoscore-cover.png" alt="" />
       <div>
         <div class="now-title" id="now-title">banale</div>
         <div class="now-sub">#chaoscore</div>
@@ -895,11 +885,11 @@ dialog {
     const coverOptions = [
       {
             "label": "<★",
-            "src": "/assets/chaoscore-spotify-cover.jpg"
+            "src": "/chaoscore-cover.png"
       },
       {
             "label": "★>",
-            "src": "/covers/★>.png"
+            "src": "/chaoscore-cover.png"
       }
 ];
 
@@ -939,7 +929,7 @@ dialog {
 
 
     function applyCover(src) {
-      const finalSrc = src || coverOptions[0]?.src || "/assets/chaoscore-spotify-cover.jpg";
+      const finalSrc = src || coverOptions[0]?.src || "/chaoscore-cover.png";
 
       document.querySelectorAll(".cover, .now img").forEach((img) => {
         img.src = finalSrc;
@@ -1729,20 +1719,6 @@ dialog {
       link.href = "/";
       link.textContent = "← Back to Busta Files";
       document.body.appendChild(link);
-    });
-  </script>
-
-
-  <script id="cover-arrow-cleanup">
-    window.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll("button, a, span, div").forEach((el) => {
-        const label = (el.textContent || "").trim();
-
-        if (label === "<★" || label === "★>") {
-          el.classList.add("cover-arrow-clean");
-          el.removeAttribute("style");
-        }
-      });
     });
   </script>
 
