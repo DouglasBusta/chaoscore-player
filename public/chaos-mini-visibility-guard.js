@@ -1,31 +1,98 @@
 (function () {
-  if (window.__chaosMiniVisibilityGuardMounted) return;
-  window.__chaosMiniVisibilityGuardMounted = true;
+  if (window.__chaosMiniVisibilityGuardMountedV2) return;
+  window.__chaosMiniVisibilityGuardMountedV2 = true;
 
-  function setMiniVisible(visible) {
-    document.body.classList.toggle("chaos-show-mini-player", Boolean(visible));
+  let showMini = false;
 
-    const mini =
-      document.getElementById("chaos-safe-mini-player") ||
-      document.querySelector(".chaos-safe-mini-player");
+  function forceHide(el) {
+    el.dataset.chaosMiniHidden = "true";
+    el.setAttribute("aria-hidden", "true");
+    el.style.setProperty("display", "none", "important");
+    el.style.setProperty("visibility", "hidden", "important");
+    el.style.setProperty("opacity", "0", "important");
+    el.style.setProperty("pointer-events", "none", "important");
+  }
 
-    if (!mini) return;
+  function forceShow(el) {
+    el.setAttribute("aria-hidden", "false");
+    el.style.removeProperty("display");
+    el.style.removeProperty("visibility");
+    el.style.removeProperty("opacity");
+    el.style.removeProperty("pointer-events");
+  }
 
-    mini.setAttribute("aria-hidden", visible ? "false" : "true");
+  function looksLikeBottomMini(el) {
+    if (!el || el.nodeType !== 1) return false;
+    if (el.id === "audio") return false;
+    if (el.tagName === "AUDIO") return false;
+    if (el.closest("section.player")) return false;
+    if (el.closest(".player") && !el.id.includes("mini")) return false;
 
-    if (visible) {
-      mini.classList.add("is-visible");
-      mini.style.removeProperty("display");
-      mini.style.removeProperty("visibility");
-      mini.style.removeProperty("opacity");
-      mini.style.removeProperty("pointer-events");
-    } else {
-      mini.classList.remove("is-visible");
-      mini.style.setProperty("display", "none", "important");
-      mini.style.setProperty("visibility", "hidden", "important");
-      mini.style.setProperty("opacity", "0", "important");
-      mini.style.setProperty("pointer-events", "none", "important");
+    const id = (el.id || "").toLowerCase();
+    const cls = (el.className || "").toString().toLowerCase();
+
+    if (
+      id.includes("safe-mini") ||
+      cls.includes("safe-mini") ||
+      id.includes("mini-player") ||
+      cls.includes("mini-player") ||
+      id.includes("persistent-player") ||
+      cls.includes("persistent-player")
+    ) {
+      return true;
     }
+
+    const style = window.getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    const text = (el.textContent || "").toLowerCase();
+
+    const isBottomFixed =
+      (style.position === "fixed" || style.position === "sticky") &&
+      rect.width > 220 &&
+      rect.height > 24 &&
+      rect.height < 190 &&
+      rect.bottom > window.innerHeight - 170;
+
+    const hasPlayerText =
+      text.includes("#chaoscore") ||
+      text.includes("douglas") ||
+      text.includes("banale") ||
+      text.includes("star ii") ||
+      text.includes("vol");
+
+    const hasControls = Boolean(el.querySelector("button, input, [role='button']"));
+
+    return isBottomFixed && hasControls && hasPlayerText;
+  }
+
+  function findMiniPlayers() {
+    const direct = Array.from(document.querySelectorAll([
+      "#chaos-safe-mini-player",
+      ".chaos-safe-mini-player",
+      "[id*='safe-mini']",
+      "[class*='safe-mini']",
+      "[id*='mini-player']",
+      "[class*='mini-player']",
+      "[id*='persistent-player']",
+      "[class*='persistent-player']"
+    ].join(",")));
+
+    const scanned = Array.from(document.body.querySelectorAll("div, aside, footer, section"))
+      .filter(looksLikeBottomMini);
+
+    return Array.from(new Set([...direct, ...scanned]));
+  }
+
+  function sync() {
+    document.body.classList.toggle("chaos-show-mini-player", showMini);
+
+    findMiniPlayers().forEach((el) => {
+      if (showMini) {
+        forceShow(el);
+      } else {
+        forceHide(el);
+      }
+    });
   }
 
   function txt(el) {
@@ -44,7 +111,6 @@
   function isBackToFiles(el) {
     const t = txt(el);
     const h = href(el);
-
     return (
       t.includes("back to busta files") ||
       t.includes("busta files") ||
@@ -56,7 +122,6 @@
   function isBackToChaoscore(el) {
     const t = txt(el);
     const h = href(el);
-
     return (
       t.includes("back to #chaoscore") ||
       t.includes("back to chaoscore") ||
@@ -69,30 +134,41 @@
     if (!target) return;
 
     if (isBackToFiles(target)) {
-      setTimeout(() => setMiniVisible(true), 50);
-      setTimeout(() => setMiniVisible(true), 250);
-      setTimeout(() => setMiniVisible(true), 800);
+      showMini = true;
+      setTimeout(sync, 50);
+      setTimeout(sync, 250);
+      setTimeout(sync, 900);
       return;
     }
 
     if (isBackToChaoscore(target)) {
-      setTimeout(() => setMiniVisible(false), 50);
-      setTimeout(() => setMiniVisible(false), 250);
-      setTimeout(() => setMiniVisible(false), 800);
+      showMini = false;
+      setTimeout(sync, 50);
+      setTimeout(sync, 250);
+      setTimeout(sync, 900);
     }
   }, true);
 
   window.addEventListener("pageshow", function () {
-    setMiniVisible(false);
+    showMini = false;
+    sync();
   });
 
   window.addEventListener("popstate", function () {
-    setMiniVisible(false);
+    showMini = false;
+    sync();
   });
 
-  /*
-    Stato iniziale: sulla pagina album il mini non deve vedersi.
-    Non tocchiamo mai #audio.
-  */
-  setMiniVisible(false);
+  const observer = new MutationObserver(sync);
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "style", "id"]
+  });
+
+  showMini = false;
+  sync();
+  setTimeout(sync, 300);
+  setTimeout(sync, 1000);
 })();

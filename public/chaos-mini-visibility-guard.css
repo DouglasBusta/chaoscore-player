@@ -1,16 +1,21 @@
-/* chaos-mini-visibility-guard-v1 */
-/* Nasconde SOLO il mini player quando siamo nella pagina album. Non tocca audio/player grande. */
+/* chaos-mini-visibility-guard-v2 */
+/* Nasconde i mini player/barre fixed sulla pagina album. Non tocca player grande, audio o FLAC. */
 
 body:not(.chaos-show-mini-player) #chaos-safe-mini-player,
-body:not(.chaos-show-mini-player) .chaos-safe-mini-player {
+body:not(.chaos-show-mini-player) .chaos-safe-mini-player,
+body:not(.chaos-show-mini-player) [id*="safe-mini"],
+body:not(.chaos-show-mini-player) [class*="safe-mini"],
+body:not(.chaos-show-mini-player) [id*="mini-player"],
+body:not(.chaos-show-mini-player) [class*="mini-player"],
+body:not(.chaos-show-mini-player) [data-chaos-mini-hidden="true"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-body.chaos-show-mini-player #chaos-safe-mini-player,
-body.chaos-show-mini-player .chaos-safe-mini-player {
+body.chaos-show-mini-player [data-chaos-mini-hidden="true"] {
+  display: revert !important;
   visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
