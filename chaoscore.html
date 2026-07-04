@@ -754,6 +754,36 @@ dialog {
       pointer-events: none !important;
     }
 
+  
+    .chaoscore-back-to-files {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 9999;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(10,8,7,0.78);
+      color: rgba(231,224,210,0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 10px 12px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.34);
+    }
+
+    .chaoscore-back-to-files:hover {
+      color: #fff;
+      border-color: rgba(231,224,210,0.45);
+      background: rgba(30,18,15,0.9);
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1659,6 +1689,19 @@ dialog {
         console.error(err);
         lockPage("#Chaoscore access could not be verified. Try again or scan your NFC key.");
       }
+    });
+  </script>
+
+
+  <script id="chaoscore-back-to-files">
+    window.addEventListener("DOMContentLoaded", () => {
+      if (document.querySelector(".chaoscore-back-to-files")) return;
+
+      const link = document.createElement("a");
+      link.className = "chaoscore-back-to-files";
+      link.href = "/";
+      link.textContent = "← Back to Busta Files";
+      document.body.appendChild(link);
     });
   </script>
 
