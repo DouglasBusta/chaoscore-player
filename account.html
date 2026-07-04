@@ -9,35 +9,46 @@
       const savedBox = document.getElementById("saved-files-list");
       if (!savedBox) return;
 
-      const { data, error } = await bustaSupabase
-        .from("saved_files")
-        .select("file_name,file_url,folder,created_at")
-        .order("created_at", { ascending: false });
+      savedBox.className = "empty";
+      savedBox.textContent = "Loading saved files...";
 
-      if (error) {
+      try {
+        const timeout = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Saved files request timed out.")), 8000);
+        });
+
+        const request = bustaSupabase.rpc("get_my_saved_files");
+
+        const { data, error } = await Promise.race([request, timeout]);
+
+        if (error) {
+          savedBox.className = "empty";
+          savedBox.textContent = "Could not load saved files: " + error.message;
+          return;
+        }
+
+        if (!data || !data.length) {
+          savedBox.className = "empty";
+          savedBox.textContent = "No saved files yet.";
+          return;
+        }
+
+        savedBox.className = "";
+        savedBox.innerHTML = `
+          <ul class="saved-file-list">
+            ${data.map(file => `
+              <li class="saved-file-item">
+                <div class="saved-file-name">${file.file_name}</div>
+                <div class="saved-file-meta">${file.folder || "Busta Files"}</div>
+                ${file.file_url ? `<a class="saved-file-open" href="${file.file_url}" target="_blank" rel="noopener noreferrer">Open File</a>` : ""}
+              </li>
+            `).join("")}
+          </ul>
+        `;
+      } catch (err) {
         savedBox.className = "empty";
-        savedBox.textContent = "Could not load saved files: " + error.message;
-        return;
+        savedBox.textContent = "Could not load saved files: " + (err.message || "Unknown error.");
       }
-
-      if (!data || !data.length) {
-        savedBox.className = "empty";
-        savedBox.textContent = "No saved files yet.";
-        return;
-      }
-
-      savedBox.className = "";
-      savedBox.innerHTML = `
-        <ul class="saved-file-list">
-          ${data.map(file => `
-            <li class="saved-file-item">
-              <div class="saved-file-name">${file.file_name}</div>
-              <div class="saved-file-meta">${file.folder || "Busta Files"}</div>
-              ${file.file_url ? `<a class="saved-file-open" href="${file.file_url}" target="_blank" rel="noopener noreferrer">Open File</a>` : ""}
-            </li>
-          `).join("")}
-        </ul>
-      `;
     }
 
   </script>
