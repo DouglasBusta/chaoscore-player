@@ -2424,5 +2424,98 @@
     });
   </script>
 
+
+  <script id="auth-email-public-fix">
+    window.addEventListener("DOMContentLoaded", () => {
+      const emailInput = document.getElementById("auth-email");
+      const passwordInput = document.getElementById("auth-password");
+      const messageBox = document.getElementById("auth-message");
+      const submitButton = document.getElementById("auth-submit-btn") || document.querySelector(".auth-submit");
+
+      function setAuthMessage(text) {
+        if (messageBox) messageBox.textContent = text || "";
+      }
+
+      function checkEmailTypo(email) {
+        const value = (email || "").trim().toLowerCase();
+
+        if (value.endsWith("@gmail.cc")) {
+          return "This email looks wrong. Did you mean @gmail.com?";
+        }
+
+        if (value.endsWith("@gmai.com") || value.endsWith("@gmial.com") || value.endsWith("@gmail.con")) {
+          return "This email looks wrong. Did you mean @gmail.com?";
+        }
+
+        if (!value.includes("@") || !value.includes(".")) {
+          return "Enter a valid email address.";
+        }
+
+        return "";
+      }
+
+      if (emailInput) {
+        emailInput.addEventListener("input", () => {
+          const warning = checkEmailTypo(emailInput.value);
+          if (warning) setAuthMessage(warning);
+          else if ((messageBox?.textContent || "").trim() === "{}") setAuthMessage("");
+        });
+      }
+
+      if (submitButton) {
+        submitButton.addEventListener("click", (event) => {
+          const email = emailInput?.value || "";
+          const warning = checkEmailTypo(email);
+
+          if (warning) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            setAuthMessage(warning);
+            return;
+          }
+
+          if (!passwordInput?.value || passwordInput.value.length < 8) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            setAuthMessage("Password must be at least 8 characters.");
+            return;
+          }
+
+          if ((messageBox?.textContent || "").trim() === "{}") {
+            setAuthMessage("Authentication failed. Check email and password, then try again.");
+          }
+        }, true);
+      }
+
+      const observer = new MutationObserver(() => {
+        if (!messageBox) return;
+
+        const text = (messageBox.textContent || "").trim();
+
+        if (text === "{}") {
+          setAuthMessage("Authentication failed. Check email and password, then try again.");
+        }
+
+        if (text.toLowerCase().includes("email rate limit")) {
+          setAuthMessage("Too many email attempts. Wait a bit and try again.");
+        }
+
+        if (text.toLowerCase().includes("signup disabled")) {
+          setAuthMessage("Sign up is temporarily disabled. Contact Douglas.");
+        }
+      });
+
+      if (messageBox) {
+        observer.observe(messageBox, {
+          childList: true,
+          characterData: true,
+          subtree: true
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
