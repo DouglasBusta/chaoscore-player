@@ -150,3 +150,87 @@
     width: 90px !important;
   }
 }
+
+/* real mobile gain volume v2 */
+
+.chaos-real-mobile-volume {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  z-index: 999999;
+}
+
+.chaos-real-mobile-volume button {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 48px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(231,224,210,0.18);
+  background: rgba(255,255,255,0.065);
+  color: rgba(231,224,210,0.92);
+  font: inherit;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.chaos-real-volume-popover {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+  transform: translateX(-50%);
+  width: 62px;
+  height: 190px;
+  padding: 12px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(231,224,210,0.18);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(139,23,23,0.3), transparent 42%),
+    rgba(8,7,7,0.98);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.5);
+  display: none;
+  place-items: center;
+  z-index: 999999;
+}
+
+.chaos-real-volume-popover.is-open {
+  display: grid;
+}
+
+.chaos-real-volume-popover input[type="range"] {
+  width: 150px;
+  accent-color: #e7e0d2;
+  transform: rotate(-90deg);
+}
+
+/* su mobile il volume deve stare vicino ai controlli, non sotto come testo morto */
+@media (max-width: 720px) {
+  .chaos-main-volume,
+  #chaos-main-volume {
+    display: none !important;
+  }
+
+  section.player .controls,
+  .player .controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .chaos-real-mobile-volume {
+    margin-left: 4px;
+  }
+
+  #time {
+    flex: 1 0 100% !important;
+    order: 99 !important;
+    opacity: 0.62 !important;
+    font-size: 0.62rem !important;
+    text-align: left !important;
+    margin-top: 4px !important;
+  }
+}

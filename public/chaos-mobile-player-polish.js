@@ -1,68 +1,57 @@
 (function () {
-  if (window.__chaosMobilePlayerPolishMounted) return;
-  window.__chaosMobilePlayerPolishMounted = true;
+  if (window.__chaosMobilePlayerPolishRealGainMounted) return;
+  window.__chaosMobilePlayerPolishRealGainMounted = true;
 
   const STATE = {
     ctx: null,
     source: null,
     gain: null,
     volume: 1,
-    open: false
+    open: false,
+    graphReady: false
   };
 
   function audio() {
     return document.getElementById("audio");
   }
 
-  function mainVolumeBox() {
-    return document.getElementById("chaos-main-volume");
-  }
-
-  function mainMuteButton() {
-    return document.getElementById("chaos-main-mute");
-  }
-
   function isTouchMobile() {
-    return window.matchMedia("(max-width: 720px)").matches ||
-      navigator.maxTouchPoints > 0;
+    return window.matchMedia("(max-width: 720px)").matches || navigator.maxTouchPoints > 0;
   }
 
   function ensureGainGraph() {
     const a = audio();
     if (!a) return false;
 
-    if (STATE.gain) return true;
-
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return false;
+    if (STATE.graphReady && STATE.gain && STATE.ctx) return true;
 
     try {
-      STATE.ctx = new AudioCtx();
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return false;
 
-      /*
-        Un solo audio: #audio.
-        Non creiamo un secondo <audio>.
-        Lo passiamo solo attraverso un GainNode per permettere volume reale su iPhone.
-      */
-      STATE.source = STATE.source || STATE.ctx.createMediaElementSource(a);
+      STATE.ctx = STATE.ctx || new AudioCtx();
+
+      if (!STATE.source) {
+        STATE.source = STATE.ctx.createMediaElementSource(a);
+      }
+
       STATE.gain = STATE.ctx.createGain();
-
       STATE.gain.gain.value = STATE.volume;
+
       STATE.source.connect(STATE.gain);
       STATE.gain.connect(STATE.ctx.destination);
 
+      STATE.graphReady = true;
       return true;
     } catch (err) {
-      console.warn("Chaos volume graph non disponibile:", err);
+      console.warn("[chaos mobile volume] WebAudio gain unavailable:", err);
       return false;
     }
   }
 
   async function resumeCtx() {
-    if (!STATE.ctx) return;
-
     try {
-      if (STATE.ctx.state !== "running") {
+      if (STATE.ctx && STATE.ctx.state !== "running") {
         await STATE.ctx.resume();
       }
     } catch (_) {}
@@ -70,28 +59,24 @@
 
   function setVolume(value) {
     const a = audio();
-    const v = Math.max(0, Math.min(1, Number(value)));
+    const safe = Math.max(0, Math.min(1, Number(value)));
 
-    STATE.volume = v;
+    STATE.volume = safe;
+
+    if (STATE.gain) {
+      STATE.gain.gain.value = safe;
+    }
 
     /*
-      Desktop/Mac: audio.volume funziona.
-      iPhone: può non funzionare, quindi usiamo anche GainNode.
+      Desktop fallback: audio.volume funziona.
+      iPhone può ignorarlo, ma il GainNode sopra fa il lavoro reale.
     */
     if (a) {
       try {
-        a.volume = v;
+        a.volume = safe;
       } catch (_) {}
 
-      a.muted = v === 0;
-    }
-
-    if (STATE.gain) {
-      try {
-        STATE.gain.gain.setTargetAtTime(v, STATE.ctx.currentTime, 0.015);
-      } catch (_) {
-        STATE.gain.gain.value = v;
-      }
+      a.muted = safe === 0;
     }
 
     syncVolumeUI();
@@ -99,62 +84,47 @@
 
   function syncVolumeUI() {
     const a = audio();
-    const mute = mainMuteButton();
-    const box = mainVolumeBox();
-    const vertical = document.getElementById("chaos-mobile-volume-slider");
-    const value = document.getElementById("chaos-mobile-volume-value");
 
-    const current = a?.muted ? 0 : STATE.volume;
+    const actual = STATE.volume;
+    const muted = actual <= 0 || Boolean(a?.muted);
 
-    if (mute) {
-      mute.textContent = current === 0 ? "🔇" : "🔊";
-      mute.setAttribute("aria-label", current === 0 ? "Volume off" : "Volume");
-    }
+    document.querySelectorAll("[data-chaos-real-volume-range]").forEach((range) => {
+      if (document.activeElement !== range) {
+        range.value = String(actual);
+      }
+    });
 
-    if (vertical && document.activeElement !== vertical) {
-      vertical.value = String(current);
-    }
+    document.querySelectorAll("[data-chaos-real-volume-button]").forEach((btn) => {
+      btn.textContent = muted ? "🔇" : "VOL";
+      btn.setAttribute("aria-label", muted ? "Volume spento" : "Volume");
+    });
 
-    if (value) {
-      value.textContent = `${Math.round(current * 100)}%`;
-    }
-
-    if (box) {
-      box.classList.toggle("is-volume-open", STATE.open);
-    }
+    document.querySelectorAll("[data-chaos-real-volume-popover]").forEach((pop) => {
+      pop.classList.toggle("is-open", STATE.open);
+    });
   }
 
-  function enhanceMainVolume() {
-    const box = mainVolumeBox();
-    const mute = mainMuteButton();
+  function closePopovers() {
+    STATE.open = false;
+    syncVolumeUI();
+  }
 
-    if (!box || !mute || box.dataset.mobileEnhanced === "1") return;
+  function buildVolumeControl(id) {
+    const wrap = document.createElement("div");
+    wrap.className = "chaos-real-mobile-volume";
+    wrap.dataset.chaosRealVolume = id;
 
-    box.dataset.mobileEnhanced = "1";
-
-    const pop = document.createElement("div");
-    pop.className = "chaos-mobile-volume-pop";
-    pop.innerHTML = `
-      <input
-        id="chaos-mobile-volume-slider"
-        class="chaos-mobile-volume-slider"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="1"
-        aria-label="Volume"
-      >
-      <div id="chaos-mobile-volume-value" class="chaos-mobile-volume-value">100%</div>
+    wrap.innerHTML = `
+      <button type="button" data-chaos-real-volume-button aria-label="Volume">VOL</button>
+      <div class="chaos-real-volume-popover" data-chaos-real-volume-popover>
+        <input data-chaos-real-volume-range type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+      </div>
     `;
 
-    box.appendChild(pop);
+    const btn = wrap.querySelector("[data-chaos-real-volume-button]");
+    const range = wrap.querySelector("[data-chaos-real-volume-range]");
 
-    const vertical = document.getElementById("chaos-mobile-volume-slider");
-
-    mute.addEventListener("click", async function (event) {
-      if (!isTouchMobile()) return;
-
+    btn.addEventListener("click", async function (event) {
       event.preventDefault();
       event.stopPropagation();
 
@@ -163,62 +133,122 @@
 
       STATE.open = !STATE.open;
       syncVolumeUI();
-    }, true);
+    });
 
-    vertical?.addEventListener("input", async function (event) {
+    range.addEventListener("input", async function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
       ensureGainGraph();
       await resumeCtx();
       setVolume(event.target.value);
     });
 
-    vertical?.addEventListener("change", async function (event) {
+    range.addEventListener("change", async function (event) {
       ensureGainGraph();
       await resumeCtx();
       setVolume(event.target.value);
     });
 
-    document.addEventListener("click", function (event) {
-      if (!STATE.open) return;
-      if (event.target.closest("#chaos-main-volume")) return;
+    range.addEventListener("touchstart", async function () {
+      ensureGainGraph();
+      await resumeCtx();
+    }, { passive: true });
 
-      STATE.open = false;
-      syncVolumeUI();
-    }, true);
-
-    syncVolumeUI();
+    return wrap;
   }
 
-  function bindAudioGestures() {
+  function mountMainVolume() {
     const a = audio();
-    if (!a || a.dataset.mobileGainBound === "1") return;
+    if (!a) return;
 
-    a.dataset.mobileGainBound = "1";
+    /*
+      Rimuove i controlli volume precedenti creati dalle patch vecchie,
+      ma NON tocca audio, player, tracklist.
+    */
+    document.querySelectorAll("#chaos-main-volume, .chaos-main-volume").forEach((el) => el.remove());
 
-    ["play", "volumechange", "loadedmetadata"].forEach((type) => {
-      a.addEventListener(type, syncVolumeUI);
+    if (document.querySelector("[data-chaos-real-volume='main']")) return;
+
+    const controls =
+      document.querySelector("section.player .controls") ||
+      document.querySelector(".player .controls") ||
+      document.querySelector("section.player") ||
+      document.querySelector(".player");
+
+    if (!controls) return;
+
+    controls.appendChild(buildVolumeControl("main"));
+  }
+
+  function mountMiniVolume() {
+    const mini = document.getElementById("chaos-safe-mini-player");
+    if (!mini) return;
+
+    /*
+      Nasconde/rimuove vecchi slider mini che usavano audio.volume.
+      Ne lasciamo uno solo: quello WebAudio gain.
+    */
+    mini.querySelectorAll(".chaos-mini-mobile-volume, .chaos-safe-mini-volume").forEach((el) => {
+      el.style.display = "none";
+      el.setAttribute("aria-hidden", "true");
     });
 
-    document.addEventListener("click", async function (event) {
-      const target = event.target.closest("button, [role='button'], input");
+    if (mini.querySelector("[data-chaos-real-volume='mini']")) return;
+
+    const controls =
+      mini.querySelector(".chaos-safe-mini-controls") ||
+      mini.querySelector("[class*='controls']") ||
+      mini.querySelector(".chaos-safe-mini-inner") ||
+      mini;
+
+    controls.appendChild(buildVolumeControl("mini"));
+  }
+
+  function bindAudioUnlock() {
+    const a = audio();
+    if (!a || a.dataset.realGainBound === "1") return;
+
+    a.dataset.realGainBound = "1";
+
+    ["play", "playing", "loadedmetadata"].forEach((type) => {
+      a.addEventListener(type, async function () {
+        if (isTouchMobile()) {
+          ensureGainGraph();
+          await resumeCtx();
+          setVolume(STATE.volume);
+        }
+      });
+    });
+
+    document.addEventListener("pointerdown", async function (event) {
+      const target = event.target.closest("button, [role='button'], input, a");
       if (!target) return;
 
       if (isTouchMobile()) {
         ensureGainGraph();
         await resumeCtx();
-        if (STATE.gain) {
-          setVolume(STATE.volume);
-        }
       }
     }, true);
   }
 
   function boot() {
-    enhanceMainVolume();
-    bindAudioGestures();
+    mountMainVolume();
+    mountMiniVolume();
+    bindAudioUnlock();
+    syncVolumeUI();
+
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest(".chaos-real-mobile-volume")) {
+        closePopovers();
+      }
+    }, true);
 
     const observer = new MutationObserver(function () {
-      enhanceMainVolume();
-      bindAudioGestures();
+      mountMainVolume();
+      mountMiniVolume();
+      bindAudioUnlock();
+      syncVolumeUI();
     });
 
     observer.observe(document.documentElement, {
