@@ -646,6 +646,83 @@
     }
     /* END HIDE PUBLIC EMAIL ON ACCOUNT */
 
+  
+    /* OWNER REVIEW PANEL */
+    .owner-review-panel {
+      border: 1px solid rgba(255,215,128,0.22);
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255,215,128,0.035);
+      min-height: 190px;
+    }
+
+    .owner-review-panel.hidden {
+      display: none !important;
+    }
+
+    .owner-review-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .owner-review-item {
+      border: 1px solid rgba(231,224,210,0.16);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(0,0,0,0.22);
+      display: grid;
+      gap: 8px;
+    }
+
+    .owner-review-name {
+      color: rgba(231,224,210,0.94);
+      font-size: 0.86rem;
+      word-break: break-word;
+    }
+
+    .owner-review-meta {
+      color: rgba(231,224,210,0.55);
+      font-size: 0.68rem;
+      line-height: 1.45;
+    }
+
+    .owner-review-note {
+      color: rgba(231,224,210,0.7);
+      font-size: 0.74rem;
+      line-height: 1.45;
+      border-left: 2px solid rgba(255,215,128,0.28);
+      padding-left: 9px;
+    }
+
+    .owner-review-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .owner-review-actions button,
+    .owner-review-actions a {
+      border: 1px solid rgba(231,224,210,0.22);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.88);
+      padding: 8px 10px;
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.6rem;
+      text-decoration: none;
+    }
+
+    .owner-review-actions button:hover,
+    .owner-review-actions a:hover {
+      border-color: rgba(231,224,210,0.44);
+      color: #fff;
+    }
+    /* END OWNER REVIEW PANEL */
+
   </style>
 </head>
 <body>
@@ -1227,6 +1304,184 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
       setTimeout(fixAccountBadges, 250);
       setTimeout(fixAccountBadges, 900);
       setTimeout(fixAccountBadges, 1800);
+    });
+  </script>
+
+
+  <script id="owner-upload-review">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.bustaSupabase ||
+        (window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }) : null);
+
+      function makePanel() {
+        if (document.getElementById("owner-review-panel")) return document.getElementById("owner-review-panel");
+
+        const panel = document.createElement("article");
+        panel.id = "owner-review-panel";
+        panel.className = "owner-review-panel hidden";
+        panel.innerHTML = `
+          <h2>Owner Review</h2>
+          <div class="empty">Loading pending submissions...</div>
+          <div id="owner-review-list" class="owner-review-list"></div>
+        `;
+
+        const grid = document.querySelector(".grid") || document.querySelector("main");
+        if (grid) grid.prepend(panel);
+        else document.body.appendChild(panel);
+
+        return panel;
+      }
+
+      async function isOwner() {
+        if (!client) return false;
+
+        try {
+          const result = await client.rpc("get_my_account_role");
+          const data = Array.isArray(result.data) ? result.data[0] : result.data;
+          return data?.role === "owner";
+        } catch (_) {
+          return false;
+        }
+      }
+
+      async function signedPreview(path) {
+        const result = await client.storage
+          .from("busta-submissions")
+          .createSignedUrl(path, 60 * 10);
+
+        if (result.error) return "";
+        return result.data?.signedUrl || "";
+      }
+
+      async function loadPending() {
+        const panel = makePanel();
+        const owner = await isOwner();
+
+        if (!owner) {
+          panel.classList.add("hidden");
+          return;
+        }
+
+        panel.classList.remove("hidden");
+
+        const intro = panel.querySelector(".empty");
+        const list = document.getElementById("owner-review-list");
+
+        const { data, error } = await client
+          .from("pending_uploads")
+          .select("*")
+          .eq("status", "pending")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          intro.textContent = "Could not load submissions: " + error.message;
+          return;
+        }
+
+        if (!data || !data.length) {
+          intro.textContent = "No pending submissions.";
+          list.innerHTML = "";
+          return;
+        }
+
+        intro.textContent = data.length + " pending submission" + (data.length === 1 ? "" : "s") + ".";
+        list.innerHTML = "";
+
+        for (const item of data) {
+          const url = await signedPreview(item.file_path);
+
+          const el = document.createElement("div");
+          el.className = "owner-review-item";
+          el.innerHTML = `
+            <div class="owner-review-name">${item.file_name}</div>
+            <div class="owner-review-meta">
+              From: @${item.uploader_username || "unknown"}<br>
+              Suggested folder: ${item.suggested_folder || "Other Busta Files"}<br>
+              Size: ${Math.round((item.file_size || 0) / 1024)} KB
+            </div>
+            ${item.note ? `<div class="owner-review-note">${item.note}</div>` : ""}
+            <div class="owner-review-actions">
+              ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">Preview</a>` : ""}
+              <button data-approve-upload="${item.id}" data-folder="${item.suggested_folder || "Other Busta Files"}">Approve</button>
+              <button data-reject-upload="${item.id}">Reject</button>
+            </div>
+          `;
+
+          list.appendChild(el);
+        }
+      }
+
+      async function approveUpload(id, suggestedFolder) {
+        const folder = prompt("Where should this file go?", suggestedFolder || "Other Busta Files");
+        if (!folder) return;
+
+        const note = prompt("Admin note? Optional.") || "";
+
+        const { error } = await client
+          .from("pending_uploads")
+          .update({
+            status: "approved",
+            reviewed_at: new Date().toISOString(),
+            admin_note: note,
+            target_folder: folder
+          })
+          .eq("id", id);
+
+        if (error) {
+          alert("Approve failed: " + error.message);
+          return;
+        }
+
+        alert("Approved. Next step: publish approved files into Busta Files grid.");
+        loadPending();
+      }
+
+      async function rejectUpload(id) {
+        const ok = confirm("Reject this submission?");
+        if (!ok) return;
+
+        const note = prompt("Reason? Optional.") || "";
+
+        const { error } = await client
+          .from("pending_uploads")
+          .update({
+            status: "rejected",
+            reviewed_at: new Date().toISOString(),
+            admin_note: note
+          })
+          .eq("id", id);
+
+        if (error) {
+          alert("Reject failed: " + error.message);
+          return;
+        }
+
+        loadPending();
+      }
+
+      document.addEventListener("click", (event) => {
+        const approve = event.target.closest("[data-approve-upload]");
+        const reject = event.target.closest("[data-reject-upload]");
+
+        if (approve) {
+          approveUpload(approve.dataset.approveUpload, approve.dataset.folder);
+        }
+
+        if (reject) {
+          rejectUpload(reject.dataset.rejectUpload);
+        }
+      });
+
+      setTimeout(loadPending, 700);
     });
   </script>
 

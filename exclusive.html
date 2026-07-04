@@ -866,6 +866,132 @@
     }
     /* END COVER ARROW CLEANUP */
 
+  
+    /* BUSTA FILE UPLOAD */
+    .busta-upload-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid rgba(216,247,207,0.28);
+      border-radius: 999px;
+      background: rgba(216,247,207,0.075);
+      color: #d8f7cf;
+      padding: 11px 13px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .busta-upload-button:hover {
+      color: #fff;
+      border-color: rgba(216,247,207,0.54);
+      background: rgba(216,247,207,0.12);
+    }
+
+    .busta-upload-dialog {
+      width: min(540px, calc(100% - 26px));
+      border: 1px solid rgba(231,224,210,0.22);
+      border-radius: 24px;
+      background: #100d0a;
+      color: #e7e0d2;
+      padding: 0;
+      box-shadow: 0 32px 110px rgba(0,0,0,0.62);
+    }
+
+    .busta-upload-dialog::backdrop {
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .busta-upload-inner {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .busta-upload-inner h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.15rem;
+      line-height: 0.92;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+
+    .busta-upload-copy {
+      color: rgba(231,224,210,0.62);
+      line-height: 1.55;
+      font-size: 0.78rem;
+    }
+
+    .busta-upload-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .busta-upload-field label {
+      color: rgba(231,224,210,0.56);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+    }
+
+    .busta-upload-field input,
+    .busta-upload-field select,
+    .busta-upload-field textarea {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.24);
+      color: #e7e0d2;
+      padding: 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    .busta-upload-field textarea {
+      min-height: 82px;
+      resize: vertical;
+    }
+
+    .busta-upload-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .busta-upload-actions button {
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(231,224,210,0.065);
+      color: #e7e0d2;
+      padding: 11px 13px;
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .busta-upload-actions button:hover {
+      border-color: rgba(231,224,210,0.46);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .busta-upload-message {
+      min-height: 20px;
+      color: rgba(231,224,210,0.64);
+      line-height: 1.5;
+      font-size: 0.78rem;
+    }
+    /* END BUSTA FILE UPLOAD */
+
   </style>
 </head>
 <body>
@@ -2514,6 +2640,218 @@
           subtree: true
         });
       }
+    });
+  </script>
+
+
+  <dialog id="busta-upload-dialog" class="busta-upload-dialog">
+    <form id="busta-upload-form" class="busta-upload-inner" method="dialog">
+      <h3>Submit<br>File</h3>
+      <div class="busta-upload-copy">
+        Upload a file for Douglas to review. If approved, it can be declassified inside Busta Files.
+      </div>
+
+      <div class="busta-upload-field">
+        <label for="busta-upload-file">File</label>
+        <input id="busta-upload-file" type="file" required>
+      </div>
+
+      <div class="busta-upload-field">
+        <label for="busta-upload-folder">Suggested folder</label>
+        <select id="busta-upload-folder">
+          <option value="Live Evidence">Live Evidence</option>
+          <option value="Villa Spada Case File">Villa Spada Case File</option>
+          <option value="NUMA Incident — 11 October 2025">NUMA Incident — 11 October 2025</option>
+          <option value="Other Busta Files">Other Busta Files</option>
+        </select>
+      </div>
+
+      <div class="busta-upload-field">
+        <label for="busta-upload-note">Note to Douglas</label>
+        <textarea id="busta-upload-note" maxlength="500" placeholder="Explain what this file is..."></textarea>
+      </div>
+
+      <div id="busta-upload-message" class="busta-upload-message"></div>
+
+      <div class="busta-upload-actions">
+        <button id="busta-upload-submit" type="submit">Send for Review</button>
+        <button id="busta-upload-close" type="button">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <script id="busta-upload-system">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.bustaSupabase ||
+        (window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }) : null);
+
+      const dialog = document.getElementById("busta-upload-dialog");
+      const form = document.getElementById("busta-upload-form");
+      const fileInput = document.getElementById("busta-upload-file");
+      const folderInput = document.getElementById("busta-upload-folder");
+      const noteInput = document.getElementById("busta-upload-note");
+      const message = document.getElementById("busta-upload-message");
+      const closeButton = document.getElementById("busta-upload-close");
+      const submitButton = document.getElementById("busta-upload-submit");
+
+      function setMessage(text) {
+        if (message) message.textContent = text || "";
+      }
+
+      function ensureUploadButton() {
+        if (document.getElementById("busta-upload-open")) return;
+
+        const button = document.createElement("button");
+        button.id = "busta-upload-open";
+        button.className = "busta-upload-button";
+        button.type = "button";
+        button.textContent = "Upload File";
+
+        const downloads = document.querySelector(".busta-app-downloads");
+        if (downloads) {
+          downloads.appendChild(button);
+          return;
+        }
+
+        const search =
+          document.querySelector("[class*='search']") ||
+          document.querySelector("main") ||
+          document.body;
+
+        search.insertAdjacentElement("afterend", button);
+      }
+
+      async function openUpload() {
+        if (!client) {
+          alert("Authentication not loaded. Refresh and try again.");
+          return;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (!session?.user) {
+          const login = document.querySelector('[data-auth-open="login"]') ||
+                        document.querySelector('[data-auth-open="signup"]');
+          if (login) login.click();
+          else alert("Log in before uploading.");
+          return;
+        }
+
+        setMessage("");
+        if (fileInput) fileInput.value = "";
+        if (noteInput) noteInput.value = "";
+        if (dialog && !dialog.open) dialog.showModal();
+      }
+
+      async function submitUpload(event) {
+        event.preventDefault();
+
+        if (!client) {
+          setMessage("Authentication not loaded.");
+          return;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (!session?.user) {
+          setMessage("Log in before uploading.");
+          return;
+        }
+
+        const file = fileInput?.files?.[0];
+
+        if (!file) {
+          setMessage("Choose a file first.");
+          return;
+        }
+
+        if (file.size > 50 * 1024 * 1024) {
+          setMessage("File too large. Max 50 MB for now.");
+          return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Uploading...";
+        setMessage("Uploading private submission...");
+
+        try {
+          let username = "";
+          const profileResult = await client
+            .from("profiles")
+            .select("username")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+
+          if (!profileResult.error && profileResult.data?.username) {
+            username = profileResult.data.username;
+          }
+
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const path = session.user.id + "/" + Date.now() + "-" + safeName;
+
+          const upload = await client.storage
+            .from("busta-submissions")
+            .upload(path, file, {
+              cacheControl: "3600",
+              upsert: false
+            });
+
+          if (upload.error) throw upload.error;
+
+          const insert = await client.from("pending_uploads").insert({
+            uploader_id: session.user.id,
+            uploader_email: session.user.email || "",
+            uploader_username: username,
+            file_name: file.name,
+            file_path: path,
+            file_type: file.type || "",
+            file_size: file.size,
+            suggested_folder: folderInput?.value || "Other Busta Files",
+            note: noteInput?.value || "",
+            status: "pending"
+          });
+
+          if (insert.error) throw insert.error;
+
+          setMessage("File submitted. Douglas will review it.");
+          submitButton.textContent = "Sent";
+
+          setTimeout(() => {
+            dialog?.close();
+            submitButton.disabled = false;
+            submitButton.textContent = "Send for Review";
+          }, 900);
+        } catch (err) {
+          console.error(err);
+          setMessage("Upload failed: " + (err.message || "Unknown error."));
+          submitButton.disabled = false;
+          submitButton.textContent = "Send for Review";
+        }
+      }
+
+      ensureUploadButton();
+
+      document.addEventListener("click", (event) => {
+        const uploadOpen = event.target.closest("#busta-upload-open");
+        if (!uploadOpen) return;
+        event.preventDefault();
+        openUpload();
+      });
+
+      closeButton?.addEventListener("click", () => dialog?.close());
+      form?.addEventListener("submit", submitUpload);
     });
   </script>
 
