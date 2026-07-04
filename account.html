@@ -637,6 +637,15 @@
       font-size: 0.58rem;
     }
 
+  
+    /* HIDE PUBLIC EMAIL ON ACCOUNT */
+    #account-email,
+    .account-email-small,
+    .profile-v2-email {
+      display: none !important;
+    }
+    /* END HIDE PUBLIC EMAIL ON ACCOUNT */
+
   </style>
 </head>
 <body>
@@ -766,7 +775,7 @@
 
       const user = data.session.user;
 
-      if (accountEmail) accountEmail.textContent = user.email || "Registered archive user";
+      if (accountEmail) if (accountEmail) // public email hidden for privacy
       loading.classList.add("hidden");
       accountPage.classList.remove("hidden");
 
@@ -893,7 +902,7 @@
           Current email: <span id="profile-v2-private-email">Loading...</span>
         </div>
         <div class="profile-v2-private-note">
-          Your data is encrypted and protected inside your private archive account.
+          
         </div>
         <button id="profile-v2-change-email" class="profile-v2-change-email" type="button">Change Email — Coming Soon</button>
       </div>
