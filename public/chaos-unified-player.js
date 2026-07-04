@@ -1,6 +1,6 @@
 (function () {
-  if (window.__chaosUnifiedPlayerMounted) return;
-  window.__chaosUnifiedPlayerMounted = true;
+  if (window.__chaosUnifiedPlayerMountedV2) return;
+  window.__chaosUnifiedPlayerMountedV2 = true;
 
   const STORAGE_KEY = "chaosUnifiedPlayerCollapsed";
 
@@ -14,6 +14,7 @@
 
   function setCollapsed(collapsed) {
     document.body.classList.toggle("chaos-player-collapsed", Boolean(collapsed));
+
     try {
       localStorage.setItem(STORAGE_KEY, collapsed ? "1" : "0");
     } catch (_) {}
@@ -33,24 +34,71 @@
     }
   }
 
-  function removeOldMiniPlayers() {
-    document.querySelectorAll([
-      "#chaos-safe-mini-player",
-      ".chaos-safe-mini-player",
-      "[id*='safe-mini']",
-      "[class*='safe-mini']",
-      "[id*='mini-player']",
-      "[class*='mini-player']"
-    ].join(",")).forEach((el) => {
-      /*
-        Non rimuoviamo dal DOM: lo rendiamo invisibile.
-        Così non distruggiamo eventuale logica legacy, ma non si vede.
-      */
-      el.setAttribute("aria-hidden", "true");
-      el.style.setProperty("display", "none", "important");
-      el.style.setProperty("visibility", "hidden", "important");
-      el.style.setProperty("opacity", "0", "important");
-      el.style.setProperty("pointer-events", "none", "important");
+  function looksLikeLegacyMiniPlayer(el) {
+    if (!el || el.nodeType !== 1) return false;
+
+    const realPlayer = player();
+
+    if (el === realPlayer) return false;
+    if (realPlayer && realPlayer.contains(el) && !String(el.id || "").toLowerCase().includes("mini")) {
+      return false;
+    }
+
+    if (el.id === "audio") return false;
+    if (el.tagName === "AUDIO") return false;
+    if (el.id === "chaos-unified-toggle") return false;
+
+    const id = String(el.id || "").toLowerCase();
+    const cls = String(el.className || "").toLowerCase();
+    const text = String(el.textContent || "").toLowerCase();
+
+    if (
+      id.includes("safe-mini") ||
+      cls.includes("safe-mini") ||
+      id.includes("mini-player") ||
+      cls.includes("mini-player") ||
+      id.includes("persistent-player") ||
+      cls.includes("persistent-player") ||
+      id.includes("mini") ||
+      cls.includes("mini")
+    ) {
+      return true;
+    }
+
+    const style = window.getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+
+    const isBottomBar =
+      style.position === "fixed" &&
+      rect.width > 240 &&
+      rect.height > 28 &&
+      rect.height < 170 &&
+      rect.bottom > window.innerHeight - 160;
+
+    const hasChaosText =
+      text.includes("#chaoscore") ||
+      text.includes("douglas busta") ||
+      text.includes("banale") ||
+      text.includes("vol");
+
+    const hasControls = Boolean(el.querySelector("button, input, [role='button']"));
+
+    return isBottomBar && hasChaosText && hasControls;
+  }
+
+  function removeLegacyMiniPlayers() {
+    const candidates = Array.from(document.body.querySelectorAll("div, aside, footer, section"))
+      .filter(looksLikeLegacyMiniPlayer);
+
+    candidates.forEach((el) => {
+      try {
+        el.remove();
+      } catch (_) {
+        el.style.setProperty("display", "none", "important");
+        el.style.setProperty("visibility", "hidden", "important");
+        el.style.setProperty("opacity", "0", "important");
+        el.style.setProperty("pointer-events", "none", "important");
+      }
     });
   }
 
@@ -101,11 +149,6 @@
 
     if (toFiles) {
       document.body.classList.add("chaos-files-active");
-      /*
-        Non obblighiamo cambio forma per pagina.
-        Però se l'utente lo aveva compatto, resta compatto.
-        Se lo vuole grande, clicca ▴.
-      */
     }
 
     if (toChaos) {
@@ -120,10 +163,6 @@
     document.querySelectorAll("audio").forEach((a) => {
       if (a === main) return;
 
-      /*
-        Non deve esistere un secondo audio udibile.
-        Non lo cancelliamo, ma lo neutralizziamo.
-      */
       try {
         a.pause();
       } catch (_) {}
@@ -141,23 +180,25 @@
 
     document.body.classList.add("chaos-unified-player-ready");
 
-    removeOldMiniPlayers();
-    protectSingleAudio();
     ensureToggle();
     setCollapsed(getInitialCollapsed());
+    protectSingleAudio();
+    removeLegacyMiniPlayers();
 
     document.addEventListener("click", detectFilesViewClick, true);
 
     const observer = new MutationObserver(function () {
-      removeOldMiniPlayers();
-      protectSingleAudio();
       ensureToggle();
+      protectSingleAudio();
+      removeLegacyMiniPlayers();
     });
 
     observer.observe(document.documentElement, {
       childList: true,
       subtree: true
     });
+
+    setInterval(removeLegacyMiniPlayers, 500);
   }
 
   if (document.readyState === "loading") {
