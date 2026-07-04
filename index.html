@@ -637,6 +637,113 @@ dialog {
       margin-top: -0.25rem !important;
     }
 
+  
+    /* REAL CIRCLE CLOSE BUTTON */
+    dialog {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.26) transparent;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    dialog.modal-closing {
+      opacity: 0;
+      transform: translateY(8px) scale(0.985);
+    }
+
+    dialog::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    dialog::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 999px;
+      margin: 18px 0;
+    }
+
+    dialog::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.24);
+      border-radius: 999px;
+      border: 3px solid transparent;
+      background-clip: content-box;
+    }
+
+    dialog::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.38);
+      border: 3px solid transparent;
+      background-clip: content-box;
+    }
+
+    .modal-inner {
+      position: relative;
+    }
+
+    #modal-close-circle {
+      position: sticky;
+      top: 10px;
+      z-index: 9999;
+
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      min-height: 26px;
+      max-width: 26px;
+      max-height: 26px;
+
+      margin: -6px 0 -20px auto;
+
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.09);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+      user-select: none;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        0 8px 18px rgba(0,0,0,0.24);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      transition:
+        transform 140ms ease,
+        background 140ms ease,
+        border-color 140ms ease,
+        opacity 140ms ease;
+    }
+
+    #modal-close-circle:hover {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.34);
+      transform: scale(1.08);
+    }
+
+    #modal-close-circle:active {
+      transform: scale(0.92);
+      opacity: 0.82;
+    }
+
+    .modal-close-line {
+      position: absolute;
+      width: 12px;
+      height: 1.6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      pointer-events: none;
+    }
+
+    .modal-close-line.line-a {
+      transform: rotate(45deg);
+    }
+
+    .modal-close-line.line-b {
+      transform: rotate(-45deg);
+    }
+
   </style>
 </head>
 <body>
@@ -700,7 +807,10 @@ dialog {
 
   <dialog id="modal">
     <div class="modal-inner">
-      <button id="modal-x" class="modal-x" type="button" aria-label="Close panel">×</button>
+      <div id="modal-close-circle" aria-label="Close panel" role="button" tabindex="0">
+        <span class="modal-close-line line-a"></span>
+        <span class="modal-close-line line-b"></span>
+      </div>
       <h2 id="modal-title"></h2>
       <p id="modal-text"></p>
       <button class="clean-button" id="modal-close">chiudi</button>
@@ -1069,7 +1179,7 @@ dialog {
     loadTrack(0, false);
 
   
-    // Final animated modal close
+    // Real circle modal close
     function closeModalPanel() {
       if (!modal || !modal.open) return;
 
@@ -1082,10 +1192,22 @@ dialog {
     }
 
     document.addEventListener("click", (event) => {
-      const closeButton = event.target.closest("#modal-x");
-      if (!closeButton) return;
+      const closeCircle = event.target.closest("#modal-close-circle");
+      if (!closeCircle) return;
+
       event.preventDefault();
       event.stopPropagation();
+
+      closeModalPanel();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+
+      const closeCircle = event.target.closest("#modal-close-circle");
+      if (!closeCircle) return;
+
+      event.preventDefault();
       closeModalPanel();
     });
 
