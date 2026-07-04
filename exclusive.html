@@ -732,46 +732,51 @@
       text-transform: uppercase;
       margin: 0;
     }
-
   
-    /* CHAOSCORE CARD CENTER FIX */
-
+    /* CHAOSCORE CARD LEFT FIX */
     [data-chaoscore-card].busta-chaoscore-cover-card {
       display: grid !important;
       align-items: center !important;
-      justify-items: center !important;
-      text-align: center !important;
-      padding: 18px !important;
+      justify-items: start !important;
+      text-align: left !important;
+      padding: 14px 12px !important;
     }
 
     [data-chaoscore-card].busta-chaoscore-cover-card > div {
       width: 100%;
-      max-width: 92%;
+      max-width: 100%;
       display: grid;
-      justify-items: center;
-      text-align: center;
-      transform: translateY(2px);
+      justify-items: start;
+      text-align: left;
+      transform: translateX(-2px) translateY(1px);
     }
 
     [data-chaoscore-card].busta-chaoscore-cover-card [data-chaos-title] {
-      font-size: clamp(1.75rem, 4.4vw, 3.25rem) !important;
+      font-size: clamp(1.45rem, 3.55vw, 2.55rem) !important;
       line-height: 0.86 !important;
       letter-spacing: -0.075em !important;
-      text-align: center !important;
-      margin: 0 auto 8px !important;
+      text-align: left !important;
+      margin: 0 0 7px 0 !important;
       max-width: 100% !important;
-      overflow-wrap: normal !important;
+      white-space: normal !important;
     }
 
-    [data-chaoscore-card].busta-chaoscore-cover-card .chaos-card-copy,
-    [data-chaoscore-card].busta-chaoscore-cover-card div[style*="NFC-only"] {
-      text-align: center !important;
-      max-width: 92% !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
+    [data-chaoscore-card].busta-chaoscore-cover-card .chaos-card-copy {
+      text-align: left !important;
+      max-width: 94% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      font-size: 0.62rem !important;
+      line-height: 1.35 !important;
     }
 
-    /* END CHAOSCORE CARD CENTER FIX */
+    [data-chaoscore-card].busta-chaoscore-cover-card div[style*="Private Album File"] {
+      text-align: left !important;
+      font-size: 0.58rem !important;
+      letter-spacing: 0.12em !important;
+      margin-bottom: 6px !important;
+    }
+    /* END CHAOSCORE CARD LEFT FIX */
 
   </style>
 </head>
@@ -1976,7 +1981,7 @@
           </div>
           <h2 data-chaos-title>Listen to<br>#chaoscore</h2>
           <div class="chaos-card-copy" style="color:rgba(231,224,210,0.78);line-height:1.45;font-size:0.72rem;margin-top:8px;max-width:92%;">
-            NFC-only access. Scan your #Chaoscore tag to unlock the album on your account.
+            NFC-only access. Scan your #Chaoscore tag to unlock.
           </div>
         </div>
       `;
