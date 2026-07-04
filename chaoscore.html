@@ -957,6 +957,26 @@ dialog {
       }
     }
 
+  
+
+    /* chaos-files-topbar-visibility-fix */
+    .chaos-files-topbar {
+      display: none !important;
+    }
+
+    html.chaos-files-open .chaos-files-topbar {
+      display: block !important;
+    }
+
+    html:not(.chaos-files-open) .chaos-files-topbar {
+      display: none !important;
+    }
+
+    html:not(.chaos-files-open) .player {
+      position: static;
+      transform: none;
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -2496,6 +2516,10 @@ dialog {
         if (shell) shell.classList.remove("is-open");
         document.documentElement.classList.remove("chaos-files-open");
 
+        document.querySelectorAll(".chaos-files-topbar").forEach((el) => {
+          el.style.display = "";
+        });
+
         if (p) {
           p.classList.remove("chaos-player-sheet", "chaos-player-compact", "chaos-player-expanded");
           p.style.height = "";
@@ -2546,8 +2570,11 @@ dialog {
         });
 
         const initial = new URL(window.location.href);
+
         if (initial.searchParams.get("view") === "files") {
           openFilesView(false);
+        } else {
+          closeFilesView(false);
         }
       }
 
