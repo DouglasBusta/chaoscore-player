@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Busta Files Account</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -56,10 +56,36 @@
       margin: 0 0 18px;
     }
 
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .mode-switch a {
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 999px;
+      color: rgba(231,224,210,0.68);
+      background: rgba(255,255,255,0.035);
+      text-align: center;
+      text-decoration: none;
+      padding: 10px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .mode-switch a.active {
+      color: #fff;
+      border-color: rgba(139,23,23,0.72);
+      background: rgba(139,23,23,0.34);
+    }
+
     form {
       display: grid;
       gap: 11px;
-      margin-top: 22px;
+      margin-top: 18px;
     }
 
     label {
@@ -78,6 +104,8 @@
       color: #e7e0d2;
       padding: 14px;
       font: inherit;
+      font-size: 16px;
+      line-height: 1.2;
       outline: none;
       appearance: none;
       -webkit-appearance: none;
@@ -88,16 +116,8 @@
       background: rgba(0,0,0,0.32);
     }
 
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
     button, a.button {
-      flex: 1;
-      min-width: 150px;
+      width: 100%;
       border: 1px solid rgba(231,224,210,0.24);
       border-radius: 999px;
       background: rgba(231,224,210,0.08);
@@ -110,11 +130,17 @@
       cursor: pointer;
       text-decoration: none;
       text-align: center;
+      margin-top: 10px;
     }
 
     button.primary {
       border-color: rgba(139,23,23,0.72);
       background: rgba(139,23,23,0.42);
+    }
+
+    .forgot {
+      background: transparent;
+      color: rgba(231,224,210,0.62);
     }
 
     .message {
@@ -124,6 +150,16 @@
       line-height: 1.55;
       font-size: 0.82rem;
       white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .debug {
+      margin-top: 12px;
+      color: rgba(255,180,180,0.72);
+      font-size: 0.68rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .hidden { display: none !important; }
@@ -135,28 +171,30 @@
     <h1 id="title">Sign Up</h1>
     <p id="copy">Create your private Busta Files account.</p>
 
-    <form id="form">
+    <div class="mode-switch">
+      <a id="signup-tab" href="/auth?mode=signup">Sign Up</a>
+      <a id="login-tab" href="/auth?mode=login">Log In</a>
+    </div>
+
+    <form id="auth-form" novalidate>
       <label for="email">Email address</label>
       <input id="email" type="email" autocomplete="email" required>
 
       <label for="password">Password</label>
       <input id="password" type="password" autocomplete="new-password" required>
 
-      <label id="confirm-label" for="confirm">Confirm password</label>
-      <input id="confirm" type="password" autocomplete="new-password">
-
-      <div class="row">
-        <button id="signup" class="primary" type="button">Create Account</button>
-        <button id="login" type="button">Log In</button>
+      <div id="confirm-wrap">
+        <label for="confirm">Confirm password</label>
+        <input id="confirm" type="password" autocomplete="new-password">
       </div>
 
-      <div class="row">
-        <button id="forgot" type="button">Forgot Password?</button>
-        <a class="button" href="/">Back to Busta Files</a>
-      </div>
+      <button id="main-action" class="primary" type="submit">Create Account</button>
+      <button id="forgot" class="forgot hidden" type="button">Forgot Password?</button>
+      <a class="button" href="/">Back to Busta Files</a>
     </form>
 
     <div id="message" class="message"></div>
+    <div id="debug" class="debug hidden"></div>
   </main>
 
   <script>
@@ -171,26 +209,56 @@
       }
     });
 
+    const params = new URLSearchParams(window.location.search);
+    let mode = params.get("mode") === "login" ? "login" : "signup";
+
+    const title = document.getElementById("title");
+    const copy = document.getElementById("copy");
+    const signupTab = document.getElementById("signup-tab");
+    const loginTab = document.getElementById("login-tab");
+    const form = document.getElementById("auth-form");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const confirm = document.getElementById("confirm");
+    const confirmWrap = document.getElementById("confirm-wrap");
+    const mainAction = document.getElementById("main-action");
+    const forgot = document.getElementById("forgot");
     const message = document.getElementById("message");
+    const debug = document.getElementById("debug");
 
     function setMessage(text) {
       message.textContent = text || "";
     }
 
-    function readableError(error) {
-      if (!error) return "Authentication failed.";
-      if (typeof error === "string") return error;
-      if (error.message) return error.message;
-      if (error.error_description) return error.error_description;
-      if (error.error) return error.error;
-      try {
-        const json = JSON.stringify(error);
-        if (json && json !== "{}") return json;
-      } catch (_) {}
-      return "Authentication failed.";
+    function setDebug(value) {
+      if (!value) {
+        debug.textContent = "";
+        debug.classList.add("hidden");
+        return;
+      }
+
+      debug.textContent = value;
+      debug.classList.remove("hidden");
+    }
+
+    function renderMode() {
+      const isSignup = mode === "signup";
+
+      title.textContent = isSignup ? "Sign Up" : "Log In";
+      copy.textContent = isSignup
+        ? "Create your private Busta Files account."
+        : "Enter your private Busta Files account.";
+
+      signupTab.classList.toggle("active", isSignup);
+      loginTab.classList.toggle("active", !isSignup);
+
+      confirmWrap.classList.toggle("hidden", !isSignup);
+      confirm.required = isSignup;
+
+      mainAction.textContent = isSignup ? "Create Account" : "Log In";
+      forgot.classList.toggle("hidden", isSignup);
+
+      password.autocomplete = isSignup ? "new-password" : "current-password";
     }
 
     function checkEmailTypo(value) {
@@ -212,7 +280,45 @@
       return "";
     }
 
-    async function createAccount() {
+    function readableError(error) {
+      if (!error) return "Unknown error.";
+      if (typeof error === "string") return error;
+      if (error.message) return error.message;
+      if (error.error_description) return error.error_description;
+      if (error.error) return error.error;
+
+      try {
+        const json = JSON.stringify(error);
+        if (json && json !== "{}") return json;
+      } catch (_) {}
+
+      return "Unknown auth error. See debug below.";
+    }
+
+    async function rawAuthDebug(endpoint, payload) {
+      try {
+        const response = await fetch(SUPABASE_URL + endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const text = await response.text();
+        return "HTTP " + response.status + "\\n" + text;
+      } catch (err) {
+        return "Network/debug error: " + (err.message || String(err));
+      }
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      setMessage("");
+      setDebug("");
+
       const userEmail = email.value.trim().toLowerCase();
       const userPassword = password.value;
       const confirmPassword = confirm.value;
@@ -228,77 +334,81 @@
         return;
       }
 
-      if (userPassword !== confirmPassword) {
+      if (mode === "signup" && userPassword !== confirmPassword) {
         setMessage("Passwords do not match.");
         return;
       }
 
-      setMessage("Creating account...");
+      mainAction.disabled = true;
+      mainAction.textContent = mode === "signup" ? "Creating..." : "Logging in...";
 
-      const result = await client.auth.signUp({
-        email: userEmail,
-        password: userPassword,
-        options: {
-          emailRedirectTo: "https://lookapp.org/account"
+      try {
+        let result;
+
+        if (mode === "signup") {
+          result = await client.auth.signUp({
+            email: userEmail,
+            password: userPassword,
+            options: {
+              emailRedirectTo: "https://lookapp.org/account"
+            }
+          });
+        } else {
+          result = await client.auth.signInWithPassword({
+            email: userEmail,
+            password: userPassword
+          });
         }
-      });
 
-      if (result.error) {
-        setMessage("Sign up failed: " + readableError(result.error));
-        return;
+        if (result.error) {
+          const msg = readableError(result.error);
+          setMessage((mode === "signup" ? "Sign up failed: " : "Login failed: ") + msg);
+
+          const endpoint = mode === "signup"
+            ? "/auth/v1/signup"
+            : "/auth/v1/token?grant_type=password";
+
+          const debugText = await rawAuthDebug(endpoint, {
+            email: userEmail,
+            password: userPassword
+          });
+
+          setDebug(debugText);
+          return;
+        }
+
+        const sessionResult = await client.auth.getSession();
+        const session = sessionResult.data?.session || result.data?.session || null;
+
+        if (!session?.user) {
+          setMessage("Account created. Now switch to Log In with the same email and password.");
+          mode = "login";
+          history.replaceState(null, "", "/auth?mode=login");
+          renderMode();
+          return;
+        }
+
+        setMessage(mode === "signup" ? "Account created. Opening your account..." : "Access granted. Opening your account...");
+
+        setTimeout(() => {
+          window.location.href = "/account.html";
+        }, 700);
+      } catch (err) {
+        setMessage("Unexpected error: " + readableError(err));
+        setDebug(String(err?.stack || err?.message || err));
+      } finally {
+        mainAction.disabled = false;
+        renderMode();
       }
-
-      const sessionResult = await client.auth.getSession();
-      const session = sessionResult.data?.session || result.data?.session || null;
-
-      if (!session?.user) {
-        setMessage("Account created. Now press Log In with the same email and password.");
-        return;
-      }
-
-      setMessage("Account created. Opening your account...");
-      setTimeout(() => {
-        window.location.href = "/account.html";
-      }, 700);
     }
 
-    async function login() {
+    async function resetPassword() {
+      setMessage("");
+      setDebug("");
+
       const userEmail = email.value.trim().toLowerCase();
-      const userPassword = password.value;
-
       const emailWarning = checkEmailTypo(userEmail);
-      if (emailWarning) {
-        setMessage(emailWarning);
-        return;
-      }
 
-      if (userPassword.length < 8) {
-        setMessage("Password must be at least 8 characters.");
-        return;
-      }
-
-      setMessage("Logging in...");
-
-      const result = await client.auth.signInWithPassword({
-        email: userEmail,
-        password: userPassword
-      });
-
-      if (result.error) {
-        setMessage("Login failed: " + readableError(result.error));
-        return;
-      }
-
-      setMessage("Access granted. Opening your account...");
-      setTimeout(() => {
-        window.location.href = "/account.html";
-      }, 700);
-    }
-
-    async function forgotPassword() {
-      const userEmail = email.value.trim().toLowerCase();
-
-      const emailWarning = checkEmailTypo(userEmail);
       if (emailWarning) {
         setMessage(emailWarning);
         return;
@@ -318,9 +428,28 @@
       setMessage("Password reset email sent. Check your inbox.");
     }
 
-    document.getElementById("signup").addEventListener("click", createAccount);
-    document.getElementById("login").addEventListener("click", login);
-    document.getElementById("forgot").addEventListener("click", forgotPassword);
+    signupTab.addEventListener("click", (event) => {
+      event.preventDefault();
+      mode = "signup";
+      history.replaceState(null, "", "/auth?mode=signup");
+      setMessage("");
+      setDebug("");
+      renderMode();
+    });
+
+    loginTab.addEventListener("click", (event) => {
+      event.preventDefault();
+      mode = "login";
+      history.replaceState(null, "", "/auth?mode=login");
+      setMessage("");
+      setDebug("");
+      renderMode();
+    });
+
+    form.addEventListener("submit", handleSubmit);
+    forgot.addEventListener("click", resetPassword);
+
+    renderMode();
   </script>
 </body>
 </html>
