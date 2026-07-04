@@ -681,11 +681,14 @@
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // BUSTA SUPABASE CONFIG
     const SUPABASE_URL = "https://gilxvsfwsguudvrvbmjk.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
-    const bustaSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const bustaSupabase = window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+      : null;
 
     const files = [
       {
@@ -916,6 +919,8 @@
       updateAuthUI();
 
     async function restoreSupabaseSession() {
+      if (!bustaSupabase) return;
+
       const { data } = await bustaSupabase.auth.getSession();
       const session = data?.session;
 
@@ -976,6 +981,11 @@
 
       if (password.length < 8) {
         authMessage.textContent = "Password must be at least 8 characters.";
+        return;
+      }
+
+      if (!bustaSupabase) {
+        authMessage.textContent = "Authentication service is still loading. Please refresh and try again.";
         return;
       }
 
@@ -1081,6 +1091,5 @@
     updateAuthUI();
 
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
