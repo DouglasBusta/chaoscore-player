@@ -981,6 +981,55 @@ dialog {
       display: none !important;
     }
 
+  
+
+    /* chaos-safe-mini-player-polish-v1 */
+    .chaos-safe-mini-inner {
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+    }
+
+    .chaos-safe-mini-volume {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 94px;
+      color: rgba(231,224,210,0.52);
+      font-size: 0.54rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .chaos-safe-mini-volume input {
+      width: 72px;
+      accent-color: #e7e0d2;
+    }
+
+    .chaos-safe-mini-progress {
+      height: 4px;
+    }
+
+    .chaos-safe-mini-progress-fill {
+      transition: width 120ms linear;
+    }
+
+    @media (max-width: 620px) {
+      .chaos-safe-mini-inner {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+      }
+
+      .chaos-safe-mini-volume {
+        grid-column: 1 / -1;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        padding: 0 4px 3px;
+      }
+
+      .chaos-safe-mini-volume input {
+        width: min(240px, 62vw);
+      }
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -2206,6 +2255,35 @@ dialog {
         }
       }
 
+      function prepareSafeFilesFrame() {
+        const frame = document.getElementById("chaos-files-safe-frame");
+        if (!frame) return;
+
+        try {
+          const doc = frame.contentDocument;
+          if (!doc) return;
+
+          let style = doc.getElementById("chaos-safe-mini-padding");
+          if (!style) {
+            style = doc.createElement("style");
+            style.id = "chaos-safe-mini-padding";
+            doc.head.appendChild(style);
+          }
+
+          style.textContent = `
+            body {
+              padding-bottom: 128px !important;
+            }
+
+            @media (max-width: 620px) {
+              body {
+                padding-bottom: 168px !important;
+              }
+            }
+          `;
+        } catch (_) {}
+      }
+
       function buildFilesShell() {
         if (document.getElementById("chaos-files-safe-shell")) return;
 
@@ -2235,6 +2313,10 @@ dialog {
               <button id="chaos-safe-mini-play" class="chaos-safe-mini-btn play" type="button" aria-label="Play/Pause">▶</button>
               <button id="chaos-safe-mini-next" class="chaos-safe-mini-btn" type="button" aria-label="Next">›</button>
             </div>
+            <label class="chaos-safe-mini-volume">
+              <span>VOL</span>
+              <input id="chaos-safe-mini-volume" type="range" min="0" max="1" step="0.01" value="1">
+            </label>
           </div>
           <div id="chaos-safe-mini-progress" class="chaos-safe-mini-progress">
             <div id="chaos-safe-mini-progress-fill" class="chaos-safe-mini-progress-fill"></div>
@@ -2244,6 +2326,15 @@ dialog {
         document.body.appendChild(shell);
         document.body.appendChild(back);
         document.body.appendChild(mini);
+
+        const frame = document.getElementById("chaos-files-safe-frame");
+        if (frame) {
+          frame.addEventListener("load", () => {
+            prepareSafeFilesFrame();
+            setTimeout(prepareSafeFilesFrame, 250);
+            setTimeout(prepareSafeFilesFrame, 900);
+          });
+        }
 
         back.addEventListener("click", closeFilesView);
 
@@ -2285,6 +2376,18 @@ dialog {
           a.currentTime = ratio * a.duration;
           syncMini();
         });
+
+        const miniVolume = document.getElementById("chaos-safe-mini-volume");
+        if (miniVolume && miniVolume.dataset.chaosSafeMiniVolumeBound !== "1") {
+          miniVolume.dataset.chaosSafeMiniVolumeBound = "1";
+          miniVolume.addEventListener("input", event => {
+            const a = audio();
+            if (a) {
+              a.volume = Number(event.target.value);
+              syncMini();
+            }
+          });
+        }
       }
 
       function openFilesView() {
@@ -2304,6 +2407,10 @@ dialog {
         shell.classList.add("is-open");
         back.classList.add("is-visible");
         mini.classList.add("is-visible");
+
+        prepareSafeFilesFrame();
+        setTimeout(prepareSafeFilesFrame, 350);
+        setTimeout(prepareSafeFilesFrame, 1000);
 
         syncMini();
       }
@@ -2328,6 +2435,29 @@ dialog {
         if (play && a) play.textContent = a.paused ? "▶" : "Ⅱ";
         if (cover && mainCover()?.src) cover.src = mainCover().src;
         if (fill && a) fill.style.width = `${a.duration ? (a.currentTime / a.duration) * 100 : 0}%`;
+
+        const miniVolume = document.getElementById("chaos-safe-mini-volume");
+        if (miniVolume && a && document.activeElement !== miniVolume) {
+          miniVolume.value = String(a.volume);
+        }
+
+        if ("mediaSession" in navigator) {
+          try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: nowTitle(),
+              artist: "Douglas Busta",
+              album: "#chaoscore",
+              artwork: [
+                { src: mainCover()?.src || "/chaoscore-cover.png", sizes: "512x512", type: "image/png" }
+              ]
+            });
+
+            navigator.mediaSession.setActionHandler("play", () => audio()?.play());
+            navigator.mediaSession.setActionHandler("pause", () => audio()?.pause());
+            navigator.mediaSession.setActionHandler("previoustrack", () => document.getElementById("prev")?.click());
+            navigator.mediaSession.setActionHandler("nexttrack", () => document.getElementById("next")?.click());
+          } catch (_) {}
+        }
       }
 
       function bindSkipStability() {
