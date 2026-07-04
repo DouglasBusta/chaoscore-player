@@ -210,6 +210,37 @@
     }
   }
 
+  async function nativeShare(title, link, button) {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: title || "Busta Files",
+          text: "Busta Files",
+          url: link
+        });
+        return;
+      }
+
+      await navigator.clipboard.writeText(link);
+      button.textContent = "Copied";
+      setTimeout(() => {
+        button.textContent = "Share";
+      }, 1200);
+    } catch (error) {
+      if (error && error.name === "AbortError") return;
+
+      try {
+        await navigator.clipboard.writeText(link);
+        button.textContent = "Copied";
+        setTimeout(() => {
+          button.textContent = "Share";
+        }, 1200);
+      } catch (_) {
+        alert("Copy this link manually: " + link);
+      }
+    }
+  }
+
   async function rebuildArchiveButtons(savedIds) {
     const cards = archiveFileCards();
 
@@ -248,7 +279,8 @@
       share.addEventListener("click", async event => {
         event.preventDefault();
         event.stopPropagation();
-        await copyLink(archiveShareLink(fileName), share);
+
+        await nativeShare(fileName, archiveShareLink(fileName), share);
       });
 
       container.appendChild(save);
@@ -289,7 +321,8 @@
       share.addEventListener("click", async event => {
         event.preventDefault();
         event.stopPropagation();
-        await copyLink(userShareLink(fileName), share);
+
+        await nativeShare(title, userShareLink(fileName), share);
       });
 
       container.appendChild(save);
