@@ -1,0 +1,135 @@
+/* chaos-busta-overlay-same-player-v1 */
+/* Back to Busta Files senza cambiare pagina. Usa lo stesso section.player e lo stesso #audio. */
+
+#chaos-busta-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900000;
+  display: none;
+  background: #050505;
+}
+
+body.chaos-busta-overlay-open #chaos-busta-overlay {
+  display: block;
+}
+
+#chaos-busta-overlay iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #050505;
+}
+
+#chaos-busta-overlay-close {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 10px;
+  z-index: 1000002;
+  display: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  border: 1px solid rgba(231,224,210,0.2);
+  border-radius: 999px;
+  background: rgba(5,5,5,0.82);
+  color: rgba(231,224,210,0.95);
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+body.chaos-busta-overlay-open #chaos-busta-overlay-close {
+  display: block;
+}
+
+/*
+  SOLO mentre Busta Files è aperto:
+  lo stesso section.player diventa compatto e resta sopra l'overlay.
+  Su /chaoscore normale NON viene toccato.
+*/
+body.chaos-busta-overlay-open section.player,
+body.chaos-busta-overlay-open .player {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 1000001 !important;
+
+  width: min(620px, calc(100vw - 14px)) !important;
+  max-height: 104px !important;
+  overflow: hidden !important;
+
+  border-radius: 24px !important;
+  box-shadow: 0 20px 70px rgba(0,0,0,0.65) !important;
+}
+
+/* Solo in overlay nascondiamo la tracklist dentro il player, non la pagina album normale */
+body.chaos-busta-overlay-open #tracks,
+body.chaos-busta-overlay-open .tracks,
+body.chaos-busta-overlay-open [id*="tracks"],
+body.chaos-busta-overlay-open [class*="tracks"],
+body.chaos-busta-overlay-open #wave,
+body.chaos-busta-overlay-open .wave {
+  display: none !important;
+}
+
+/* Compatto dello stesso player, solo in Busta Files */
+body.chaos-busta-overlay-open #main-cover {
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px !important;
+  border-radius: 14px !important;
+  object-fit: cover !important;
+}
+
+body.chaos-busta-overlay-open #now-title {
+  font-size: 0.76rem !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body.chaos-busta-overlay-open #time {
+  font-size: 0.55rem !important;
+  opacity: 0.62 !important;
+}
+
+body.chaos-busta-overlay-open section.player .controls,
+body.chaos-busta-overlay-open .player .controls {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Spazio dentro l'overlay per non coprire contenuti col player */
+body.chaos-busta-overlay-open {
+  padding-bottom: 120px !important;
+}
+
+/* Sicurezza: audio sempre vivo, mai visibile come controllo nativo */
+#audio {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  body.chaos-busta-overlay-open section.player,
+  body.chaos-busta-overlay-open .player {
+    width: calc(100vw - 10px) !important;
+    max-height: 98px !important;
+    border-radius: 22px !important;
+  }
+
+  body.chaos-busta-overlay-open #main-cover {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+  }
+}
