@@ -811,6 +811,106 @@ dialog {
     }
     /* END COVER ARROW REPAIR */
 
+  
+    /* chaos-sheet-size-polish */
+
+    html.chaos-files-open .player.chaos-player-sheet {
+      max-width: 560px !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-compact {
+      grid-template-columns: minmax(0, 1fr) auto !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-compact .now-title {
+      font-size: 0.72rem !important;
+      line-height: 1.05 !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-compact .now-meta,
+    html.chaos-files-open .player.chaos-player-compact .credits,
+    html.chaos-files-open .player.chaos-player-compact .track-meta {
+      display: none !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .now-title {
+      font-size: 0.86rem !important;
+      line-height: 1.08 !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .wave {
+      height: 52px !important;
+      max-height: 52px !important;
+      min-height: 52px !important;
+      overflow: hidden !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .wave span,
+    html.chaos-files-open .player.chaos-player-expanded .wave div {
+      max-height: 44px !important;
+    }
+
+    html.chaos-files-open .player .controls .round,
+    html.chaos-files-open .player .round {
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      min-height: 32px !important;
+      font-size: 0.82rem !important;
+    }
+
+    html.chaos-files-open .player #play {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      min-height: 38px !important;
+      font-size: 0.86rem !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .time {
+      font-size: 0.62rem !important;
+      text-align: center !important;
+      opacity: 0.72 !important;
+      margin-top: -3px !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .chaos-player-volume {
+      margin-top: -2px !important;
+      font-size: 0.54rem !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .chaos-player-volume input {
+      width: min(230px, 56vw) !important;
+    }
+
+    html.chaos-files-open .chaos-player-handle {
+      width: 38px !important;
+      height: 4px !important;
+      margin-bottom: 1px !important;
+      opacity: 0.72 !important;
+    }
+
+    @media (max-width: 620px) {
+      html.chaos-files-open .player.chaos-player-sheet {
+        width: calc(100% - 12px) !important;
+        max-width: none !important;
+      }
+
+      html.chaos-files-open .player.chaos-player-compact {
+        height: 74px !important;
+      }
+
+      html.chaos-files-open .player.chaos-player-expanded {
+        height: min(278px, calc(100dvh - 20px)) !important;
+      }
+
+      html.chaos-files-open .player.chaos-player-expanded .wave {
+        height: 48px !important;
+        max-height: 48px !important;
+        min-height: 48px !important;
+      }
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -882,10 +982,10 @@ dialog {
       bottom: max(14px, env(safe-area-inset-bottom)) !important;
       transform: translateX(-50%) !important;
       z-index: 99999 !important;
-      width: min(760px, calc(100% - 20px)) !important;
+      width: min(560px, calc(100% - 22px)) !important;
       max-height: calc(100dvh - 34px) !important;
       border: 1px solid rgba(231,224,210,0.18) !important;
-      border-radius: 30px !important;
+      border-radius: 24px !important;
       background:
         radial-gradient(circle at 18% 0%, rgba(139,23,23,0.34), transparent 40%),
         linear-gradient(135deg, rgba(24,19,18,0.96), rgba(5,5,5,0.96)) !important;
@@ -897,24 +997,24 @@ dialog {
     }
 
     html.chaos-files-open .player.chaos-player-compact {
-      height: 88px !important;
+      height: 76px !important;
       display: grid !important;
       grid-template-columns: minmax(0, 1fr) auto !important;
       grid-template-rows: auto 1fr !important;
       align-items: center !important;
       gap: 0 10px !important;
-      padding: 8px 10px 10px !important;
+      padding: 7px 9px 8px !important;
     }
 
     html.chaos-files-open .player.chaos-player-expanded {
-      height: min(410px, calc(100dvh - 34px)) !important;
+      height: min(255px, calc(100dvh - 34px)) !important;
       display: grid !important;
       grid-template-columns: 1fr !important;
       grid-template-rows: auto auto 1fr auto auto !important;
       align-items: stretch !important;
-      gap: 12px !important;
-      padding: 8px 14px 15px !important;
-      border-radius: 30px 30px 24px 24px !important;
+      gap: 8px !important;
+      padding: 7px 12px 12px !important;
+      border-radius: 24px !important;
     }
 
     html.chaos-files-open .chaos-player-handle {
@@ -939,7 +1039,7 @@ dialog {
     html.chaos-files-open .player.chaos-player-compact .now {
       display: flex !important;
       align-items: center !important;
-      gap: 10px !important;
+      gap: 7px !important;
       grid-column: 1 / 2 !important;
       grid-row: 2 / 3 !important;
       min-width: 0 !important;
@@ -948,22 +1048,22 @@ dialog {
     html.chaos-files-open .player.chaos-player-expanded .now {
       display: flex !important;
       align-items: center !important;
-      gap: 12px !important;
+      gap: 8px !important;
       grid-column: 1 / -1 !important;
     }
 
     html.chaos-files-open .player .now img {
       flex: 0 0 auto !important;
-      width: 44px !important;
-      height: 44px !important;
-      border-radius: 14px !important;
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 11px !important;
       object-fit: cover !important;
     }
 
     html.chaos-files-open .player.chaos-player-expanded .now img {
-      width: 64px !important;
-      height: 64px !important;
-      border-radius: 18px !important;
+      width: 46px !important;
+      height: 46px !important;
+      border-radius: 13px !important;
     }
 
     html.chaos-files-open .player .now-title {
@@ -978,7 +1078,7 @@ dialog {
 
     html.chaos-files-open .player.chaos-player-expanded .wave {
       display: flex !important;
-      min-height: 88px !important;
+      min-height: 76px !important;
       align-items: end !important;
       cursor: pointer;
     }
@@ -996,7 +1096,7 @@ dialog {
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
-      gap: 10px !important;
+      gap: 7px !important;
     }
 
     html.chaos-files-open .player.chaos-player-compact .time {
@@ -1036,7 +1136,7 @@ dialog {
 
       html.chaos-files-open .player.chaos-player-expanded {
         width: calc(100% - 14px) !important;
-        height: min(430px, calc(100dvh - 24px)) !important;
+        height: min(270px, calc(100dvh - 24px)) !important;
         border-radius: 28px 28px 22px 22px !important;
       }
 
@@ -2191,8 +2291,8 @@ dialog {
           if (!dragging) return;
 
           const delta = event.clientY - startY;
-          const compactHeight = 88;
-          const expandedHeight = Math.min(430, window.innerHeight - 34);
+          const compactHeight = 76;
+          const expandedHeight = Math.min(270, window.innerHeight - 34);
           const base = startState === "expanded" ? expandedHeight : compactHeight;
           const next = Math.min(expandedHeight, Math.max(compactHeight, base - delta));
 
@@ -2252,7 +2352,7 @@ dialog {
             doc.head.appendChild(style);
           }
 
-          const height = sheetState === "expanded" ? 470 : 132;
+          const height = sheetState === "expanded" ? 310 : 116;
 
           style.textContent = `
             body {
