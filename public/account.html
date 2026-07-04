@@ -1417,25 +1417,93 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         const folder = prompt("Where should this file go?", suggestedFolder || "Other Busta Files");
         if (!folder) return;
 
+        const title = prompt("Public title? Leave empty to use original filename.") || "";
+        const description = prompt("Public description? Optional.") || "";
         const note = prompt("Admin note? Optional.") || "";
 
-        const { error } = await client
-          .from("pending_uploads")
-          .update({
-            status: "approved",
-            reviewed_at: new Date().toISOString(),
-            admin_note: note,
-            target_folder: folder
-          })
-          .eq("id", id);
+        try {
+          const pendingResult = await client
+            .from("pending_uploads")
+            .select("*")
+            .eq("id", id)
+            .single();
 
-        if (error) {
-          alert("Approve failed: " + error.message);
-          return;
+          if (pendingResult.error) throw pendingResult.error;
+
+          const item = pendingResult.data;
+
+          const signed = await client.storage
+            .from("busta-submissions")
+            .createSignedUrl(item.file_path, 60 * 10);
+
+          if (signed.error) throw signed.error;
+
+          const fileResponse = await fetch(signed.data.signedUrl);
+
+          if (!fileResponse.ok) {
+            throw new Error("Could not read private submitted file.");
+          }
+
+          const blob = await fileResponse.blob();
+
+          const safeName = item.file_name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const publicPath = folder.replace(/[^a-zA-Z0-9._-]/g, "_") + "/" + Date.now() + "-" + safeName;
+
+          const uploadPublic = await client.storage
+            .from("busta-approved-files")
+            .upload(publicPath, blob, {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: item.file_type || blob.type || "application/octet-stream"
+            });
+
+          if (uploadPublic.error) throw uploadPublic.error;
+
+          const publicUrlResult = client.storage
+            .from("busta-approved-files")
+            .getPublicUrl(publicPath);
+
+          const publicUrl = publicUrlResult?.data?.publicUrl;
+
+          if (!publicUrl) {
+            throw new Error("Could not create public file URL.");
+          }
+
+          const approvedInsert = await client
+            .from("approved_busta_files")
+            .insert({
+              original_pending_id: item.id,
+              file_name: item.file_name,
+              file_url: publicUrl,
+              file_type: item.file_type || "",
+              file_size: item.file_size || 0,
+              folder: folder,
+              title: title || item.file_name,
+              description: description,
+              submitted_by: item.uploader_id,
+              submitted_by_username: item.uploader_username || "unknown"
+            });
+
+          if (approvedInsert.error) throw approvedInsert.error;
+
+          const updatePending = await client
+            .from("pending_uploads")
+            .update({
+              status: "approved",
+              reviewed_at: new Date().toISOString(),
+              admin_note: note,
+              target_folder: folder
+            })
+            .eq("id", id);
+
+          if (updatePending.error) throw updatePending.error;
+
+          alert("Approved and published inside Busta Files.");
+          loadPending();
+        } catch (err) {
+          console.error(err);
+          alert("Approve failed: " + (err.message || "Unknown error"));
         }
-
-        alert("Approved. Next step: publish approved files inside Busta Files.");
-        loadPending();
       }
 
       async function rejectUpload(id) {
