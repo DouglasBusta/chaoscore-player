@@ -813,6 +813,204 @@ dialog {
 
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style id="chaoscore-persistent-player-style">
+    .chaos-files-shell {
+      position: fixed;
+      inset: 0;
+      z-index: 99990;
+      display: none;
+      background: #030303;
+      color: #e7e0d2;
+    }
+
+    .chaos-files-shell.is-open {
+      display: block;
+    }
+
+    .chaos-files-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #030303;
+    }
+
+    .chaos-files-topbar {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top));
+      left: 14px;
+      z-index: 99994;
+      display: none;
+      gap: 8px;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .chaos-files-shell.is-open + .chaos-files-topbar {
+      display: flex;
+    }
+
+    .chaos-files-back {
+      pointer-events: auto;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.64);
+      color: rgba(231,224,210,0.84);
+      backdrop-filter: blur(14px);
+      padding: 10px 13px;
+      font: inherit;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      cursor: pointer;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.32);
+    }
+
+    .chaos-floating-player {
+      position: fixed;
+      left: 50%;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(130%);
+      z-index: 99999;
+      width: min(760px, calc(100% - 20px));
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(139,23,23,0.34), transparent 40%),
+        linear-gradient(135deg, rgba(24,19,18,0.94), rgba(5,5,5,0.94));
+      color: #e7e0d2;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.58);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 220ms ease, opacity 220ms ease;
+    }
+
+    .chaos-floating-player.is-visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .chaos-floating-inner {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      gap: 11px;
+      align-items: center;
+      padding: 9px 11px;
+    }
+
+    .chaos-floating-cover {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 1px solid rgba(231,224,210,0.14);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .chaos-floating-meta {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .chaos-floating-title {
+      font-size: 0.78rem;
+      color: rgba(231,224,210,0.95);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chaos-floating-sub {
+      font-size: 0.56rem;
+      color: rgba(231,224,210,0.48);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .chaos-floating-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chaos-floating-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(231,224,210,0.16);
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.86);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font: inherit;
+      line-height: 1;
+    }
+
+    .chaos-floating-btn.play {
+      width: 40px;
+      height: 40px;
+      background: rgba(231,224,210,0.12);
+      color: #fff;
+    }
+
+    .chaos-floating-volume {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 112px;
+    }
+
+    .chaos-floating-volume span {
+      font-size: 0.62rem;
+      color: rgba(231,224,210,0.55);
+    }
+
+    .chaos-floating-volume input {
+      width: 82px;
+      accent-color: #e7e0d2;
+    }
+
+    .chaos-floating-progress {
+      height: 3px;
+      background: rgba(231,224,210,0.13);
+      overflow: hidden;
+    }
+
+    .chaos-floating-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: rgba(231,224,210,0.82);
+      transition: width 120ms linear;
+    }
+
+    @media (max-width: 620px) {
+      .chaos-floating-inner {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+      }
+
+      .chaos-floating-volume {
+        grid-column: 1 / -1;
+        justify-content: center;
+        min-width: 0;
+        padding-bottom: 3px;
+      }
+
+      .chaos-floating-volume input {
+        width: min(260px, 60vw);
+      }
+    }
+  </style>
+
 </head>
 <body>
   <main class="shell">
@@ -1801,6 +1999,278 @@ dialog {
         }
       }
     });
+  </script>
+
+
+  <script id="chaoscore-persistent-player">
+    (() => {
+      if (window.__chaoscorePersistentPlayerMounted) return;
+      window.__chaoscorePersistentPlayerMounted = true;
+
+      const TRACKS = [
+        { title: "banale", file: "/audio-mp3/1. banale.mp3" },
+        { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3" },
+        { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3" },
+        { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3" },
+        { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3" },
+        { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3" },
+        { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3" },
+        { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3" },
+        { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3" },
+        { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3" },
+        { title: "ma che ho fatto mo??...", file: "/audio-mp3/track11.mp3" },
+        { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3" },
+        { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3" },
+        { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3" },
+        { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3" }
+      ];
+
+      function absoluteUrl(path) {
+        return new URL(path, window.location.origin).href;
+      }
+
+      function audio() {
+        return document.getElementById("audio");
+      }
+
+      function currentIndex() {
+        const a = audio();
+        if (!a || !a.src) return 0;
+        const index = TRACKS.findIndex(track => a.src === absoluteUrl(track.file));
+        return index >= 0 ? index : 0;
+      }
+
+      function currentTrack() {
+        return TRACKS[currentIndex()] || TRACKS[0];
+      }
+
+      function fmt(value) {
+        if (!Number.isFinite(value)) return "0:00";
+        const m = Math.floor(value / 60);
+        const s = Math.floor(value % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+      }
+
+      function buildShell() {
+        if (document.getElementById("chaos-files-shell")) return;
+
+        const shell = document.createElement("div");
+        shell.id = "chaos-files-shell";
+        shell.className = "chaos-files-shell";
+        shell.innerHTML = `<iframe class="chaos-files-frame" id="chaos-files-frame" src="about:blank" title="Busta Files"></iframe>`;
+
+        const topbar = document.createElement("div");
+        topbar.className = "chaos-files-topbar";
+        topbar.innerHTML = `<button class="chaos-files-back" id="chaos-files-back" type="button">← Back to #chaoscore</button>`;
+
+        const island = document.createElement("div");
+        island.id = "chaos-floating-player";
+        island.className = "chaos-floating-player";
+        island.innerHTML = `
+          <div class="chaos-floating-inner">
+            <img class="chaos-floating-cover" id="chaos-floating-cover" src="/chaoscore-cover.png" alt="">
+            <div class="chaos-floating-meta">
+              <div class="chaos-floating-title" id="chaos-floating-title">#chaoscore</div>
+              <div class="chaos-floating-sub" id="chaos-floating-sub">Douglas Busta · 0:00 / 0:00</div>
+            </div>
+            <div class="chaos-floating-controls">
+              <button class="chaos-floating-btn" id="chaos-floating-prev" type="button" aria-label="Previous track">‹</button>
+              <button class="chaos-floating-btn play" id="chaos-floating-play" type="button" aria-label="Play or pause">▶</button>
+              <button class="chaos-floating-btn" id="chaos-floating-next" type="button" aria-label="Next track">›</button>
+            </div>
+            <label class="chaos-floating-volume">
+              <span>VOL</span>
+              <input id="chaos-floating-volume" type="range" min="0" max="1" step="0.01" value="1">
+            </label>
+          </div>
+          <div class="chaos-floating-progress">
+            <div class="chaos-floating-progress-fill" id="chaos-floating-progress-fill"></div>
+          </div>
+        `;
+
+        document.body.appendChild(shell);
+        document.body.appendChild(topbar);
+        document.body.appendChild(island);
+      }
+
+      function showIsland(force = false) {
+        const island = document.getElementById("chaos-floating-player");
+        const shell = document.getElementById("chaos-files-shell");
+        const a = audio();
+        if (!island) return;
+
+        const shouldShow = force || shell?.classList.contains("is-open") || (a && a.src && !a.paused);
+        island.classList.toggle("is-visible", Boolean(shouldShow));
+      }
+
+      function syncIsland() {
+        const a = audio();
+        const track = currentTrack();
+
+        const title = document.getElementById("chaos-floating-title");
+        const sub = document.getElementById("chaos-floating-sub");
+        const play = document.getElementById("chaos-floating-play");
+        const fill = document.getElementById("chaos-floating-progress-fill");
+        const cover = document.getElementById("chaos-floating-cover");
+        const mainCover = document.getElementById("main-cover");
+
+        if (title) title.textContent = track.title || "#chaoscore";
+        if (sub && a) sub.textContent = `Douglas Busta · ${fmt(a.currentTime)} / ${fmt(a.duration)}`;
+        if (play && a) play.textContent = a.paused ? "▶" : "Ⅱ";
+        if (fill && a) fill.style.width = `${a.duration ? (a.currentTime / a.duration) * 100 : 0}%`;
+        if (cover && mainCover?.src) cover.src = mainCover.src;
+
+        if ("mediaSession" in navigator && track) {
+          try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: track.title,
+              artist: "Douglas Busta",
+              album: "#chaoscore",
+              artwork: [
+                { src: cover?.src || "/chaoscore-cover.png", sizes: "512x512", type: "image/png" }
+              ]
+            });
+          } catch (_) {}
+        }
+
+        showIsland();
+      }
+
+      function clickExisting(id) {
+        const button = document.getElementById(id);
+        if (button) button.click();
+      }
+
+      async function playPause() {
+        const a = audio();
+        if (!a) return;
+
+        if (!a.src) {
+          clickExisting("play");
+          return;
+        }
+
+        if (a.paused) {
+          try {
+            await a.play();
+          } catch (_) {
+            clickExisting("play");
+          }
+        } else {
+          a.pause();
+        }
+      }
+
+      function openFilesView(push = true) {
+        buildShell();
+
+        const shell = document.getElementById("chaos-files-shell");
+        const frame = document.getElementById("chaos-files-frame");
+
+        if (!shell || !frame) return;
+
+        if (frame.getAttribute("src") === "about:blank") {
+          frame.src = "/exclusive";
+        }
+
+        shell.classList.add("is-open");
+        document.documentElement.classList.add("chaos-files-open");
+        showIsland(true);
+
+        if (push) {
+          const url = new URL(window.location.href);
+          url.searchParams.set("view", "files");
+          history.pushState({ chaosView: "files" }, "", url);
+        }
+      }
+
+      function closeFilesView(push = true) {
+        const shell = document.getElementById("chaos-files-shell");
+
+        if (shell) shell.classList.remove("is-open");
+        document.documentElement.classList.remove("chaos-files-open");
+        showIsland();
+
+        if (push) {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("view");
+          history.pushState({ chaosView: "album" }, "", url);
+        }
+      }
+
+      function bind() {
+        buildShell();
+
+        document.addEventListener("click", event => {
+          const link = event.target.closest("a");
+          if (!link) return;
+
+          const href = link.getAttribute("href") || "";
+          const text = (link.textContent || "").toLowerCase();
+
+          const isBackToFiles =
+            link.classList.contains("chaoscore-back-to-files") ||
+            text.includes("back to busta files") ||
+            href === "/" ||
+            href === "/exclusive" ||
+            href === "/exclusive.html";
+
+          if (!isBackToFiles) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+          openFilesView(true);
+        }, true);
+
+        document.getElementById("chaos-files-back")?.addEventListener("click", () => closeFilesView(true));
+        document.getElementById("chaos-floating-play")?.addEventListener("click", playPause);
+        document.getElementById("chaos-floating-prev")?.addEventListener("click", () => clickExisting("prev"));
+        document.getElementById("chaos-floating-next")?.addEventListener("click", () => clickExisting("next"));
+
+        document.getElementById("chaos-floating-volume")?.addEventListener("input", event => {
+          const a = audio();
+          if (a) a.volume = Number(event.target.value);
+        });
+
+        const a = audio();
+        if (a) {
+          ["play", "pause", "timeupdate", "loadedmetadata", "durationchange", "ended", "volumechange"].forEach(type => {
+            a.addEventListener(type, syncIsland);
+          });
+        }
+
+        if ("mediaSession" in navigator) {
+          try {
+            navigator.mediaSession.setActionHandler("play", () => audio()?.play());
+            navigator.mediaSession.setActionHandler("pause", () => audio()?.pause());
+            navigator.mediaSession.setActionHandler("previoustrack", () => clickExisting("prev"));
+            navigator.mediaSession.setActionHandler("nexttrack", () => clickExisting("next"));
+          } catch (_) {}
+        }
+
+        window.addEventListener("popstate", () => {
+          const url = new URL(window.location.href);
+          if (url.searchParams.get("view") === "files") {
+            openFilesView(false);
+          } else {
+            closeFilesView(false);
+          }
+        });
+
+        const initial = new URL(window.location.href);
+        if (initial.searchParams.get("view") === "files") {
+          openFilesView(false);
+        }
+
+        syncIsland();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", bind);
+      } else {
+        bind();
+      }
+    })();
   </script>
 
 </body>
