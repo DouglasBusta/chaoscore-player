@@ -1199,22 +1199,26 @@
 \n  
     /* USER SUBMISSIONS INSIDE OTHER */
     .user-submissions-folder {
-      position: relative;
-      overflow: hidden;
-      min-height: 220px;
-      border: 1px solid rgba(231,224,210,0.18);
-      border-radius: 18px;
+      all: unset !important;
+      box-sizing: border-box !important;
+      position: relative !important;
+      overflow: hidden !important;
+      width: 100% !important;
+      min-height: 190px !important;
+      border: 1px solid rgba(231,224,210,0.18) !important;
+      border-radius: 18px !important;
       background:
         radial-gradient(circle at 20% 0%, rgba(139,23,23,0.24), transparent 44%),
-        rgba(255,255,255,0.035);
-      color: #e7e0d2;
-      text-decoration: none;
-      display: grid;
-      align-content: end;
-      padding: 14px;
-      cursor: pointer;
-      font: inherit;
-      text-align: left;
+        linear-gradient(135deg, rgba(231,224,210,0.08), rgba(231,224,210,0.025)),
+        rgba(0,0,0,0.34) !important;
+      color: #e7e0d2 !important;
+      text-decoration: none !important;
+      display: grid !important;
+      align-content: end !important;
+      padding: 14px !important;
+      cursor: pointer !important;
+      font: inherit !important;
+      text-align: left !important;
     }
 
     .user-submissions-folder:hover {
@@ -2797,31 +2801,26 @@
       function findBestGrid(section) {
         if (!section) return null;
 
-        const candidates = Array.from(section.querySelectorAll("[class*='grid'], [class*='list'], div"));
-        let best = null;
-        let bestScore = -1;
+        let holder = document.getElementById("user-submissions-holder");
 
-        candidates.forEach(el => {
-          if (el.id === "user-submissions-panel" || el.closest("#user-submissions-panel")) return;
+        if (!holder) {
+          holder = document.createElement("div");
+          holder.id = "user-submissions-holder";
+          holder.style.display = "grid";
+          holder.style.gap = "12px";
+          holder.style.marginTop = "14px";
 
-          const children = Array.from(el.children || []);
-          const score = children.filter(child => {
-            const text = child.textContent || "";
-            return child.querySelector?.("img") || /reviewed|share|\.jpe?g|\.png|coming soon/i.test(text);
-          }).length;
+          const comingSoonBox = Array.from(section.querySelectorAll("div, article"))
+            .find(el => /coming soon/i.test(el.textContent || ""));
 
-          if (score > bestScore) {
-            best = el;
-            bestScore = score;
+          if (comingSoonBox && comingSoonBox.parentElement) {
+            comingSoonBox.insertAdjacentElement("afterend", holder);
+          } else {
+            section.appendChild(holder);
           }
-        });
+        }
 
-        if (best) return best;
-
-        const grid = document.createElement("div");
-        grid.className = "archive-grid";
-        section.appendChild(grid);
-        return grid;
+        return holder;
       }
 
       function isImage(type, url) {
@@ -2848,6 +2847,7 @@
         // Non tocchiamo nessun file esistente nella cartella.
         // Rimuoviamo solo la nostra card se era già stata montata.
         document.getElementById("user-submissions-folder")?.remove();
+        document.querySelectorAll(".user-submissions-folder").forEach(el => el.remove());
         document.getElementById("user-submissions-panel")?.remove();
 
         const result = await getApprovedFiles();
