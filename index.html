@@ -1488,94 +1488,14 @@
     }
     /* END USER SUBMISSIONS FINAL VISUAL FIX */
   
-    /* USER SUBMISSIONS TRUE ARCHIVE ACTIONS */
-    #user-submissions-grid.user-submissions-grid {
+    /* USER SUBMISSIONS REAL CLONE FIX */
+    #user-submissions-grid {
       display: grid !important;
       grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
       gap: 12px !important;
-      align-items: stretch !important;
     }
 
-    #user-submissions-grid .busta-user-file-card {
-      position: relative !important;
-      overflow: hidden !important;
-      aspect-ratio: 1 / 1.22 !important;
-      width: 100% !important;
-      border: 1px solid rgba(231,224,210,0.16) !important;
-      border-radius: 12px !important;
-      background: rgba(255,255,255,0.025) !important;
-      color: #e7e0d2 !important;
-      text-decoration: none !important;
-      display: grid !important;
-      grid-template-rows: 1fr auto !important;
-      padding: 0 !important;
-      box-shadow: none !important;
-    }
-
-    #user-submissions-grid .busta-user-file-card img {
-      position: relative !important;
-      inset: auto !important;
-      width: 100% !important;
-      height: 100% !important;
-      min-height: 0 !important;
-      object-fit: cover !important;
-      opacity: 1 !important;
-      display: block !important;
-      border-radius: 12px 12px 0 0 !important;
-      filter: contrast(1.02) saturate(0.95) !important;
-    }
-
-    #user-submissions-grid .busta-user-file-card::after {
-      display: none !important;
-    }
-
-    #user-submissions-grid .busta-user-file-copy {
-      position: relative !important;
-      z-index: 1 !important;
-      display: grid !important;
-      gap: 7px !important;
-      padding: 9px 10px 10px !important;
-      background: rgba(0,0,0,0.52) !important;
-      border-top: 1px solid rgba(231,224,210,0.08) !important;
-    }
-
-    #user-submissions-grid .busta-user-file-badge {
-      width: fit-content !important;
-      border: 1px solid rgba(231,224,210,0.16) !important;
-      border-radius: 999px !important;
-      padding: 3px 6px !important;
-      color: rgba(231,224,210,0.68) !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.12em !important;
-      font-size: 0.5rem !important;
-      line-height: 1 !important;
-      background: rgba(255,255,255,0.035) !important;
-    }
-
-    #user-submissions-grid .busta-user-file-name {
-      color: rgba(231,224,210,0.92) !important;
-      font-size: 0.68rem !important;
-      line-height: 1.22 !important;
-      word-break: break-word !important;
-      font-family: inherit !important;
-    }
-
-    #user-submissions-grid .busta-user-file-by {
-      color: rgba(231,224,210,0.52) !important;
-      font-size: 0.58rem !important;
-      line-height: 1.3 !important;
-    }
-
-    #user-submissions-grid .busta-user-file-actions {
-      display: flex !important;
-      gap: 6px !important;
-      flex-wrap: wrap !important;
-      margin-top: 2px !important;
-    }
-
-    #user-submissions-grid .busta-user-file-action {
-      appearance: none !important;
-      -webkit-appearance: none !important;
+    #user-submissions-grid .user-submission-real-clone button {
       border: 1px solid rgba(231,224,210,0.16) !important;
       border-radius: 999px !important;
       background: rgba(255,255,255,0.035) !important;
@@ -1587,42 +1507,13 @@
       letter-spacing: 0.08em !important;
       padding: 5px 7px !important;
       cursor: pointer !important;
-      text-decoration: none !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      min-height: 21px !important;
     }
 
-    #user-submissions-grid .busta-user-file-action:hover {
+    #user-submissions-grid .user-submission-real-clone button:hover {
       color: #fff !important;
       border-color: rgba(231,224,210,0.34) !important;
     }
-
-    #user-submissions-grid .busta-user-file-save {
-      width: 22px !important;
-      min-width: 22px !important;
-      padding: 5px !important;
-      font-size: 0.58rem !important;
-    }
-
-    #user-submissions-grid .busta-user-file-save.is-saved {
-      border-color: rgba(216,247,207,0.34) !important;
-      color: rgba(216,247,207,0.92) !important;
-    }
-
-    @media (max-width: 760px) {
-      #user-submissions-grid.user-submissions-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      }
-    }
-
-    @media (max-width: 520px) {
-      #user-submissions-grid.user-submissions-grid {
-        grid-template-columns: 1fr !important;
-      }
-    }
-    /* END USER SUBMISSIONS TRUE ARCHIVE ACTIONS */
+    /* END USER SUBMISSIONS REAL CLONE FIX */
 
   </style>
 </head>
@@ -3417,6 +3308,316 @@
       setTimeout(enhanceCards, 1000);
       setTimeout(enhanceCards, 1800);
       setTimeout(enhanceCards, 2600);
+    });
+  </script>
+
+
+  <script id="user-submissions-clone-real-archive-layout">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function getCardText(card) {
+        return (card?.textContent || "").trim();
+      }
+
+      function findArchiveTemplateCard() {
+        const tokens = [
+          "IMG_1441.JPG",
+          "IMG_1462.JPG",
+          "IMG_1464.JPG",
+          "DSC04317.JPG",
+          "DSC04366.JPG"
+        ];
+
+        for (const token of tokens) {
+          const node = Array.from(document.querySelectorAll("a, article, div"))
+            .filter(el => getCardText(el).includes(token))
+            .sort((a, b) => getCardText(a).length - getCardText(b).length)[0];
+
+          if (node) {
+            return node.closest("a") || node.closest("article") || node;
+          }
+        }
+
+        return null;
+      }
+
+      function getUserSubmissionDataFromOldCard(card) {
+        const img = card.querySelector("img");
+        const title =
+          card.querySelector(".busta-user-file-name")?.textContent?.trim() ||
+          Array.from(card.querySelectorAll("*"))
+            .map(el => el.textContent?.trim())
+            .find(t => t && !/reviewed|user submission|submitted by/i.test(t)) ||
+          "User Submission";
+
+        const by =
+          card.querySelector(".busta-user-file-by")?.textContent?.trim() ||
+          "Submitted by @unknown";
+
+        return {
+          href: card.href || card.getAttribute("href") || "",
+          imgSrc: img?.src || "",
+          title,
+          by
+        };
+      }
+
+      function replaceTextInClone(clone, data) {
+        const all = Array.from(clone.querySelectorAll("*"));
+
+        const filenameEl = all.find(el =>
+          /\.jpe?g|\.png|\.webp|\.gif/i.test(el.textContent || "")
+        );
+
+        if (filenameEl) filenameEl.textContent = data.title;
+
+        const reviewedEl = all.find(el =>
+          /^reviewed$/i.test((el.textContent || "").trim())
+        );
+
+        if (reviewedEl) reviewedEl.textContent = "Reviewed";
+
+        const byLike = all.find(el =>
+          /submitted by|@/i.test(el.textContent || "")
+        );
+
+        if (byLike) {
+          byLike.textContent = data.by;
+        } else if (filenameEl) {
+          const by = document.createElement("div");
+          by.textContent = data.by;
+          by.style.color = "rgba(231,224,210,0.52)";
+          by.style.fontSize = "0.58rem";
+          by.style.lineHeight = "1.3";
+          filenameEl.insertAdjacentElement("afterend", by);
+        }
+      }
+
+      function findActionsContainer(clone) {
+        const buttons = Array.from(clone.querySelectorAll("button, a"));
+        const action = buttons.find(btn =>
+          /share|✓|save|\+/i.test(btn.textContent || "") ||
+          /share|save/i.test(btn.className || "")
+        );
+
+        if (action?.parentElement) return action.parentElement;
+
+        return clone.querySelector("div:last-child") || clone;
+      }
+
+      async function isSaved(fileId) {
+        if (!client) return false;
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+        if (!session?.user) return false;
+
+        const result = await client.rpc("get_my_saved_files");
+
+        if (result.error || !result.data) return false;
+
+        return result.data.some(row =>
+          row.file_id === fileId ||
+          row.file_key === fileId ||
+          row.id === fileId
+        );
+      }
+
+      async function saveFile(fileId, title, url, button) {
+        if (!client) return;
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (!session?.user) {
+          window.location.href = "/auth?mode=login";
+          return;
+        }
+
+        button.disabled = true;
+
+        const attempts = [
+          {
+            file_id: fileId,
+            file_title: title,
+            file_type: "User Submission",
+            file_url: url,
+            file_meta: "Other Busta Files / User Submissions"
+          },
+          {
+            p_file_id: fileId,
+            p_file_title: title,
+            p_file_type: "User Submission",
+            p_file_url: url,
+            p_file_meta: "Other Busta Files / User Submissions"
+          }
+        ];
+
+        let ok = false;
+        let lastError = null;
+
+        for (const payload of attempts) {
+          const result = await client.rpc("save_busta_file", payload);
+          if (!result.error) {
+            ok = true;
+            break;
+          }
+          lastError = result.error;
+        }
+
+        button.disabled = false;
+
+        if (!ok) {
+          alert("Save failed: " + (lastError?.message || "Unknown error"));
+          return;
+        }
+
+        button.dataset.saved = "1";
+        button.textContent = "✓";
+      }
+
+      async function unsaveFile(fileId, button) {
+        if (!client) return;
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (!session?.user) {
+          window.location.href = "/auth?mode=login";
+          return;
+        }
+
+        button.disabled = true;
+
+        const result = await client.rpc("unsave_busta_file", {
+          p_file_id: fileId
+        });
+
+        button.disabled = false;
+
+        if (result.error) {
+          alert("Remove failed: " + result.error.message);
+          return;
+        }
+
+        button.dataset.saved = "0";
+        button.textContent = "+";
+      }
+
+      function buildRealArchiveClone(data, template) {
+        const clone = template.cloneNode(true);
+
+        clone.classList.add("user-submission-real-clone");
+        clone.removeAttribute("id");
+
+        if (clone.tagName.toLowerCase() === "a") {
+          clone.href = data.href;
+          clone.target = "_blank";
+          clone.rel = "noopener noreferrer";
+        }
+
+        const img = clone.querySelector("img");
+        if (img && data.imgSrc) {
+          img.src = data.imgSrc;
+          img.alt = data.title;
+        }
+
+        replaceTextInClone(clone, data);
+
+        const actionBox = findActionsContainer(clone);
+        actionBox.innerHTML = "";
+
+        const save = document.createElement("button");
+        save.type = "button";
+        save.textContent = "+";
+        save.title = "Save";
+        save.dataset.saved = "0";
+
+        const share = document.createElement("button");
+        share.type = "button";
+        share.textContent = "Share";
+
+        actionBox.appendChild(save);
+        actionBox.appendChild(share);
+
+        const fileId = "user-submission:" + data.href;
+
+        save.addEventListener("click", async (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
+          if (save.dataset.saved === "1") {
+            await unsaveFile(fileId, save);
+          } else {
+            await saveFile(fileId, data.title, data.href, save);
+          }
+        }, true);
+
+        share.addEventListener("click", async (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
+          try {
+            await navigator.clipboard.writeText(data.href);
+            share.textContent = "Copied";
+            setTimeout(() => share.textContent = "Share", 900);
+          } catch (_) {
+            alert("Copy this link manually: " + data.href);
+          }
+        }, true);
+
+        setTimeout(async () => {
+          if (await isSaved(fileId)) {
+            save.dataset.saved = "1";
+            save.textContent = "✓";
+          } else {
+            save.dataset.saved = "0";
+            save.textContent = "+";
+          }
+        }, 300);
+
+        return clone;
+      }
+
+      function cloneUserSubmissionCards() {
+        const grid = document.getElementById("user-submissions-grid");
+        if (!grid) return;
+
+        const template = findArchiveTemplateCard();
+        if (!template) return;
+
+        const oldCards = Array.from(grid.querySelectorAll(".busta-user-file-card"));
+
+        if (!oldCards.length) return;
+
+        const data = oldCards.map(getUserSubmissionDataFromOldCard);
+
+        grid.innerHTML = "";
+
+        data.forEach(item => {
+          const clone = buildRealArchiveClone(item, template);
+          grid.appendChild(clone);
+        });
+      }
+
+      cloneUserSubmissionCards();
+      setTimeout(cloneUserSubmissionCards, 600);
+      setTimeout(cloneUserSubmissionCards, 1400);
+      setTimeout(cloneUserSubmissionCards, 2600);
     });
   </script>
 
