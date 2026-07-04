@@ -1,0 +1,133 @@
+/* chaos-files-overlay-player-v1 */
+/* Back to Busta Files senza cambiare pagina: stesso player, stesso audio. */
+
+#chaos-files-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900000;
+  display: none;
+  background: #050505;
+}
+
+body.chaos-files-overlay-open #chaos-files-overlay {
+  display: block;
+}
+
+#chaos-files-overlay iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #050505;
+}
+
+#chaos-files-overlay-close {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 10px;
+  z-index: 1000002;
+  display: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  border: 1px solid rgba(231,224,210,0.2);
+  border-radius: 999px;
+  background: rgba(5,5,5,0.82);
+  color: rgba(231,224,210,0.95);
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+body.chaos-files-overlay-open #chaos-files-overlay-close {
+  display: block;
+}
+
+/* Il player vero resta vivo e diventa compatto SOLO dentro Busta Files */
+body.chaos-files-overlay-open section.player,
+body.chaos-files-overlay-open .player {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 9px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 1000001 !important;
+
+  width: min(620px, calc(100vw - 12px)) !important;
+  max-height: 96px !important;
+  overflow: hidden !important;
+
+  border-radius: 24px !important;
+  box-shadow: 0 20px 70px rgba(0,0,0,0.65) !important;
+}
+
+/* In modalità Files nascondiamo solo parti ingombranti, NON il player */
+body.chaos-files-overlay-open #tracks,
+body.chaos-files-overlay-open .tracks,
+body.chaos-files-overlay-open [id*="tracks"],
+body.chaos-files-overlay-open [class*="tracks"],
+body.chaos-files-overlay-open #wave,
+body.chaos-files-overlay-open .wave {
+  display: none !important;
+}
+
+body.chaos-files-overlay-open #main-cover {
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px !important;
+  border-radius: 14px !important;
+  object-fit: cover !important;
+}
+
+body.chaos-files-overlay-open #now-title {
+  font-size: 0.76rem !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body.chaos-files-overlay-open #time {
+  font-size: 0.55rem !important;
+  opacity: 0.62 !important;
+}
+
+body.chaos-files-overlay-open section.player .controls,
+body.chaos-files-overlay-open .player .controls {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Evita che vecchi mini player legacy tornino visibili */
+#chaos-safe-mini-player,
+.chaos-safe-mini-player,
+[id*="safe-mini"],
+[class*="safe-mini"],
+[id*="mini-player"],
+[class*="mini-player"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 720px) {
+  body.chaos-files-overlay-open section.player,
+  body.chaos-files-overlay-open .player {
+    width: calc(100vw - 10px) !important;
+    max-height: 92px !important;
+    border-radius: 22px !important;
+  }
+
+  body.chaos-files-overlay-open #main-cover {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+  }
+}
