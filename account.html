@@ -1157,5 +1157,78 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
     });
   </script>
 
+
+  <script id="account-badge-final-fix">
+    window.addEventListener("DOMContentLoaded", () => {
+      async function fixAccountBadges() {
+        const client =
+          window.bustaSupabase ||
+          (typeof bustaSupabase !== "undefined" ? bustaSupabase : null);
+
+        if (!client) return;
+
+        const roleBadge = document.getElementById("account-role-badge");
+        const chaosBadge = document.getElementById("chaos-access-badge");
+        const activateButton = document.getElementById("activate-chaos-account");
+
+        try {
+          const roleResult = await client.rpc("get_my_account_role");
+          const roleData = Array.isArray(roleResult.data) ? roleResult.data[0] : roleResult.data;
+          const role = roleData?.role || "user";
+
+          if (roleBadge) {
+            if (role === "owner") {
+              roleBadge.className = "account-role-badge owner";
+              roleBadge.textContent = "★ Owner Account";
+            } else if (role === "admin") {
+              roleBadge.className = "account-role-badge admin";
+              roleBadge.textContent = "Admin Account";
+            } else if (role === "manager") {
+              roleBadge.className = "account-role-badge admin";
+              roleBadge.textContent = "Manager Account";
+            } else {
+              roleBadge.className = "account-role-badge";
+              roleBadge.textContent = "User Account";
+            }
+          }
+        } catch (err) {
+          console.warn("Could not load account role:", err);
+        }
+
+        try {
+          const accessResult = await client.rpc("get_my_chaos_access");
+          const accessData = Array.isArray(accessResult.data) ? accessResult.data[0] : accessResult.data;
+          const isVerified = !!accessData?.chaos_verified;
+
+          if (chaosBadge) {
+            if (isVerified) {
+              chaosBadge.className = "chaos-badge";
+              chaosBadge.textContent = "✓ #Chaos Verified";
+            } else {
+              chaosBadge.className = "chaos-badge locked";
+              chaosBadge.textContent = "#Chaos Locked — Scan NFC";
+            }
+          }
+
+          if (activateButton) {
+            if (isVerified) {
+              activateButton.classList.add("hidden");
+              activateButton.style.display = "none";
+            } else {
+              activateButton.classList.remove("hidden");
+              activateButton.style.display = "";
+            }
+          }
+        } catch (err) {
+          console.warn("Could not load #Chaos access:", err);
+        }
+      }
+
+      setTimeout(fixAccountBadges, 250);
+      setTimeout(fixAccountBadges, 900);
+      setTimeout(fixAccountBadges, 1800);
+    });
+  </script>
+
 </body>
 </html>
