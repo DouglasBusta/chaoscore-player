@@ -1,0 +1,17 @@
+/* chaos-mini-visibility-guard-v1 */
+/* Nasconde SOLO il mini player quando siamo nella pagina album. Non tocca audio/player grande. */
+
+body:not(.chaos-show-mini-player) #chaos-safe-mini-player,
+body:not(.chaos-show-mini-player) .chaos-safe-mini-player {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.chaos-show-mini-player #chaos-safe-mini-player,
+body.chaos-show-mini-player .chaos-safe-mini-player {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
