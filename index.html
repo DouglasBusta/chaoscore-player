@@ -744,6 +744,16 @@ dialog {
       transform: rotate(-45deg);
     }
 
+  
+    /* FORCE CLOSE CIRCLE CLICK */
+    #modal-close-circle {
+      pointer-events: auto !important;
+    }
+
+    #modal-close-circle * {
+      pointer-events: none !important;
+    }
+
   </style>
 </head>
 <body>
@@ -807,7 +817,12 @@ dialog {
 
   <dialog id="modal">
     <div class="modal-inner">
-      <div id="modal-close-circle" aria-label="Close panel" role="button" tabindex="0">
+      <div id="modal-close-circle"
+        aria-label="Close panel"
+        role="button"
+        tabindex="0"
+        onclick="this.closest('dialog').close()"
+        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); this.closest('dialog').close(); }">
         <span class="modal-close-line line-a"></span>
         <span class="modal-close-line line-b"></span>
       </div>
