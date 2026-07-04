@@ -33,26 +33,27 @@
       margin-bottom: 28px;
     }
 
-    .topbar a {
+    .back-link,
+    .account-icon-link {
       color: rgba(231,224,210,0.72);
       text-decoration: none;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .back-link {
       text-transform: uppercase;
       letter-spacing: 0.12em;
       font-size: 0.68rem;
-      border: 1px solid rgba(231,224,210,0.18);
-      border-radius: 999px;
       padding: 10px 12px;
-      background: rgba(255,255,255,0.035);
     }
 
     .account-icon-link {
       width: 36px;
       height: 36px;
-      padding: 0 !important;
       display: inline-grid;
       place-items: center;
-      border-radius: 999px !important;
-      background: rgba(255,255,255,0.045) !important;
     }
 
     .account-icon-link svg {
@@ -63,11 +64,6 @@
       stroke-width: 1.8;
       stroke-linecap: round;
       stroke-linejoin: round;
-    }
-
-    .account-icon-link:hover {
-      border-color: rgba(231,224,210,0.38) !important;
-      background: rgba(255,255,255,0.075) !important;
     }
 
     .kicker {
@@ -91,7 +87,7 @@
       max-width: 660px;
       color: rgba(231,224,210,0.64);
       line-height: 1.65;
-      margin-bottom: 28px;
+      margin-bottom: 22px;
       font-size: 0.88rem;
     }
 
@@ -125,11 +121,6 @@
       outline: none;
     }
 
-    #submission-search:focus {
-      border-color: rgba(231,224,210,0.38);
-      background: rgba(255,255,255,0.065);
-    }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -137,21 +128,14 @@
     }
 
     .file-card {
-      position: relative;
       overflow: hidden;
       border: 1px solid rgba(231,224,210,0.16);
       border-radius: 12px;
       background: rgba(255,255,255,0.025);
       color: #e7e0d2;
-      text-decoration: none;
       display: grid;
       grid-template-rows: 1fr auto;
       min-height: 360px;
-    }
-
-    .file-card:hover {
-      border-color: rgba(231,224,210,0.38);
-      color: #fff;
     }
 
     .file-preview {
@@ -160,7 +144,7 @@
       min-height: 250px;
       object-fit: cover;
       display: block;
-      filter: contrast(1.02) saturate(0.95);
+      cursor: pointer;
     }
 
     .file-info {
@@ -221,11 +205,6 @@
       min-height: 21px;
     }
 
-    .actions button:hover {
-      color: #fff;
-      border-color: rgba(231,224,210,0.34);
-    }
-
     .actions button.is-saved {
       color: rgba(216,247,207,0.92);
       border-color: rgba(216,247,207,0.32);
@@ -252,7 +231,7 @@
 <body>
   <main>
     <div class="topbar">
-      <a href="/">← Back to Busta Files</a>
+      <a class="back-link" href="/">← Back to Busta Files</a>
       <a id="account-icon-link" class="account-icon-link" href="/account" aria-label="My Account" title="My Account">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="8" r="3.2"></circle>
@@ -263,8 +242,9 @@
 
     <div class="kicker">Other Busta Files / Subfolder</div>
     <h1>User<br>Submissions</h1>
+
     <div class="intro">
-      Approved files submitted by Busta Files users. Each file has its own shareable link and can be saved to your account.
+      Approved files submitted by Busta Files users. Each file has its own copyable link and can be saved to your account.
     </div>
 
     <div class="search-wrap">
@@ -293,137 +273,28 @@
     });
 
     const grid = document.getElementById("grid");
+    const searchInput = document.getElementById("submission-search");
+    const searchCount = document.getElementById("search-count");
+    const accountIconLink = document.getElementById("account-icon-link");
+
+    let allFiles = [];
+    let savedIds = new Set();
+
+    function clean(value) {
+      return String(value || "").trim();
+    }
 
     function fileId(item) {
-      return "user-submission:" + item.file_url;
+      return "user-submission:" + clean(item.file_url);
+    }
+
+    function publicFileKey(item) {
+      return clean(item.id || item.file_name || item.title || item.file_url);
     }
 
     function perFileLink(item) {
-      return window.location.origin + "/user-submissions?file=" + encodeURIComponent(item.id || item.file_name || item.file_url);
+      return window.location.origin + "/user-submissions?file=" + encodeURIComponent(publicFileKey(item));
     }
-
-    async function getSavedIds() {
-      const sessionResult = await client.auth.getSession();
-      const session = sessionResult.data?.session || null;
-
-      if (!session?.user) return new Set();
-
-      const result = await client.rpc("get_my_saved_files");
-
-      if (result.error || !Array.isArray(result.data)) return new Set();
-
-      return new Set(result.data.map(row => row.file_id || row.file_key || row.id).filter(Boolean));
-    }
-
-    async function toggleSave(item, button) {
-      const sessionResult = await client.auth.getSession();
-      const session = sessionResult.data?.session || null;
-
-      if (!session?.user) {
-        window.location.href = "/auth?mode=login";
-        return;
-      }
-
-      button.disabled = true;
-      button.textContent = "...";
-
-      const result = await client.rpc("toggle_busta_saved_file", {
-        p_file_id: fileId(item),
-        p_file_title: item.title || item.file_name || "User Submission",
-        p_file_type: "User Submission",
-        p_file_url: item.file_url,
-        p_file_meta: perFileLink(item)
-      });
-
-      button.disabled = false;
-
-      if (result.error) {
-        button.textContent = button.dataset.saved === "1" ? "✓" : "Save";
-        alert("Save failed: " + result.error.message);
-        return;
-      }
-
-      const savedNow = result.data === true;
-
-      button.dataset.saved = savedNow ? "1" : "0";
-      button.textContent = savedNow ? "✓" : "Save";
-      button.classList.toggle("is-saved", savedNow);
-    }
-
-    async function share(item, button) {
-      const link = perFileLink(item);
-      const title = item.title || item.file_name || "User Submission";
-
-      try {
-        if (navigator.share) {
-          await navigator.share({
-            title: title,
-            text: "Busta Files / User Submissions",
-            url: link
-          });
-          return;
-        }
-
-        await navigator.clipboard.writeText(link);
-        button.textContent = "Copied";
-        setTimeout(() => button.textContent = "Share", 900);
-      } catch (error) {
-        try {
-          await navigator.clipboard.writeText(link);
-          button.textContent = "Copied";
-          setTimeout(() => button.textContent = "Share", 900);
-        } catch (_) {
-          alert("Copy this link manually: " + link);
-        }
-      }
-    }
-
-    function card(item, savedIds) {
-      const isSaved = savedIds.has(fileId(item));
-
-      const a = document.createElement("a");
-      a.className = "file-card";
-      a.href = item.file_url;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.dataset.fileId = item.id || item.file_name || "";
-
-      const isImage = (item.file_type || "").startsWith("image/") || /\.(png|jpe?g|webp|gif)$/i.test(item.file_url || "");
-
-      a.innerHTML = `
-        ${isImage ? `<img class="file-preview" src="${item.file_url}" alt="">` : `<div class="file-preview empty">File</div>`}
-        <div class="file-info">
-          <div class="badge">Reviewed</div>
-          <div class="file-title">${item.title || item.file_name || "User Submission"}</div>
-          <div class="submitted">Submitted by @${item.submitted_by_username || "unknown"}</div>
-          <div class="actions">
-            <button class="save-button ${isSaved ? "is-saved" : ""}" type="button" data-saved="${isSaved ? "1" : "0"}">${isSaved ? "✓" : "Save"}</button>
-            <button class="share-button" type="button">Share</button>
-          </div>
-        </div>
-      `;
-
-      const saveButton = a.querySelector(".save-button");
-      const shareButton = a.querySelector(".share-button");
-
-      saveButton.addEventListener("click", async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        await toggleSave(item, saveButton);
-      });
-
-      shareButton.addEventListener("click", async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        await share(item, shareButton);
-      });
-
-      return a;
-    }
-
-    let allFiles = [];
-    let currentSavedIds = new Set();
 
     function searchableText(item) {
       return [
@@ -435,33 +306,200 @@
       ].filter(Boolean).join(" ").toLowerCase();
     }
 
-    function renderFiles() {
-      const input = document.getElementById("submission-search");
-      const count = document.getElementById("search-count");
-      const query = (input?.value || "").trim().toLowerCase();
+    async function getSession() {
+      const result = await client.auth.getSession();
+      return result.data?.session || null;
+    }
 
-      const filtered = query
+    async function updateAccountIcon() {
+      const session = await getSession();
+      accountIconLink.href = session?.user ? "/account" : "/auth?mode=login";
+      accountIconLink.title = session?.user ? "My Account" : "Log In";
+      accountIconLink.setAttribute("aria-label", session?.user ? "My Account" : "Log In");
+    }
+
+    async function loadSavedIds() {
+      const session = await getSession();
+      if (!session?.user) {
+        savedIds = new Set();
+        return;
+      }
+
+      const result = await client.rpc("get_my_saved_files");
+
+      if (result.error || !Array.isArray(result.data)) {
+        savedIds = new Set();
+        return;
+      }
+
+      savedIds = new Set(
+        result.data
+          .map(row => row.file_id || row.file_key || row.id)
+          .filter(Boolean)
+      );
+    }
+
+    async function saveItem(item, button) {
+      const session = await getSession();
+
+      if (!session?.user) {
+        window.location.href = "/auth?mode=login";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "...";
+
+      const id = fileId(item);
+
+      const result = await client.rpc("save_busta_file", {
+        p_file_id: id,
+        p_file_title: clean(item.title || item.file_name || "User Submission"),
+        p_file_type: "User Submission",
+        p_file_url: clean(item.file_url),
+        p_file_meta: perFileLink(item)
+      });
+
+      button.disabled = false;
+
+      if (result.error) {
+        button.textContent = "Save";
+        alert("Save failed: " + result.error.message);
+        return;
+      }
+
+      savedIds.add(id);
+      button.dataset.saved = "1";
+      button.classList.add("is-saved");
+      button.textContent = "✓";
+    }
+
+    async function unsaveItem(item, button) {
+      const session = await getSession();
+
+      if (!session?.user) {
+        window.location.href = "/auth?mode=login";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "...";
+
+      const id = fileId(item);
+
+      const result = await client.rpc("unsave_busta_file", {
+        p_file_id: id
+      });
+
+      button.disabled = false;
+
+      if (result.error) {
+        button.textContent = "✓";
+        alert("Remove failed: " + result.error.message);
+        return;
+      }
+
+      savedIds.delete(id);
+      button.dataset.saved = "0";
+      button.classList.remove("is-saved");
+      button.textContent = "Save";
+    }
+
+    async function copyShareLink(item, button) {
+      const link = perFileLink(item);
+
+      try {
+        await navigator.clipboard.writeText(link);
+        button.textContent = "Copied";
+        setTimeout(() => {
+          button.textContent = "Share";
+        }, 900);
+      } catch (_) {
+        alert("Copy this link manually: " + link);
+      }
+    }
+
+    function createCard(item) {
+      const id = fileId(item);
+      const isSaved = savedIds.has(id);
+      const isImage = (item.file_type || "").startsWith("image/") || /\.(png|jpe?g|webp|gif)$/i.test(item.file_url || "");
+
+      const card = document.createElement("article");
+      card.className = "file-card";
+      card.dataset.fileId = publicFileKey(item);
+
+      const preview = isImage
+        ? `<img class="file-preview" src="${clean(item.file_url)}" alt="">`
+        : `<div class="file-preview empty">File</div>`;
+
+      card.innerHTML = `
+        ${preview}
+        <div class="file-info">
+          <div class="badge">Reviewed</div>
+          <div class="file-title">${clean(item.title || item.file_name || "User Submission")}</div>
+          <div class="submitted">Submitted by @${clean(item.submitted_by_username || "unknown")}</div>
+          <div class="actions">
+            <button class="save-button ${isSaved ? "is-saved" : ""}" type="button" data-saved="${isSaved ? "1" : "0"}">${isSaved ? "✓" : "Save"}</button>
+            <button class="share-button" type="button">Share</button>
+          </div>
+        </div>
+      `;
+
+      const image = card.querySelector(".file-preview");
+      const saveButton = card.querySelector(".save-button");
+      const shareButton = card.querySelector(".share-button");
+
+      image.addEventListener("click", () => {
+        if (item.file_url) window.open(item.file_url, "_blank", "noopener,noreferrer");
+      });
+
+      saveButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (saveButton.dataset.saved === "1") {
+          await unsaveItem(item, saveButton);
+        } else {
+          await saveItem(item, saveButton);
+        }
+      });
+
+      shareButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        await copyShareLink(item, shareButton);
+      });
+
+      return card;
+    }
+
+    function renderFiles() {
+      const query = clean(searchInput.value).toLowerCase();
+
+      const files = query
         ? allFiles.filter(item => searchableText(item).includes(query))
         : allFiles;
 
-      if (count) count.textContent = filtered.length + " result" + (filtered.length === 1 ? "" : "s");
+      searchCount.textContent = files.length + " result" + (files.length === 1 ? "" : "s");
 
       grid.innerHTML = "";
 
-      if (!filtered.length) {
+      if (!files.length) {
         grid.innerHTML = `<div class="empty">No matching user submissions.</div>`;
         return;
       }
 
-      filtered.forEach(item => grid.appendChild(card(item, currentSavedIds)));
+      files.forEach(item => grid.appendChild(createCard(item)));
     }
 
     async function load() {
+      await updateAccountIcon();
+
       const result = await client
         .from("approved_busta_files")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(80);
+        .limit(100);
 
       if (result.error) {
         grid.innerHTML = `<div class="empty">Could not load user submissions: ${result.error.message}</div>`;
@@ -469,26 +507,25 @@
       }
 
       allFiles = result.data || [];
-      currentSavedIds = await getSavedIds();
+
+      await loadSavedIds();
 
       if (!allFiles.length) {
+        searchCount.textContent = "0 results";
         grid.innerHTML = `<div class="empty">No user submissions approved yet.</div>`;
-        const count = document.getElementById("search-count");
-        if (count) count.textContent = "0 results";
         return;
       }
 
       renderFiles();
 
-      document.getElementById("submission-search")?.addEventListener("input", renderFiles);
+      searchInput.addEventListener("input", renderFiles);
 
-      const params = new URLSearchParams(window.location.search);
-      const wanted = params.get("file");
+      const wanted = new URLSearchParams(window.location.search).get("file");
 
       if (wanted) {
         setTimeout(() => {
-          const target = Array.from(document.querySelectorAll(".file-card")).find(el => {
-            return el.dataset.fileId === wanted || decodeURIComponent(wanted) === el.dataset.fileId;
+          const target = Array.from(document.querySelectorAll(".file-card")).find(card => {
+            return card.dataset.fileId === wanted || decodeURIComponent(wanted) === card.dataset.fileId;
           });
 
           if (target) {
@@ -505,23 +542,6 @@
     }
 
     load();
-  
-    const accountIconLink = document.getElementById("account-icon-link");
-
-    async function updateAccountIconLink() {
-      if (!accountIconLink) return;
-
-      const sessionResult = await client.auth.getSession();
-      const session = sessionResult.data?.session || null;
-
-      accountIconLink.href = session?.user ? "/account" : "/auth?mode=login";
-      accountIconLink.title = session?.user ? "My Account" : "Log In";
-      accountIconLink.setAttribute("aria-label", session?.user ? "My Account" : "Log In");
-    }
-
-    updateAccountIconLink();
   </script>
-  <script id="user-submissions-account-icon-session"></script>
-  <script src="/user-submissions-actions-v3.js?v=3"></script>
 </body>
 </html>
