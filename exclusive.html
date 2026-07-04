@@ -1616,16 +1616,11 @@
           saveButton.disabled = true;
           saveButton.textContent = "Saving...";
 
-          const payload = {
-            user_id: session.user.id,
-            file_name: fileName,
-            file_url: item?.src || "",
-            folder: item?.folder || "Busta Files"
-          };
-
-          const { error } = await client
-            .from("saved_files")
-            .upsert(payload, { onConflict: "user_id,file_url" });
+          const { error } = await client.rpc("save_busta_file", {
+            p_file_name: fileName,
+            p_file_url: item?.src || "",
+            p_folder: item?.folder || "Busta Files"
+          });
 
           if (error) {
             console.error(error);
