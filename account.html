@@ -324,6 +324,69 @@
       color: #fff;
     }
 
+  
+    /* SAVED FILES COLLAPSE FIX */
+    .saved-files-compact {
+      display: grid;
+      gap: 12px;
+    }
+
+    .saved-files-summary {
+      border: 1px solid rgba(231,224,210,0.16);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,0.035);
+      color: rgba(231,224,210,0.72);
+      line-height: 1.55;
+    }
+
+    .saved-files-summary strong {
+      color: rgba(231,224,210,0.96);
+      font-size: 1.15rem;
+    }
+
+    .saved-files-toggle {
+      width: fit-content;
+      border: 1px solid rgba(231,224,210,0.22);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.88);
+      padding: 9px 11px;
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .saved-files-toggle:hover {
+      color: #fff;
+      border-color: rgba(231,224,210,0.44);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .saved-files-drawer {
+      max-height: 340px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .saved-files-drawer.hidden {
+      display: none;
+    }
+
+    .saved-files-drawer .saved-file-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    @media (min-width: 760px) {
+      .saved-files-drawer .saved-file-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    /* END SAVED FILES COLLAPSE FIX */
+
   </style>
 </head>
 <body>
@@ -467,5 +530,70 @@
 
     initAccount();
   </script>
+
+  <script id="saved-files-collapse-fix">
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedBox = document.getElementById("saved-files-list");
+      if (!savedBox) return;
+
+      function collapseSavedFiles() {
+        if (savedBox.dataset.collapsedReady === "true") return;
+
+        const list = savedBox.querySelector(".saved-file-list");
+        if (!list) return;
+
+        const count = list.querySelectorAll(".saved-file-item").length;
+        if (!count) return;
+
+        savedBox.dataset.collapsedReady = "true";
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "saved-files-compact";
+
+        const summary = document.createElement("div");
+        summary.className = "saved-files-summary";
+        summary.innerHTML = `
+          <strong>${count}</strong> saved file${count === 1 ? "" : "s"}<br>
+          Your saved Busta Files are stored privately on this account.
+        `;
+
+        const toggle = document.createElement("button");
+        toggle.className = "saved-files-toggle";
+        toggle.type = "button";
+        toggle.textContent = "Show Saved Files";
+
+        const drawer = document.createElement("div");
+        drawer.className = "saved-files-drawer hidden";
+
+        list.remove();
+        drawer.appendChild(list);
+
+        toggle.addEventListener("click", () => {
+          const isHidden = drawer.classList.toggle("hidden");
+          toggle.textContent = isHidden ? "Show Saved Files" : "Hide Saved Files";
+        });
+
+        wrapper.appendChild(summary);
+        wrapper.appendChild(toggle);
+        wrapper.appendChild(drawer);
+
+        savedBox.innerHTML = "";
+        savedBox.className = "";
+        savedBox.appendChild(wrapper);
+      }
+
+      const observer = new MutationObserver(() => {
+        collapseSavedFiles();
+      });
+
+      observer.observe(savedBox, {
+        childList: true,
+        subtree: false
+      });
+
+      collapseSavedFiles();
+    });
+  </script>
+
 </body>
 </html>
