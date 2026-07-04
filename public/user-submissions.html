@@ -45,6 +45,31 @@
       background: rgba(255,255,255,0.035);
     }
 
+    .account-icon-link {
+      width: 36px;
+      height: 36px;
+      padding: 0 !important;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,0.045) !important;
+    }
+
+    .account-icon-link svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: rgba(231,224,210,0.82);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .account-icon-link:hover {
+      border-color: rgba(231,224,210,0.38) !important;
+      background: rgba(255,255,255,0.075) !important;
+    }
+
     .kicker {
       color: rgba(216,247,207,0.78);
       text-transform: uppercase;
@@ -228,7 +253,12 @@
   <main>
     <div class="topbar">
       <a href="/">← Back to Busta Files</a>
-      <a href="/account">My Account</a>
+      <a id="account-icon-link" class="account-icon-link" href="/account" aria-label="My Account" title="My Account">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="3.2"></circle>
+          <path d="M5.5 20c.8-4.2 3.1-6.3 6.5-6.3s5.7 2.1 6.5 6.3"></path>
+        </svg>
+      </a>
     </div>
 
     <div class="kicker">Other Busta Files / Subfolder</div>
@@ -490,6 +520,22 @@
     }
 
     load();
+  
+    const accountIconLink = document.getElementById("account-icon-link");
+
+    async function updateAccountIconLink() {
+      if (!accountIconLink) return;
+
+      const sessionResult = await client.auth.getSession();
+      const session = sessionResult.data?.session || null;
+
+      accountIconLink.href = session?.user ? "/account" : "/auth?mode=login";
+      accountIconLink.title = session?.user ? "My Account" : "Log In";
+      accountIconLink.setAttribute("aria-label", session?.user ? "My Account" : "Log In");
+    }
+
+    updateAccountIconLink();
   </script>
+  <script id="user-submissions-account-icon-session"></script>
 </body>
 </html>
