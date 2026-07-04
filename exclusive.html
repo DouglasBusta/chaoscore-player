@@ -733,12 +733,52 @@
       margin: 0;
     }
 
+  
+    /* CHAOSCORE CARD CENTER FIX */
+
+    [data-chaoscore-card].busta-chaoscore-cover-card {
+      display: grid !important;
+      align-items: center !important;
+      justify-items: center !important;
+      text-align: center !important;
+      padding: 18px !important;
+    }
+
+    [data-chaoscore-card].busta-chaoscore-cover-card > div {
+      width: 100%;
+      max-width: 92%;
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      transform: translateY(2px);
+    }
+
+    [data-chaoscore-card].busta-chaoscore-cover-card [data-chaos-title] {
+      font-size: clamp(1.75rem, 4.4vw, 3.25rem) !important;
+      line-height: 0.86 !important;
+      letter-spacing: -0.075em !important;
+      text-align: center !important;
+      margin: 0 auto 8px !important;
+      max-width: 100% !important;
+      overflow-wrap: normal !important;
+    }
+
+    [data-chaoscore-card].busta-chaoscore-cover-card .chaos-card-copy,
+    [data-chaoscore-card].busta-chaoscore-cover-card div[style*="NFC-only"] {
+      text-align: center !important;
+      max-width: 92% !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    /* END CHAOSCORE CARD CENTER FIX */
+
   </style>
 </head>
 <body>
   <main class="page">
     <div class="topbar">
-      <a class="back" href="/">← Back to #chaoscore player</a>
+      
       <div class="agency">
         <div class="seal">DB</div>
         <div>Official Busta Archive</div>
@@ -1935,7 +1975,7 @@
             Private Album File
           </div>
           <h2 data-chaos-title>Listen to<br>#chaoscore</h2>
-          <div style="color:rgba(231,224,210,0.78);line-height:1.55;font-size:0.82rem;margin-top:12px;max-width:420px;">
+          <div class="chaos-card-copy" style="color:rgba(231,224,210,0.78);line-height:1.45;font-size:0.72rem;margin-top:8px;max-width:92%;">
             NFC-only access. Scan your #Chaoscore tag to unlock the album on your account.
           </div>
         </div>
