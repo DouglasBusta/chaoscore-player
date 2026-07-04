@@ -1,0 +1,12 @@
+/* chaos-hide-mini-on-album-v1 */
+/* Nasconde il mini player SOLO sulla pagina album normale. Non tocca audio, FLAC o controlli. */
+
+body:not(.chaos-files-mode) #chaos-safe-mini-player,
+body:not(.chaos-files-mode) .chaos-safe-mini-player,
+body:not(.chaos-files-mode) [id*="chaos-safe-mini"],
+body:not(.chaos-files-mode) [class*="chaos-safe-mini"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
