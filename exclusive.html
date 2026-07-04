@@ -634,6 +634,44 @@
       background: rgba(231,224,210,0.82);
     }
 
+  
+    .auth-return-banner {
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      top: 18px;
+      transform: translateX(-50%);
+      width: min(520px, calc(100% - 28px));
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(231,224,210,0.10), rgba(231,224,210,0.035)),
+        rgba(7,7,6,0.94);
+      color: rgba(231,224,210,0.88);
+      padding: 14px 16px;
+      box-shadow: 0 20px 70px rgba(0,0,0,0.42);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .auth-return-banner strong {
+      display: block;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      margin-bottom: 4px;
+    }
+
+    .auth-return-banner.error {
+      border-color: rgba(179,34,34,0.58);
+      background:
+        linear-gradient(135deg, rgba(139,23,23,0.24), rgba(231,224,210,0.035)),
+        rgba(7,7,6,0.94);
+    }
+
   </style>
 </head>
 <body>
@@ -754,13 +792,94 @@
     }
 
 
+  
+    // BUSTA AUTH REDIRECT HANDLER
+    function showAuthReturnBanner(title, message, type = "ok") {
+      const oldBanner = document.querySelector(".auth-return-banner");
+      if (oldBanner) oldBanner.remove();
+
+      const banner = document.createElement("div");
+      banner.className = "auth-return-banner" + (type === "error" ? " error" : "");
+      banner.innerHTML = `<strong>${title}</strong>${message}`;
+      document.body.appendChild(banner);
+
+      window.setTimeout(() => {
+        banner.style.opacity = "0";
+        banner.style.transform = "translateX(-50%) translateY(-8px)";
+        banner.style.transition = "opacity 220ms ease, transform 220ms ease";
+        window.setTimeout(() => banner.remove(), 240);
+      }, 5200);
+    }
+
+    async function handleSupabaseAuthRedirect() {
+      if (!bustaSupabase) return;
+
+      const url = new URL(window.location.href);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const code = url.searchParams.get("code");
+      const error = url.searchParams.get("error") || hashParams.get("error");
+      const errorDescription =
+        url.searchParams.get("error_description") ||
+        hashParams.get("error_description");
+
+      if (error) {
+        showAuthReturnBanner(
+          "Authentication error",
+          decodeURIComponent(errorDescription || "The confirmation link could not be completed."),
+          "error"
+        );
+        window.history.replaceState({}, document.title, "/exclusive");
+        return;
+      }
+
+      if (code) {
+        const { error: exchangeError } = await bustaSupabase.auth.exchangeCodeForSession(code);
+
+        if (exchangeError) {
+          showAuthReturnBanner(
+            "Confirmation problem",
+            exchangeError.message,
+            "error"
+          );
+          window.history.replaceState({}, document.title, "/exclusive");
+          return;
+        }
+      }
+
+      const { data } = await bustaSupabase.auth.getSession();
+      const session = data?.session || null;
+
+      if (session?.user) {
+        updateAuthUI(session);
+        showAuthReturnBanner(
+          "Email confirmed",
+          "Your Busta Files archive session is now active."
+        );
+        window.history.replaceState({}, document.title, "/exclusive");
+      }
+    }
+
+    handleSupabaseAuthRedirect();
+
+    if (bustaSupabase) {
+      bustaSupabase.auth.onAuthStateChange((_event, session) => {
+        updateAuthUI(session || null);
+      });
+    }
+
   </script>
   <script>
     // BUSTA SUPABASE CONFIG
     const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
     const bustaSupabase = window.supabase
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+          auth: {
+            detectSessionInUrl: true,
+            persistSession: true,
+            autoRefreshToken: true
+          }
+        })
       : null;
 
     const files = [
