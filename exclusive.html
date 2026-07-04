@@ -1076,6 +1076,128 @@
     }
     /* END AUTH MOBILE V3 */
 
+  
+    /* BUSTA FILE UPLOAD SYSTEM */
+    .busta-upload-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid rgba(216,247,207,0.28);
+      border-radius: 999px;
+      background: rgba(216,247,207,0.075);
+      color: #d8f7cf;
+      padding: 11px 13px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      cursor: pointer;
+      font: inherit;
+      margin: 10px 0;
+    }
+
+    .busta-upload-button:hover {
+      color: #fff;
+      border-color: rgba(216,247,207,0.54);
+      background: rgba(216,247,207,0.12);
+    }
+
+    .busta-upload-dialog {
+      width: min(540px, calc(100% - 26px));
+      border: 1px solid rgba(231,224,210,0.22);
+      border-radius: 24px;
+      background: #100d0a;
+      color: #e7e0d2;
+      padding: 0;
+      box-shadow: 0 32px 110px rgba(0,0,0,0.62);
+    }
+
+    .busta-upload-dialog::backdrop {
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .busta-upload-inner {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .busta-upload-inner h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.15rem;
+      line-height: 0.92;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+
+    .busta-upload-copy {
+      color: rgba(231,224,210,0.62);
+      line-height: 1.55;
+      font-size: 0.78rem;
+    }
+
+    .busta-upload-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .busta-upload-field label {
+      color: rgba(231,224,210,0.56);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+    }
+
+    .busta-upload-field input,
+    .busta-upload-field select,
+    .busta-upload-field textarea {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.24);
+      color: #e7e0d2;
+      padding: 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    .busta-upload-field textarea {
+      min-height: 82px;
+      resize: vertical;
+    }
+
+    .busta-upload-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .busta-upload-actions button {
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(231,224,210,0.065);
+      color: #e7e0d2;
+      padding: 11px 13px;
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .busta-upload-message {
+      min-height: 20px;
+      color: rgba(231,224,210,0.64);
+      line-height: 1.5;
+      font-size: 0.78rem;
+    }
+    /* END BUSTA FILE UPLOAD SYSTEM */
+
   </style>
 </head>
 <body>
@@ -2136,10 +2258,37 @@
     });
   </script>
 
+  <script id="disable-old-auth-modal">
+    window.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("click", (event) => {
+        const authButton = event.target.closest("[data-auth-open]");
+        if (!authButton) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        window.location.href = "/auth";
+      }, true);
+
+      const modal = document.getElementById("auth-modal");
+      if (modal && modal.open) {
+        modal.close();
+      }
+
+      document.querySelectorAll("[data-auth-open]").forEach((button) => {
+        if (button.tagName.toLowerCase() === "a") {
+          button.href = "/auth";
+        }
+      });
+    });
+  </script>
+
 
   <dialog id="busta-upload-dialog" class="busta-upload-dialog">
     <form id="busta-upload-form" class="busta-upload-inner" method="dialog">
       <h3>Submit<br>File</h3>
+
       <div class="busta-upload-copy">
         Upload a file for Douglas to review. If approved, it can be declassified inside Busta Files.
       </div>
@@ -2211,17 +2360,18 @@
         button.textContent = "Upload File";
 
         const downloads = document.querySelector(".busta-app-downloads");
+        const search = document.querySelector("[class*='search']");
+        const hero = document.querySelector("main");
+
         if (downloads) {
           downloads.appendChild(button);
-          return;
+        } else if (search) {
+          search.insertAdjacentElement("afterend", button);
+        } else if (hero) {
+          hero.prepend(button);
+        } else {
+          document.body.prepend(button);
         }
-
-        const search =
-          document.querySelector("[class*='search']") ||
-          document.querySelector("main") ||
-          document.body;
-
-        search.insertAdjacentElement("afterend", button);
       }
 
       async function openUpload() {
@@ -2234,10 +2384,7 @@
         const session = data?.session || null;
 
         if (!session?.user) {
-          const login = document.querySelector('[data-auth-open="login"]') ||
-                        document.querySelector('[data-auth-open="signup"]');
-          if (login) login.click();
-          else alert("Log in before uploading.");
+          window.location.href = "/auth?mode=login";
           return;
         }
 
@@ -2292,11 +2439,11 @@
           }
 
           const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const path = session.user.id + "/" + Date.now() + "-" + safeName;
+          const storagePath = session.user.id + "/" + Date.now() + "-" + safeName;
 
           const upload = await client.storage
             .from("busta-submissions")
-            .upload(path, file, {
+            .upload(storagePath, file, {
               cacheControl: "3600",
               upsert: false
             });
@@ -2308,7 +2455,7 @@
             uploader_email: session.user.email || "",
             uploader_username: username,
             file_name: file.name,
-            file_path: path,
+            file_path: storagePath,
             file_type: file.type || "",
             file_size: file.size,
             suggested_folder: folderInput?.value || "Other Busta Files",
@@ -2339,38 +2486,13 @@
       document.addEventListener("click", (event) => {
         const uploadOpen = event.target.closest("#busta-upload-open");
         if (!uploadOpen) return;
+
         event.preventDefault();
         openUpload();
       });
 
       closeButton?.addEventListener("click", () => dialog?.close());
       form?.addEventListener("submit", submitUpload);
-    });
-  </script>
-
-  <script id="disable-old-auth-modal">
-    window.addEventListener("DOMContentLoaded", () => {
-      document.addEventListener("click", (event) => {
-        const authButton = event.target.closest("[data-auth-open]");
-        if (!authButton) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        window.location.href = "/auth";
-      }, true);
-
-      const modal = document.getElementById("auth-modal");
-      if (modal && modal.open) {
-        modal.close();
-      }
-
-      document.querySelectorAll("[data-auth-open]").forEach((button) => {
-        if (button.tagName.toLowerCase() === "a") {
-          button.href = "/auth";
-        }
-      });
     });
   </script>
 

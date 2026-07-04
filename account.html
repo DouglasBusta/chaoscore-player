@@ -645,7 +645,6 @@
       display: none !important;
     }
     /* END HIDE PUBLIC EMAIL ON ACCOUNT */
-
   
     /* OWNER REVIEW PANEL */
     .owner-review-panel {
@@ -714,12 +713,6 @@
       letter-spacing: 0.1em;
       font-size: 0.6rem;
       text-decoration: none;
-    }
-
-    .owner-review-actions button:hover,
-    .owner-review-actions a:hover {
-      border-color: rgba(231,224,210,0.44);
-      color: #fff;
     }
     /* END OWNER REVIEW PANEL */
 
@@ -1335,6 +1328,7 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         `;
 
         const grid = document.querySelector(".grid") || document.querySelector("main");
+
         if (grid) grid.prepend(panel);
         else document.body.appendChild(panel);
 
@@ -1441,7 +1435,7 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
           return;
         }
 
-        alert("Approved. Next step: publish approved files into Busta Files grid.");
+        alert("Approved. Next step: publish approved files inside Busta Files.");
         loadPending();
       }
 
@@ -1472,13 +1466,8 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         const approve = event.target.closest("[data-approve-upload]");
         const reject = event.target.closest("[data-reject-upload]");
 
-        if (approve) {
-          approveUpload(approve.dataset.approveUpload, approve.dataset.folder);
-        }
-
-        if (reject) {
-          rejectUpload(reject.dataset.rejectUpload);
-        }
+        if (approve) approveUpload(approve.dataset.approveUpload, approve.dataset.folder);
+        if (reject) rejectUpload(reject.dataset.rejectUpload);
       });
 
       setTimeout(loadPending, 700);
