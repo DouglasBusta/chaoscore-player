@@ -647,7 +647,7 @@
       <div class="auth-actions">
         <button class="auth-btn" type="button" data-auth-open="login">Log In</button>
         <button class="auth-btn auth-btn-primary" type="button" data-auth-open="signup">Sign Up</button>
-        <a class="account-avatar hidden" id="account-link" href="/account.html" aria-label="My Account">
+        <a class="account-avatar hidden" id="account-link" href="/account.html" aria-label="My Account" data-account-avatar>
           <span class="account-avatar-head"></span>
           <span class="account-avatar-body"></span>
         </a>
@@ -729,7 +729,32 @@
 
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    // FINAL ACCOUNT AVATAR SESSION CHECK
+    if (accountLink) {
+      accountLink.addEventListener("click", async (event) => {
+        event.preventDefault();
+
+        if (!bustaSupabase) {
+          openAuth("login");
+          return;
+        }
+
+        const { data } = await bustaSupabase.auth.getSession();
+        const session = data?.session;
+
+        if (!session?.user) {
+          localStorage.removeItem("bustaAccount");
+          updateAuthUI();
+          openAuth("login");
+          return;
+        }
+
+        window.location.href = "/account.html";
+      });
+    }
+
+  </script>
   <script>
     // BUSTA SUPABASE CONFIG
     const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";

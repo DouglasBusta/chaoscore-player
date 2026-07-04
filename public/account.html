@@ -303,7 +303,17 @@
       const { data, error } = await bustaSupabase.auth.getSession();
 
       if (error || !data.session || !data.session.user) {
-        window.location.href = "/exclusive";
+        loading.innerHTML = `
+          <div style="text-align:center; max-width:520px; padding:28px;">
+            <div style="font-family:Georgia,'Times New Roman',serif; font-size:3rem; line-height:.9; letter-spacing:-.06em; text-transform:uppercase; margin-bottom:18px;">
+              Log In<br>Required
+            </div>
+            <div style="color:rgba(231,224,210,.68); line-height:1.6; margin-bottom:22px;">
+              This private account page requires an active Busta Files session.
+            </div>
+            <a class="pill" href="/exclusive">Back to Busta Files</a>
+          </div>
+        `;
         return;
       }
 
