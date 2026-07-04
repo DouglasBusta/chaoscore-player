@@ -1019,6 +1019,63 @@
     }
     /* END AUTH CLEAN V2 */
 
+  
+    /* AUTH MOBILE V3 */
+    #auth-password-confirm-label {
+      display: block;
+      margin-top: 14px;
+      color: rgba(231,224,210,0.56);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+      font-family: inherit;
+    }
+
+    #auth-password-confirm {
+      width: 100% !important;
+      box-sizing: border-box !important;
+      border: 1px solid rgba(231,224,210,0.24) !important;
+      border-radius: 16px !important;
+      background: rgba(0,0,0,0.24) !important;
+      color: #e7e0d2 !important;
+      padding: 14px !important;
+      font: inherit !important;
+      font-family: inherit !important;
+      font-size: inherit !important;
+      line-height: 1.2 !important;
+      outline: none !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+    }
+
+    #auth-password-confirm:focus {
+      border-color: rgba(231,224,210,0.46) !important;
+      background: rgba(0,0,0,0.32) !important;
+    }
+
+    .auth-hidden {
+      display: none !important;
+    }
+
+    .auth-forgot-password {
+      margin-top: 10px;
+      border: 0;
+      background: transparent;
+      color: rgba(231,224,210,0.58);
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      padding: 8px 0;
+      width: fit-content;
+    }
+
+    .auth-forgot-password:hover {
+      color: #fff;
+    }
+    /* END AUTH MOBILE V3 */
+
   </style>
 </head>
 <body>
@@ -1084,11 +1141,11 @@
 
           <label class="auth-label" for="auth-password">Password</label>
           <input id="auth-password" class="auth-input" type="password" placeholder="••••••••" minlength="8" required>
-          <label id="auth-password-confirm-label" for="auth-password-confirm">Confirm Password</label>
-          <input id="auth-password-confirm" type="password" autocomplete="new-password" placeholder="Repeat password">
+          <label id="auth-password-confirm-label" class="auth-label auth-confirm-only" for="auth-password-confirm">CONFIRM PASSWORD</label>
+          <input id="auth-password-confirm" class="auth-input auth-confirm-only" type="password" autocomplete="new-password" placeholder="Repeat password">
 
-          <button id="auth-submit-btn" class="auth-submit" type="submit">Enter Archive</button>
-          <button id="auth-forgot-password" class="auth-forgot-password" type="button">Forgot Password?</button>
+          <button id="auth-submit-btn" class="auth-submit" type="button">Enter Archive</button>
+          <button id="auth-forgot-password" class="auth-forgot-password auth-hidden" type="button">Forgot Password?</button>
         </form>
 
         <p id="auth-message" class="auth-message"></p>
@@ -2292,7 +2349,7 @@
   </script>
 
 
-  <script id="busta-auth-clean-v2">
+  <script id="busta-auth-mobile-v3">
     window.addEventListener("DOMContentLoaded", () => {
       const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
       const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
@@ -2308,15 +2365,7 @@
         : null;
 
       const authModal = document.getElementById("auth-modal");
-      let authForm = document.getElementById("auth-form");
-
-      // Cloniamo il form per togliere listener vecchi rimasti attaccati
-      if (authForm) {
-        const cleanForm = authForm.cloneNode(true);
-        authForm.parentNode.replaceChild(cleanForm, authForm);
-        authForm = cleanForm;
-      }
-
+      const authForm = document.getElementById("auth-form");
       const authTitle = document.getElementById("auth-title");
       const authCopy = document.getElementById("auth-copy");
       const authEmail = document.getElementById("auth-email");
@@ -2331,6 +2380,7 @@
       const remember = document.getElementById("auth-remember");
 
       let mode = "signup";
+      let busy = false;
 
       function setMessage(text) {
         if (authMessage) authMessage.textContent = text || "";
@@ -2394,6 +2444,13 @@
         if (forgotPassword) {
           forgotPassword.classList.toggle("auth-hidden", isSignup);
         }
+
+        if (authSubmit) {
+          authSubmit.disabled = false;
+          authSubmit.textContent = "Enter Archive";
+        }
+
+        busy = false;
       }
 
       function showLoggedOut() {
@@ -2476,6 +2533,8 @@
           event.stopImmediatePropagation();
         }
 
+        if (busy) return;
+
         if (!client) {
           setMessage("Authentication service is not loaded. Refresh and try again.");
           return;
@@ -2507,6 +2566,8 @@
           localStorage.removeItem("bustaRememberedEmail");
         }
 
+        busy = true;
+
         if (authSubmit) {
           authSubmit.disabled = true;
           authSubmit.textContent = mode === "login" ? "Checking..." : "Creating...";
@@ -2514,9 +2575,9 @@
 
         setMessage(mode === "login" ? "Checking account..." : "Creating account...");
 
-        let result;
-
         try {
+          let result;
+
           if (mode === "login") {
             result = await client.auth.signInWithPassword({
               email,
@@ -2531,51 +2592,46 @@
               }
             });
           }
+
+          if (result?.error) {
+            throw result.error;
+          }
+
+          const { data } = await client.auth.getSession();
+          const session = data?.session || result?.data?.session || null;
+
+          if (!session?.user) {
+            mode = "login";
+            updateModeUI();
+            setMessage("Account created. Now press Log In with the same email and password.");
+            return;
+          }
+
+          showLoggedIn();
+          setMessage(mode === "login" ? "Access granted." : "Account created. Access granted.");
+
+          setTimeout(() => {
+            authModal?.close();
+            updateModeUI();
+          }, 650);
         } catch (err) {
+          console.error("AUTH ERROR", err);
           setMessage(readableError(err));
+          busy = false;
+
           if (authSubmit) {
             authSubmit.disabled = false;
             authSubmit.textContent = "Enter Archive";
           }
-          return;
         }
-
-        if (result?.error) {
-          setMessage(readableError(result.error));
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        const { data } = await client.auth.getSession();
-        const session = data?.session || result?.data?.session || null;
-
-        if (!session?.user) {
-          setMessage("Account created. Now press Log In with the same email and password.");
-          mode = "login";
-          updateModeUI();
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        showLoggedIn();
-        setMessage(mode === "login" ? "Access granted." : "Account created. Access granted.");
-
-        setTimeout(() => {
-          authModal?.close();
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-        }, 650);
       }
 
-      async function resetPassword() {
+      async function resetPassword(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
         if (!client) {
           setMessage("Authentication service is not loaded.");
           return;
@@ -2603,12 +2659,20 @@
         setMessage("Password reset email sent. Check your inbox.");
       }
 
-      if (authForm) authForm.addEventListener("submit", submitAuth, true);
-      if (authSubmit) authSubmit.addEventListener("click", submitAuth, true);
-      if (forgotPassword) forgotPassword.addEventListener("click", resetPassword);
+      if (authSubmit) {
+        authSubmit.onclick = submitAuth;
+      }
+
+      if (authForm) {
+        authForm.onsubmit = submitAuth;
+      }
+
+      if (forgotPassword) {
+        forgotPassword.onclick = resetPassword;
+      }
 
       if (accountLink) {
-        accountLink.addEventListener("click", async (event) => {
+        accountLink.onclick = async (event) => {
           event.preventDefault();
 
           const session = await refreshSessionUI();
@@ -2619,7 +2683,7 @@
           }
 
           window.location.href = "/account.html";
-        }, true);
+        };
       }
 
       if (client) {
