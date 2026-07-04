@@ -839,6 +839,33 @@
     }
     /* END SAVE TICK LIGHT FIX */
 
+  
+    /* COVER ARROW CLEANUP */
+    .cover-arrow-clean {
+      border: 0 !important;
+      outline: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      padding: 4px 8px !important;
+      min-width: auto !important;
+      width: auto !important;
+      height: auto !important;
+      color: rgba(231,224,210,0.9) !important;
+      font-size: 1rem !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      text-transform: none !important;
+      border-radius: 0 !important;
+    }
+
+    .cover-arrow-clean:hover {
+      color: #fff !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+    /* END COVER ARROW CLEANUP */
+
   </style>
 </head>
 <body>
@@ -2116,6 +2143,20 @@
         const text = (button.textContent || "").trim().toLowerCase();
         if (button.dataset.saved === "true" || text === "saved" || text === "✓") {
           makeTick(button);
+        }
+      });
+    });
+  </script>
+
+
+  <script id="cover-arrow-cleanup">
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("button, a, span, div").forEach((el) => {
+        const label = (el.textContent || "").trim();
+
+        if (label === "<★" || label === "★>") {
+          el.classList.add("cover-arrow-clean");
+          el.removeAttribute("style");
         }
       });
     });

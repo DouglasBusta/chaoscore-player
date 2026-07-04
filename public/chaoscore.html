@@ -784,6 +784,33 @@ dialog {
       background: rgba(30,18,15,0.9);
     }
 
+  
+    /* COVER ARROW CLEANUP */
+    .cover-arrow-clean {
+      border: 0 !important;
+      outline: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      padding: 4px 8px !important;
+      min-width: auto !important;
+      width: auto !important;
+      height: auto !important;
+      color: rgba(231,224,210,0.9) !important;
+      font-size: 1rem !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      text-transform: none !important;
+      border-radius: 0 !important;
+    }
+
+    .cover-arrow-clean:hover {
+      color: #fff !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+    /* END COVER ARROW CLEANUP */
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -867,12 +894,12 @@ dialog {
 
     const coverOptions = [
       {
-            "label": "★>",
+            "label": "<★",
             "src": "/assets/chaoscore-spotify-cover.jpg"
       },
       {
-            "label": "<★",
-            "src": "/covers/<★.png"
+            "label": "★>",
+            "src": "/covers/★>.png"
       }
 ];
 
@@ -1702,6 +1729,20 @@ dialog {
       link.href = "/";
       link.textContent = "← Back to Busta Files";
       document.body.appendChild(link);
+    });
+  </script>
+
+
+  <script id="cover-arrow-cleanup">
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("button, a, span, div").forEach((el) => {
+        const label = (el.textContent || "").trim();
+
+        if (label === "<★" || label === "★>") {
+          el.classList.add("cover-arrow-clean");
+          el.removeAttribute("style");
+        }
+      });
     });
   </script>
 
