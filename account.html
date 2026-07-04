@@ -4,66 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account — BUSTA FILES</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    async function loadSavedFilesFromSupabase() {
-      const savedBox = document.getElementById("saved-files-list");
-      if (!savedBox) return;
-
-      savedBox.className = "empty";
-      savedBox.textContent = "Loading saved files...";
-
-      try {
-        const timeout = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Saved files request timed out.")), 8000);
-        });
-
-        const request = bustaSupabase.rpc("get_my_saved_files");
-
-        const { data, error } = await Promise.race([request, timeout]);
-
-        if (error) {
-          savedBox.className = "empty";
-          savedBox.textContent = "Could not load saved files: " + error.message;
-          return;
-        }
-
-        if (!data || !data.length) {
-          savedBox.className = "empty";
-          savedBox.textContent = "No saved files yet.";
-          return;
-        }
-
-        savedBox.className = "";
-        savedBox.innerHTML = `
-          <ul class="saved-file-list">
-            ${data.map(file => `
-              <li class="saved-file-item">
-                <div class="saved-file-name">${file.file_name}</div>
-                <div class="saved-file-meta">${file.folder || "Busta Files"}</div>
-                ${file.file_url ? `<a class="saved-file-open" href="${file.file_url}" target="_blank" rel="noopener noreferrer">Open File</a>` : ""}
-              </li>
-            `).join("")}
-          </ul>
-        `;
-      } catch (err) {
-        savedBox.className = "empty";
-        savedBox.textContent = "Could not load saved files: " + (err.message || "Unknown error.");
-      }
-    }
-
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --paper: #e7e0d2;
-      --muted: rgba(231,224,210,0.64);
       --line: rgba(231,224,210,0.18);
       --red: #8b1717;
-      --red2: #b32222;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -74,38 +23,9 @@
         linear-gradient(180deg, #0d0b08 0%, #050504 72%);
       color: var(--paper);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        repeating-linear-gradient(
-          0deg,
-          rgba(255,255,255,0.025) 0px,
-          rgba(255,255,255,0.025) 1px,
-          transparent 1px,
-          transparent 4px
-        );
-      opacity: 0.45;
-      z-index: 1;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.62) 78%);
-      z-index: 2;
     }
 
     .page {
-      position: relative;
-      z-index: 3;
       width: min(1080px, calc(100% - 28px));
       margin: 0 auto;
       padding: 28px 0 72px;
@@ -135,8 +55,6 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
       font-size: 0.74rem;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
     }
 
     .pill:hover {
@@ -202,25 +120,6 @@
       max-width: 720px;
     }
 
-    .badge-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    .badge {
-      display: inline-flex;
-      border: 1px solid rgba(231,224,210,0.2);
-      border-radius: 999px;
-      padding: 8px 10px;
-      color: rgba(231,224,210,0.72);
-      background: rgba(255,255,255,0.04);
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -248,37 +147,6 @@
       line-height: 1.65;
     }
 
-    .loading {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      color: rgba(231,224,210,0.7);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-size: 0.82rem;
-    }
-
-    .locked {
-      display: none;
-    }
-
-    @media (max-width: 760px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .topbar {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .hero::before {
-        right: -42px;
-        top: 20px;
-        font-size: 2.6rem;
-      }
-    }
-  
     .saved-file-list {
       display: grid;
       gap: 10px;
@@ -329,12 +197,32 @@
       background: rgba(255,255,255,0.08);
     }
 
+    .loading {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      color: rgba(231,224,210,0.7);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      text-align: center;
+      padding: 28px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+    }
   </style>
 </head>
 <body>
   <div id="loading" class="loading">Checking private archive session...</div>
 
-  <main id="account-page" class="page locked">
+  <main id="account-page" class="page hidden">
     <div class="topbar">
       <a class="pill" href="/exclusive">← Back to Busta Files</a>
       <button class="pill danger" id="logout" type="button">Log Out</button>
@@ -343,46 +231,31 @@
     <section class="hero">
       <div class="kicker">Private Archive Account</div>
       <h1>My<br>Account</h1>
-
       <div class="session">
         <strong id="account-email">Loading...</strong><br>
-        This private account page is connected to Supabase Auth. Only the logged-in session can view this archive dashboard.
-      </div>
-
-      <div class="badge-row">
-        <span class="badge">Access Level: Registered</span>
-        <span class="badge">Archive Session: Active</span>
-        <span class="badge">Backend: Supabase</span>
+        This private account page is connected to Supabase Auth.
       </div>
     </section>
 
     <section class="grid">
       <article class="card">
         <h2>Saved Files</h2>
-        <div id="saved-files-list" class="empty">
-          Loading saved files...
-        </div>
+        <div id="saved-files-list" class="empty">Loading saved files...</div>
       </article>
 
       <article class="card">
         <h2>Shared Files</h2>
-        <div class="empty">
-          Files shared with other registered archive users will appear here.
-        </div>
+        <div class="empty">Shared files will appear here after the next backend connection.</div>
       </article>
 
       <article class="card">
         <h2>Favorite Tracks</h2>
-        <div class="empty">
-          Favorite #chaoscore tracks will be synced here once the global player database is connected.
-        </div>
+        <div class="empty">Favorite #chaoscore tracks will be synced here once the global player database is connected.</div>
       </article>
 
       <article class="card">
         <h2>Private Inbox</h2>
-        <div class="empty">
-          Private messages, photo transfers and file exchanges will appear here after the inbox backend is created.
-        </div>
+        <div class="empty">Private messages, photo transfers and file exchanges will appear here after the inbox backend is created.</div>
       </article>
     </section>
   </main>
@@ -390,48 +263,99 @@
   <script>
     const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
-    const bustaSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const bustaSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
 
     const loading = document.getElementById("loading");
     const accountPage = document.getElementById("account-page");
     const accountEmail = document.getElementById("account-email");
     const logout = document.getElementById("logout");
+    const savedBox = document.getElementById("saved-files-list");
 
-    async function requireAccountSession() {
+    function showLoginRequired() {
+      loading.innerHTML = `
+        <div style="max-width:520px;">
+          <div style="font-family:Georgia,'Times New Roman',serif; font-size:3rem; line-height:.9; letter-spacing:-.06em; text-transform:uppercase; margin-bottom:18px;">
+            Log In<br>Required
+          </div>
+          <div style="color:rgba(231,224,210,.68); line-height:1.6; margin-bottom:22px;">
+            This private account page requires an active Busta Files session.
+          </div>
+          <a class="pill" href="/exclusive">Back to Busta Files</a>
+        </div>
+      `;
+    }
+
+    async function loadSavedFiles() {
+      savedBox.className = "empty";
+      savedBox.textContent = "Loading saved files...";
+
+      try {
+        const timeout = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Saved files request timed out.")), 8000);
+        });
+
+        const request = bustaSupabase.rpc("get_my_saved_files");
+        const result = await Promise.race([request, timeout]);
+
+        const data = result?.data || [];
+        const error = result?.error || null;
+
+        if (error) {
+          savedBox.textContent = "Could not load saved files: " + error.message;
+          return;
+        }
+
+        if (!data.length) {
+          savedBox.textContent = "No saved files yet.";
+          return;
+        }
+
+        savedBox.className = "";
+        savedBox.innerHTML = `
+          <ul class="saved-file-list">
+            ${data.map(file => `
+              <li class="saved-file-item">
+                <div class="saved-file-name">${file.file_name}</div>
+                <div class="saved-file-meta">${file.folder || "Busta Files"}</div>
+                ${file.file_url ? `<a class="saved-file-open" href="${file.file_url}" target="_blank" rel="noopener noreferrer">Open File</a>` : ""}
+              </li>
+            `).join("")}
+          </ul>
+        `;
+      } catch (err) {
+        savedBox.textContent = "Could not load saved files: " + (err.message || "Unknown error.");
+      }
+    }
+
+    async function initAccount() {
       const { data, error } = await bustaSupabase.auth.getSession();
 
-      if (error || !data.session || !data.session.user) {
-        loading.innerHTML = `
-          <div style="text-align:center; max-width:520px; padding:28px;">
-            <div style="font-family:Georgia,'Times New Roman',serif; font-size:3rem; line-height:.9; letter-spacing:-.06em; text-transform:uppercase; margin-bottom:18px;">
-              Log In<br>Required
-            </div>
-            <div style="color:rgba(231,224,210,.68); line-height:1.6; margin-bottom:22px;">
-              This private account page requires an active Busta Files session.
-            </div>
-            <a class="pill" href="/exclusive">Back to Busta Files</a>
-          </div>
-        `;
+      if (error || !data?.session?.user) {
+        showLoginRequired();
         return;
       }
 
       const user = data.session.user;
 
       accountEmail.textContent = user.email || "Registered archive user";
+      loading.classList.add("hidden");
+      accountPage.classList.remove("hidden");
 
-      loading.style.display = "none";
-      accountPage.classList.remove("locked");
-
-      loadSavedFilesFromSupabase();
+      await loadSavedFiles();
     }
 
     logout.addEventListener("click", async () => {
       await bustaSupabase.auth.signOut();
-      localStorage.removeItem("bustaAccount");
       window.location.href = "/exclusive";
     });
 
-    requireAccountSession();
+    initAccount();
   </script>
 </body>
 </html>

@@ -672,6 +672,29 @@
         rgba(7,7,6,0.94);
     }
 
+  
+    .file-action.saved-tick {
+      width: 30px;
+      min-width: 30px;
+      height: 30px;
+      padding: 0;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      border-color: rgba(231,224,210,0.34);
+      background: rgba(231,224,210,0.12);
+      color: rgba(231,224,210,0.95);
+      font-size: 0.98rem;
+      letter-spacing: 0;
+      cursor: default;
+    }
+
+    .file-action.saved-tick:hover {
+      background: rgba(231,224,210,0.16);
+      border-color: rgba(231,224,210,0.48);
+      color: #fff;
+    }
+
   </style>
 </head>
 <body>
@@ -1689,6 +1712,140 @@
           if (shareMessage) shareMessage.textContent = "File shared inside the archive.";
         }, true);
       }
+    });
+  </script>
+
+
+  <script id="busta-saved-state-final">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function findArchiveFile(fileName) {
+        try {
+          if (typeof files !== "undefined" && Array.isArray(files)) {
+            return files.find(item => item.name === fileName) || null;
+          }
+        } catch (_) {}
+        return null;
+      }
+
+      function markButtonAsSaved(button) {
+        if (!button) return;
+        button.dataset.saved = "true";
+        button.textContent = "✓";
+        button.title = "File already saved";
+        button.setAttribute("aria-label", "File already saved");
+        button.classList.add("saved-tick");
+        button.disabled = true;
+      }
+
+      async function getSession() {
+        if (!client) return null;
+        const { data } = await client.auth.getSession();
+        return data?.session || null;
+      }
+
+      async function loadSavedState() {
+        const session = await getSession();
+        if (!session?.user) return;
+
+        let saved = [];
+
+        try {
+          const { data, error } = await client.rpc("get_my_saved_files");
+
+          if (error) {
+            console.warn("get_my_saved_files failed, falling back to direct select:", error.message);
+
+            const fallback = await client
+              .from("saved_files")
+              .select("file_name,file_url,folder,created_at")
+              .order("created_at", { ascending: false });
+
+            if (fallback.error) throw fallback.error;
+            saved = fallback.data || [];
+          } else {
+            saved = data || [];
+          }
+        } catch (err) {
+          console.error("Could not load saved state:", err);
+          return;
+        }
+
+        const savedNames = new Set(saved.map(file => file.file_name));
+        const savedUrls = new Set(saved.map(file => file.file_url));
+
+        document.querySelectorAll("[data-save-file]").forEach(button => {
+          const fileName = button.dataset.saveFile;
+          const item = findArchiveFile(fileName);
+          const fileUrl = item?.src || "";
+
+          if (savedNames.has(fileName) || savedUrls.has(fileUrl)) {
+            markButtonAsSaved(button);
+          }
+        });
+      }
+
+      document.addEventListener("click", async (event) => {
+        const saveButton = event.target.closest("[data-save-file]");
+        if (!saveButton) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        if (saveButton.dataset.saved === "true") return;
+
+        const session = await getSession();
+
+        if (!session?.user) {
+          const loginButton = document.querySelector('[data-auth-open="login"]');
+          if (loginButton) loginButton.click();
+          return;
+        }
+
+        const fileName = saveButton.dataset.saveFile;
+        const item = findArchiveFile(fileName);
+
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+
+        try {
+          const { error } = await client.rpc("save_busta_file", {
+            p_file_name: fileName,
+            p_file_url: item?.src || "",
+            p_folder: item?.folder || "Busta Files"
+          });
+
+          if (error) throw error;
+
+          markButtonAsSaved(saveButton);
+        } catch (err) {
+          console.error(err);
+          saveButton.disabled = false;
+          saveButton.textContent = "Save";
+          alert("Save failed: " + (err.message || "Unknown error"));
+        }
+      }, true);
+
+      if (client) {
+        client.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) loadSavedState();
+        });
+      }
+
+      loadSavedState();
     });
   </script>
 
