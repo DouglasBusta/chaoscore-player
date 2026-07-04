@@ -1,6 +1,6 @@
-/* chaos-beta-polish-v1 */
+/* chaos-beta-polish-v2 */
 
-/* Base anti micro-bug */
+/* Micro polish generali */
 html,
 body {
   max-width: 100%;
@@ -18,84 +18,52 @@ a,
   touch-action: manipulation;
 }
 
-button {
-  cursor: pointer;
-}
-
 img {
   user-select: none;
   -webkit-user-drag: none;
 }
 
-/* Evita che pulsanti fantasma coprano i click */
-[hidden],
-.is-hidden,
-.hidden {
-  pointer-events: none !important;
-}
+/*
+  IMPORTANTE:
+  Non nascondiamo più .player o section.player.
+  Il player grande e le tracce devono rimanere intatti.
+*/
 
-/* Back buttons sopra ma non sovrapposti ai player */
-a[href*="chaoscore"],
-a[href*="exclusive"],
-button,
-[role="button"] {
-  position: relative;
-}
-
-/* Player grande: priorità quando siamo su /chaoscore */
-body:not(.chaos-files-mode) section.player,
-body:not(.chaos-files-mode) .player {
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Mini player: MAI visibile sulla pagina album normale */
+/* Mini player nascosto su /chaoscore normale */
 body:not(.chaos-files-mode) #chaos-safe-mini-player,
 body:not(.chaos-files-mode) .chaos-safe-mini-player,
-body:not(.chaos-files-mode) .chaos-safe-mini {
+body:not(.chaos-files-mode) .chaos-safe-mini,
+body:not(.chaos-files-mode) [id*="safe-mini"],
+body:not(.chaos-files-mode) [class*="safe-mini"],
+body:not(.chaos-files-mode) [id*="mini-player"],
+body:not(.chaos-files-mode) [class*="mini-player"] {
   display: none !important;
+  visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-/* In Busta Files: mini player visibile, player grande nascosto solo visivamente */
+/* Mini player visibile solo quando siamo davvero dentro Busta Files */
 body.chaos-files-mode #chaos-safe-mini-player,
-body.chaos-files-mode .chaos-safe-mini-player {
-  display: block !important;
+body.chaos-files-mode .chaos-safe-mini-player,
+body.chaos-files-mode .chaos-safe-mini,
+body.chaos-files-mode [id*="safe-mini"],
+body.chaos-files-mode [class*="safe-mini"],
+body.chaos-files-mode [id*="mini-player"],
+body.chaos-files-mode [class*="mini-player"] {
+  visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
-  z-index: 99999 !important;
 }
 
-body.chaos-files-mode section.player,
-body.chaos-files-mode .player {
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-/* L'audio vero non va mai toccato */
+/* L'audio vero non va toccato */
 #audio {
   display: none;
 }
 
-/* Mini player stabile */
-#chaos-safe-mini-player {
-  max-width: calc(100vw - 16px) !important;
-}
-
-/* Evita che il mini copra contenuti/click in basso dentro iframe */
-body.chaos-files-mode {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Mobile polish */
 @media (max-width: 720px) {
   body {
     min-height: 100dvh;
-  }
-
-  #chaos-safe-mini-player {
-    max-width: calc(100vw - 10px) !important;
   }
 
   button,
