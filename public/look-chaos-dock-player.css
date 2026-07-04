@@ -1,0 +1,416 @@
+/* look-chaos-dock-player-v1 */
+/* UN SOLO player persistente: mini/mega sono due layout dello stesso dock. */
+
+:root {
+  --look-bg: rgba(8, 7, 7, 0.94);
+  --look-line: rgba(231, 224, 210, 0.16);
+  --look-text: rgba(231, 224, 210, 0.96);
+  --look-muted: rgba(231, 224, 210, 0.52);
+  --look-soft: rgba(231, 224, 210, 0.08);
+}
+
+#look-chaos-dock {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  transform: translateX(-50%);
+  z-index: 1000005;
+
+  width: min(720px, calc(100vw - 12px));
+  color: var(--look-text);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(125, 16, 24, 0.30), transparent 38%),
+    radial-gradient(circle at 90% 100%, rgba(231, 224, 210, 0.08), transparent 35%),
+    var(--look-bg);
+  border: 1px solid var(--look-line);
+  border-radius: 26px;
+  box-shadow: 0 24px 90px rgba(0,0,0,0.70);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  font-family: inherit;
+}
+
+#look-chaos-dock * {
+  box-sizing: border-box;
+}
+
+.look-dock-mini,
+.look-dock-mega {
+  display: none;
+}
+
+#look-chaos-dock:not(.is-expanded) .look-dock-mini {
+  display: grid;
+}
+
+#look-chaos-dock.is-expanded .look-dock-mega {
+  display: grid;
+}
+
+.look-dock-mini {
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-rows: auto 4px;
+  gap: 8px 10px;
+  align-items: center;
+  padding: 8px 10px 9px;
+}
+
+.look-mini-cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1px solid rgba(231,224,210,0.13);
+  background: rgba(255,255,255,0.04);
+}
+
+.look-mini-meta {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.look-mini-title,
+.look-mega-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.look-mini-title {
+  font-size: 0.78rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.look-mini-artist,
+.look-mega-artist {
+  color: var(--look-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.look-mini-controls,
+.look-mega-controls {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.look-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(231,224,210,0.15);
+  background: rgba(255,255,255,0.055);
+  color: var(--look-text);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+  user-select: none;
+}
+
+.look-btn:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+.look-btn-mini {
+  width: 33px;
+  height: 33px;
+  font-size: 1rem;
+}
+
+.look-btn-mini.play {
+  width: 40px;
+  height: 40px;
+  font-size: 0.95rem;
+  background: rgba(231,224,210,0.14);
+}
+
+.look-progress {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(231,224,210,0.14);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.look-mini-progress {
+  grid-column: 1 / -1;
+}
+
+.look-progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: rgba(231,224,210,0.90);
+}
+
+.look-dock-mega {
+  max-height: min(82vh, 760px);
+  overflow: auto;
+  padding: 16px;
+  gap: 14px;
+  justify-items: center;
+}
+
+.look-mega-top {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.look-mega-brand {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.look-mega-kicker {
+  color: var(--look-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.look-mega-close {
+  width: 36px;
+  height: 36px;
+}
+
+.look-mega-cover-wrap {
+  width: min(330px, 72vw);
+  aspect-ratio: 1 / 1;
+  border-radius: 32px;
+  overflow: hidden;
+  border: 1px solid rgba(231,224,210,0.14);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.48);
+  background: rgba(255,255,255,0.04);
+}
+
+.look-mega-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.look-mega-meta {
+  width: min(520px, 100%);
+  display: grid;
+  gap: 5px;
+  text-align: center;
+}
+
+.look-mega-title {
+  font-size: clamp(1.05rem, 4vw, 1.65rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.look-mega-progress-area {
+  width: min(560px, 100%);
+  display: grid;
+  gap: 7px;
+}
+
+.look-mega-progress {
+  height: 7px;
+}
+
+.look-time-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--look-muted);
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.look-btn-mega {
+  width: 46px;
+  height: 46px;
+  font-size: 1.25rem;
+}
+
+.look-btn-mega.play {
+  width: 62px;
+  height: 62px;
+  font-size: 1.28rem;
+  background: rgba(231,224,210,0.16);
+}
+
+.look-mega-volume {
+  width: min(460px, 100%);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(231,224,210,0.11);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.035);
+  color: var(--look-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+.look-mega-volume input {
+  width: 100%;
+  accent-color: #e7e0d2;
+}
+
+.look-mega-status {
+  width: min(520px, 100%);
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(231,224,210,0.10);
+  background: rgba(255,255,255,0.032);
+  color: var(--look-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.look-mega-nav {
+  width: min(520px, 100%);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.look-nav-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(231,224,210,0.11);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.035);
+  color: var(--look-text);
+  padding: 12px;
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Overlay Busta Files: la pagina chaoscore resta viva, quindi l'audio non muore. */
+#look-busta-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 900000;
+  background: #050505;
+}
+
+body.look-busta-open #look-busta-overlay {
+  display: block;
+}
+
+#look-busta-overlay iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #050505;
+}
+
+#look-busta-close {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 10px;
+  z-index: 1000006;
+  display: none;
+  border: 1px solid rgba(231,224,210,0.18);
+  border-radius: 999px;
+  background: rgba(5,5,5,0.82);
+  color: var(--look-text);
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.look-busta-open #look-busta-close {
+  display: block;
+}
+
+/* Cancella i menu player vecchi SENZA cancellare la schermata/tracklist. */
+body.look-dock-ready #audio {
+  display: none !important;
+}
+
+body.look-dock-ready [id*="safe-mini"],
+body.look-dock-ready [class*="safe-mini"],
+body.look-dock-ready [id*="mini-player"],
+body.look-dock-ready [class*="mini-player"],
+body.look-dock-ready [id*="persistent-player"],
+body.look-dock-ready [class*="persistent-player"],
+body.look-dock-ready [id*="unified-player"],
+body.look-dock-ready [class*="unified-player"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Non nascondiamo section.player intera: altrimenti sparisce la pagina.
+   Nascondiamo solo i controlli visivi vecchi più probabili. */
+body.look-dock-ready section.player .controls,
+body.look-dock-ready section.player [class*="control"],
+body.look-dock-ready section.player [class*="transport"],
+body.look-dock-ready section.player [class*="volume"],
+body.look-dock-ready section.player [class*="progress"],
+body.look-dock-ready section.player #time,
+body.look-dock-ready section.player #now-title,
+body.look-dock-ready section.player #main-cover {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  #look-chaos-dock {
+    width: calc(100vw - 10px);
+    border-radius: 23px;
+  }
+
+  .look-dock-mini {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 7px 8px;
+    padding: 7px 8px 8px;
+  }
+
+  .look-mini-cover {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  .look-btn-mini {
+    width: 30px;
+    height: 30px;
+  }
+
+  .look-btn-mini.play {
+    width: 37px;
+    height: 37px;
+  }
+
+  .look-dock-mega {
+    max-height: 84vh;
+    padding: 13px;
+  }
+
+  .look-mega-nav {
+    grid-template-columns: 1fr;
+  }
+}
