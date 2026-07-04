@@ -580,6 +580,15 @@
       border-color: rgba(231,224,210,0.36);
     }
 
+  
+    .auth-security-note {
+      margin-top: 14px !important;
+      margin-bottom: 0 !important;
+      color: rgba(231,224,210,0.46) !important;
+      font-size: 0.72rem !important;
+      line-height: 1.45 !important;
+    }
+
   </style>
 </head>
 <body>
@@ -639,10 +648,17 @@
         <form id="auth-form">
           <label class="auth-label" for="auth-email">Email address</label>
           <input id="auth-email" class="auth-input" type="email" placeholder="your@email.com" required>
+
+          <label class="auth-label" for="auth-password">Password</label>
+          <input id="auth-password" class="auth-input" type="password" placeholder="••••••••" minlength="8" required>
+
           <button class="auth-submit" type="submit">Enter Archive</button>
         </form>
 
         <p id="auth-message" class="auth-message"></p>
+        <p class="auth-security-note">
+          Passwords are not stored in this demo version. Private encrypted authentication will be connected next.
+        </p>
       </div>
     </dialog>
 
@@ -874,6 +890,7 @@
     const authCopy = document.getElementById("auth-copy");
     const authForm = document.getElementById("auth-form");
     const authEmail = document.getElementById("auth-email");
+    const authPassword = document.getElementById("auth-password");
     const authMessage = document.getElementById("auth-message");
 
     const shareModal = document.getElementById("share-modal");
@@ -909,6 +926,7 @@
         : "Create your private Busta Files session.";
       authMessage.textContent = "";
       authEmail.value = "";
+      if (authPassword) authPassword.value = "";
       authModal.showModal();
       window.setTimeout(() => authEmail.focus(), 80);
     }
@@ -927,17 +945,27 @@
 
     authForm.addEventListener("submit", event => {
       event.preventDefault();
-      const email = authEmail.value.trim().toLowerCase();
-      if (!email) return;
 
+      const email = authEmail.value.trim().toLowerCase();
+      const password = authPassword ? authPassword.value : "";
+
+      if (!email || !password) return;
+
+      if (password.length < 8) {
+        authMessage.textContent = "Password must be at least 8 characters.";
+        return;
+      }
+
+      // Demo session only.
+      // The password is NOT stored in localStorage and is NOT written anywhere public.
       setAccount({
         email,
         access_level: "demo",
         created_at: new Date().toISOString()
       });
 
-      authMessage.textContent = "Archive session created. Backend authentication will be connected later.";
-      window.setTimeout(() => authModal.close(), 650);
+      authMessage.textContent = "Archive session created. Password field ready. Private backend authentication will be connected next.";
+      window.setTimeout(() => authModal.close(), 800);
     });
 
     document.addEventListener("click", event => {
