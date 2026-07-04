@@ -972,9 +972,13 @@ dialog {
       display: none !important;
     }
 
-    html:not(.chaos-files-open) .player {
-      position: static;
-      transform: none;
+
+  
+
+    /* chaos-original-player-restore */
+    html:not(.chaos-files-open) .chaos-player-handle,
+    html:not(.chaos-files-open) .chaos-player-volume {
+      display: none !important;
     }
 
   </style>
@@ -2521,9 +2525,23 @@ dialog {
         });
 
         if (p) {
-          p.classList.remove("chaos-player-sheet", "chaos-player-compact", "chaos-player-expanded");
+          p.classList.remove(
+            "chaos-player-sheet",
+            "chaos-player-compact",
+            "chaos-player-expanded",
+            "chaos-player-dragging",
+            "chaos-player-dragging-up",
+            "chaos-player-dragging-down"
+          );
+
           p.style.height = "";
           p.style.transition = "";
+          p.style.transform = "";
+          p.style.position = "";
+          p.style.left = "";
+          p.style.bottom = "";
+          p.style.width = "";
+          p.style.zIndex = "";
         }
 
         if (push) {
@@ -2535,7 +2553,6 @@ dialog {
 
       function bindNavigation() {
         buildShell();
-        prepareRealPlayer();
 
         document.addEventListener("click", event => {
           const link = event.target.closest("a");
