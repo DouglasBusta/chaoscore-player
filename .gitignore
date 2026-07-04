@@ -20,3 +20,6 @@ public/exclusive/*.MOV
 dist/
 node_modules/
 package-lock.json
+
+# Private NFC key files — never commit real tag URLs
+nfc_keys/
