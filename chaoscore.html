@@ -1573,7 +1573,7 @@ dialog {
                   How to unlock
                 </div>
                 <div style="color:rgba(231,224,210,.74);line-height:1.65;">
-                  Avvicina il tuo tag NFC Chaoscore al telefono. Il tag aprirà automaticamente il link privato di sblocco.
+                  Avvicina il tuo tag NFC #Chaoscore al telefono. Il tag aprirà automaticamente il link privato di sblocco.
                   Dopo il login, la chiave verrà collegata al tuo account e l’album si aprirà.
                 </div>
               </div>
@@ -1632,7 +1632,7 @@ dialog {
       }
 
       if (!client) {
-        lockPage("Authentication could not be loaded. Scan your Chaoscore NFC key again.");
+        lockPage("Authentication could not be loaded. Scan your #Chaoscore NFC key again.");
         return;
       }
 
@@ -1640,7 +1640,7 @@ dialog {
       const session = data?.session || null;
 
       if (!session?.user) {
-        lockPage("This album is private. To unlock it, avvicina il tuo tag NFC Chaoscore al telefono. Il tag aprirà il link privato di sblocco e collegherà la key al tuo account.");
+        lockPage("This album is private. To unlock it, avvicina il tuo tag NFC #Chaoscore al telefono. Il tag aprirà il link privato di sblocco e collegherà la key al tuo account.");
         return;
       }
 
@@ -1652,12 +1652,12 @@ dialog {
         const access = Array.isArray(accessData) ? accessData[0] : accessData;
 
         if (!access?.chaos_verified) {
-          lockPage("Your account is logged in, but it is not Chaos Verificato yet. Avvicina il tuo tag NFC Chaoscore al telefono per sbloccare l’album su questo account.");
+          lockPage("Your account is logged in, but it is not Chaos Verificato yet. Avvicina il tuo tag NFC #Chaoscore al telefono per sbloccare l’album su questo account.");
           return;
         }
       } catch (err) {
         console.error(err);
-        lockPage("Chaoscore access could not be verified. Try again or scan your NFC key.");
+        lockPage("#Chaoscore access could not be verified. Try again or scan your NFC key.");
       }
     });
   </script>

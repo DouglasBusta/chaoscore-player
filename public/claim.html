@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claim Chaoscore Access — BUSTA FILES</title>
+  <title>Claim #Chaoscore Access — BUSTA FILES</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; }
@@ -169,7 +169,7 @@
   <main class="card">
     <div class="stamp">NFC</div>
     <div class="kicker">Busta Files Private Key</div>
-    <h1>Claim<br>Chaoscore</h1>
+    <h1>Claim<br>#Chaoscore</h1>
     <p>
       This NFC key unlocks private #chaoscore access on one account only.
       Create an account or log in, then claim your Chaos Verificato status.
@@ -189,7 +189,7 @@
     <div id="claim-area" class="hidden">
       <div class="badge">✓ Ready to claim</div>
       <div class="row" style="margin-top:18px;">
-        <button id="claim" type="button">Unlock Chaoscore</button>
+        <button id="claim" type="button">Unlock #Chaoscore</button>
         <a class="button" href="/exclusive">Back to Archive</a>
       </div>
     </div>
@@ -285,9 +285,9 @@
       await refreshSession();
 
       if (mode === "signup") {
-        setMessage("Account created. Now unlock your Chaoscore access.", "success");
+        setMessage("Account created. Now unlock your #Chaoscore access.", "success");
       } else {
-        setMessage("Login successful. Now unlock your Chaoscore access.", "success");
+        setMessage("Login successful. Now unlock your #Chaoscore access.", "success");
       }
     }
 
@@ -313,7 +313,7 @@
 
       if (error) {
         claim.disabled = false;
-        claim.textContent = "Unlock Chaoscore";
+        claim.textContent = "Unlock #Chaoscore";
         setMessage(error.message, "error");
         return;
       }
@@ -322,7 +322,7 @@
 
       if (!result?.success) {
         claim.disabled = false;
-        claim.textContent = "Unlock Chaoscore";
+        claim.textContent = "Unlock #Chaoscore";
         setMessage(result?.message || "Chaos key could not be claimed.", "error");
         return;
       }
