@@ -911,6 +911,52 @@ dialog {
       }
     }
 
+  
+
+    /* chaos-drag-polish */
+    html.chaos-files-open .player.chaos-player-sheet {
+      touch-action: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      overscroll-behavior: contain !important;
+    }
+
+    html.chaos-files-open .chaos-player-handle {
+      touch-action: none !important;
+      cursor: grab !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-dragging {
+      transition: transform 80ms linear, height 180ms ease !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-dragging-up {
+      transform: translateX(-50%) translateY(-8px) !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-dragging-down {
+      transform: translateX(-50%) translateY(8px) !important;
+    }
+
+    html.chaos-files-open .player button,
+    html.chaos-files-open .player input,
+    html.chaos-files-open .player a {
+      touch-action: manipulation !important;
+    }
+
+    @media (max-width: 620px) {
+      html.chaos-files-open .chaos-player-handle {
+        width: 52px !important;
+        height: 6px !important;
+        margin-top: 2px !important;
+        margin-bottom: 4px !important;
+      }
+
+      html.chaos-files-open .player.chaos-player-compact {
+        bottom: max(10px, env(safe-area-inset-bottom)) !important;
+      }
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -2277,50 +2323,107 @@ dialog {
         if (!handle || !p || handle.dataset.dragBound === "1") return;
         handle.dataset.dragBound = "1";
 
-        handle.addEventListener("pointerdown", event => {
-          if (!document.documentElement.classList.contains("chaos-files-open")) return;
+        const canStartDrag = (event) => {
+          const interactive = event.target.closest("button, input, a, select, textarea");
+          if (interactive) return false;
+
+          return document.documentElement.classList.contains("chaos-files-open");
+        };
+
+        const onPointerDown = (event) => {
+          if (!canStartDrag(event)) return;
 
           dragging = true;
           startY = event.clientY;
           startState = sheetState;
-          handle.setPointerCapture(event.pointerId);
-          p.style.transition = "none";
-        });
 
-        handle.addEventListener("pointermove", event => {
+          p.classList.add("chaos-player-dragging");
+
+          try {
+            event.currentTarget.setPointerCapture(event.pointerId);
+          } catch (_) {}
+
+          event.preventDefault();
+        };
+
+        const onPointerMove = (event) => {
           if (!dragging) return;
 
           const delta = event.clientY - startY;
-          const compactHeight = 76;
-          const expandedHeight = Math.min(270, window.innerHeight - 34);
-          const base = startState === "expanded" ? expandedHeight : compactHeight;
-          const next = Math.min(expandedHeight, Math.max(compactHeight, base - delta));
 
-          p.style.height = `${next}px`;
-        });
+          p.classList.toggle("chaos-player-dragging-up", delta < -12);
+          p.classList.toggle("chaos-player-dragging-down", delta > 12);
 
-        handle.addEventListener("pointerup", event => {
+          event.preventDefault();
+        };
+
+        const finishDrag = (event) => {
           if (!dragging) return;
 
           dragging = false;
-          handle.releasePointerCapture(event.pointerId);
-          p.style.transition = "";
+
+          try {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          } catch (_) {}
 
           const delta = event.clientY - startY;
 
-          if (delta < -34) {
+          p.classList.remove(
+            "chaos-player-dragging",
+            "chaos-player-dragging-up",
+            "chaos-player-dragging-down"
+          );
+
+          if (delta < -26) {
             setSheetState("expanded");
-          } else if (delta > 34) {
+          } else if (delta > 26) {
             setSheetState("compact");
           } else {
             setSheetState(startState);
           }
+
+          event.preventDefault();
+        };
+
+        // Drag dalla barretta
+        handle.addEventListener("pointerdown", onPointerDown);
+        handle.addEventListener("pointermove", onPointerMove);
+        handle.addEventListener("pointerup", finishDrag);
+        handle.addEventListener("pointercancel", finishDrag);
+
+        // Drag anche dalla zona alta del player, così su telefono è molto più facile.
+        p.addEventListener("pointerdown", event => {
+          const isTopArea =
+            event.target.closest(".chaos-player-handle") ||
+            event.target.closest(".now") ||
+            event.target === p;
+
+          if (!isTopArea) return;
+          onPointerDown(event);
         });
 
+        p.addEventListener("pointermove", onPointerMove);
+        p.addEventListener("pointerup", finishDrag);
+        p.addEventListener("pointercancel", finishDrag);
+
+        // Desktop fallback comodo: doppio click sulla barretta.
         handle.addEventListener("dblclick", () => {
           setSheetState(sheetState === "expanded" ? "compact" : "expanded");
         });
+
+        // Mobile fallback comodo: tap rapido sulla barretta.
+        let lastTap = 0;
+        handle.addEventListener("click", () => {
+          const now = Date.now();
+
+          if (now - lastTap < 320) {
+            setSheetState(sheetState === "expanded" ? "compact" : "expanded");
+          }
+
+          lastTap = now;
+        });
       }
+
 
       function setSheetState(state) {
         const p = player();
