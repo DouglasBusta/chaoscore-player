@@ -430,6 +430,45 @@
       text-align: right;
     }
 
+
+    .credits-roll {
+      text-align: center;
+      display: grid;
+      gap: 18px;
+      padding: 4px 0 2px;
+    }
+
+    .credits-block {
+      display: grid;
+      gap: 5px;
+    }
+
+    .credits-role {
+      color: rgba(255,255,255,0.48);
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .credits-name {
+      color: rgba(255,255,255,0.88);
+      font-size: 0.98rem;
+      line-height: 1.45;
+      font-weight: 560;
+    }
+
+    .credits-name a {
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.26);
+    }
+
+    .credits-name a:hover {
+      color: #fff;
+      border-bottom-color: rgba(255,255,255,0.72);
+    }
+
     dialog {
       width: min(520px, calc(100% - 32px));
       border: 1px solid rgba(255,255,255,0.12);
@@ -723,9 +762,15 @@
       return `${m}:${s}`;
     }
 
-    function popup(title, text) {
+    function popup(title, text, isHtml = false) {
       modalTitle.textContent = title;
-      modalText.textContent = text;
+
+      if (isHtml) {
+        modalText.innerHTML = text;
+      } else {
+        modalText.textContent = text;
+      }
+
       modal.showModal();
     }
 
@@ -852,55 +897,135 @@
     });
 
     document.getElementById("album-credits").addEventListener("click", () => {
-      popup("Credits", `#chaoscore credits
+      popup("Credits", `
+        <div class="credits-roll">
+          <div class="credits-block">
+            <div class="credits-role">Album</div>
+            <div class="credits-name">#chaoscore</div>
+          </div>
 
-All lyrics written by Douglas Busta.
-All tracks produced and composed by Douglas Busta.
-Recorded by Douglas Busta.
-Mixed and mastered by Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">All Lyrics Written By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
 
-Track 4 — so ki 6... ft. 39Redboy
-Lyrics written by Douglas Busta and 39Redboy.
-Produced by Douglas Busta.
-Mixed and mastered by Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">All Tracks Produced and Composed By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
 
-Track 8 — Patto d'Achille ft. Gador
-Lyrics written by Douglas Busta and Gador.
-Produced by Douglas Busta and Gador.
-Mixed and mastered by Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">Recorded By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
 
-Track 10 — sensibileh! ft. Deffy
-Lyrics written by Douglas Busta and Deffy.
-Produced by Douglas Busta.
-Mixed and mastered by Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">Mixed and Mastered By</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
 
-Executive Producer
-Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">Track 4 — so ki 6... ft. 39Redboy</div>
+            <div class="credits-name">
+              Lyrics written by Douglas Busta and 39Redboy
+              <br>
+              <a href="https://instagram.com/39redboy" target="_blank" rel="noopener noreferrer">@39redboy</a>
+              <br>
+              Produced by Douglas Busta
+              <br>
+              Mixed and mastered by Douglas Busta
+            </div>
+          </div>
 
-Direction
-Directed by Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">Track 8 — Patto d'Achille ft. Gador</div>
+            <div class="credits-name">
+              Lyrics written by Douglas Busta and Gador
+              <br>
+              <a href="https://instagram.com/ohmygador" target="_blank" rel="noopener noreferrer">@ohmygador</a>
+              <br>
+              Produced by Douglas Busta and Gador
+              <br>
+              Mixed and mastered by Douglas Busta
+            </div>
+          </div>
 
-Cover
-Cover by Matteo Mazzetti (@tuma.zz) and Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">Track 10 — sensibileh! ft. Deffy</div>
+            <div class="credits-name">
+              Lyrics written by Douglas Busta and Deffy
+              <br>
+              <a href="https://instagram.com/dd_deffy" target="_blank" rel="noopener noreferrer">@dd_deffy</a>
+              <br>
+              Produced by Douglas Busta
+              <br>
+              Mixed and mastered by Douglas Busta
+            </div>
+          </div>
 
-Video Sound Design
-Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">Executive Producer</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
 
-Video Editing, Color and Camera
-Nicola Vitali (@vitali.mp4).
+          <div class="credits-block">
+            <div class="credits-role">Direction</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
 
-Video AI Prompter
-Douglas Busta.
+          <div class="credits-block">
+            <div class="credits-role">Cover</div>
+            <div class="credits-name">
+              Matteo Mazzetti
+              <a href="https://instagram.com/tuma.zz" target="_blank" rel="noopener noreferrer">@tuma.zz</a>
+              <br>
+              Douglas Busta
+            </div>
+          </div>
 
-Management and Label
-Giacomo Andreoli / KAMI (@lovekxmi).
-KYMA Label (@kyma_label).
+          <div class="credits-block">
+            <div class="credits-role">Video Sound Design</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
 
-Publishing
-KYMA Label (@kyma_label).
+          <div class="credits-block">
+            <div class="credits-role">Video Editing, Color and Camera</div>
+            <div class="credits-name">
+              Nicola Vitali
+              <a href="https://instagram.com/vitali.mp4" target="_blank" rel="noopener noreferrer">@vitali.mp4</a>
+            </div>
+          </div>
 
-Original Idea
-Douglas Busta.`);
+          <div class="credits-block">
+            <div class="credits-role">Video AI Prompter</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Management and Label</div>
+            <div class="credits-name">
+              Giacomo Andreoli / KAMI
+              <a href="https://instagram.com/lovekxmi" target="_blank" rel="noopener noreferrer">@lovekxmi</a>
+              <br>
+              KYMA Label
+              <a href="https://instagram.com/kyma_label" target="_blank" rel="noopener noreferrer">@kyma_label</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Publishing</div>
+            <div class="credits-name">
+              KYMA Label
+              <a href="https://instagram.com/kyma_label" target="_blank" rel="noopener noreferrer">@kyma_label</a>
+            </div>
+          </div>
+
+          <div class="credits-block">
+            <div class="credits-role">Original Idea</div>
+            <div class="credits-name">Douglas Busta</div>
+          </div>
+        </div>
+      `, true);
     });
 
     document.getElementById("ios-download").addEventListener("click", () => {
