@@ -592,6 +592,51 @@
     }
     /* END PROFILE ACCOUNT V2 */
 
+  
+    .profile-v2-private-info {
+      border: 1px solid rgba(231,224,210,0.14);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.032);
+      padding: 12px;
+      display: grid;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .profile-v2-private-label {
+      color: rgba(231,224,210,0.48);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.62rem;
+    }
+
+    .profile-v2-private-line {
+      color: rgba(231,224,210,0.72);
+      font-size: 0.72rem;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .profile-v2-private-note {
+      color: rgba(231,224,210,0.5);
+      font-size: 0.68rem;
+      line-height: 1.45;
+    }
+
+    .profile-v2-change-email {
+      width: fit-content;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.18);
+      color: rgba(231,224,210,0.6);
+      padding: 8px 10px;
+      font: inherit;
+      cursor: not-allowed;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.58rem;
+    }
+
   </style>
 </head>
 <body>
@@ -608,7 +653,7 @@
       <h1>My<br>Account</h1>
       <div class="session">
         <strong id="account-email">Loading...</strong><br>
-        Your data is encrypted and protected inside your private archive account.
+        
         <div id="account-role-badge" class="account-role-badge">User Account</div>
         <div id="chaos-access-badge" class="chaos-badge locked">#Chaos Locked — Scan NFC</div>
         <a id="activate-chaos-account" class="activate-account-button" href="/claim">Activate Account</a>
@@ -721,7 +766,7 @@
 
       const user = data.session.user;
 
-      accountEmail.textContent = user.email || "Registered archive user";
+      if (accountEmail) accountEmail.textContent = user.email || "Registered archive user";
       loading.classList.add("hidden");
       accountPage.classList.remove("hidden");
 
@@ -842,6 +887,17 @@
         <textarea id="profile-v2-bio" maxlength="160" placeholder="Breve descrizione del tuo account..."></textarea>
       </div>
 
+      <div class="profile-v2-private-info">
+        <div class="profile-v2-private-label">Private account data</div>
+        <div class="profile-v2-private-line">
+          Current email: <span id="profile-v2-private-email">Loading...</span>
+        </div>
+        <div class="profile-v2-private-note">
+          Your data is encrypted and protected inside your private archive account.
+        </div>
+        <button id="profile-v2-change-email" class="profile-v2-change-email" type="button">Change Email — Coming Soon</button>
+      </div>
+
       <div id="profile-v2-message" class="profile-v2-message"></div>
 
       <div class="profile-v2-dialog-actions">
@@ -898,7 +954,7 @@
           <div class="profile-v2-copy">
             <strong id="profile-v2-name" class="profile-v2-name">Loading profile...</strong>
             <span id="profile-v2-username-display" class="profile-v2-username">@user</span>
-            <span id="profile-v2-email" class="profile-v2-email"></span>
+            
           </div>
         </div>
         <div id="profile-v2-bio-display" class="profile-v2-bio" style="display:none;"></div>
@@ -916,8 +972,7 @@
       const openButton = document.getElementById("profile-v2-open");
       const nameDisplay = document.getElementById("profile-v2-name");
       const usernameDisplay = document.getElementById("profile-v2-username-display");
-      const emailDisplay = document.getElementById("profile-v2-email");
-      const avatarDisplay = document.getElementById("profile-v2-avatar");
+const avatarDisplay = document.getElementById("profile-v2-avatar");
       const bioDisplay = document.getElementById("profile-v2-bio-display");
 
       const inputAvatar = document.getElementById("profile-v2-avatar-input");
@@ -925,6 +980,7 @@
       const inputUsername = document.getElementById("profile-v2-username");
       const inputBio = document.getElementById("profile-v2-bio");
       const message = document.getElementById("profile-v2-message");
+      const privateEmail = document.getElementById("profile-v2-private-email");
 
       let currentProfile = null;
       let currentUser = null;
@@ -937,8 +993,7 @@
 
         nameDisplay.textContent = displayName;
         usernameDisplay.textContent = "@" + username;
-        emailDisplay.textContent = email;
-        avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
+avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
 
         bioDisplay.textContent = bio;
         bioDisplay.style.display = bio ? "block" : "none";
@@ -946,6 +1001,7 @@
         inputName.value = displayName;
         inputUsername.value = username;
         inputBio.value = bio;
+        if (privateEmail) privateEmail.textContent = email || "No email found";
       }
 
       async function loadProfile() {
