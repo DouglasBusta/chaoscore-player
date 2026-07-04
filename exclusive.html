@@ -682,6 +682,11 @@
   </main>
 
   <script>
+    // BUSTA SUPABASE CONFIG
+    const SUPABASE_URL = "https://gilxvsfwsguudvrvbmjk.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+    const bustaSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
     const files = [
       {
             "name": "82179e2f-21b1-4e6d-93a0-9fab9566c5e7.jpg",
@@ -900,6 +905,7 @@
     const shareMessage = document.getElementById("share-message");
 
     let selectedShareFile = "";
+    let currentAuthMode = "signup";
 
     function getAccount() {
       return JSON.parse(localStorage.getItem("bustaAccount") || "null");
@@ -908,6 +914,22 @@
     function setAccount(account) {
       localStorage.setItem("bustaAccount", JSON.stringify(account));
       updateAuthUI();
+
+    async function restoreSupabaseSession() {
+      const { data } = await bustaSupabase.auth.getSession();
+      const session = data?.session;
+
+      if (session?.user?.email) {
+        setAccount({
+          email: session.user.email,
+          access_level: "supabase",
+          created_at: session.user.created_at || new Date().toISOString()
+        });
+      }
+    }
+
+    restoreSupabaseSession();
+
     }
 
     function updateAuthUI() {
@@ -919,6 +941,7 @@
     }
 
     function openAuth(mode) {
+      currentAuthMode = mode;
       const isLogin = mode === "login";
       authTitle.textContent = isLogin ? "Log In" : "Sign Up";
       authCopy.textContent = isLogin
@@ -943,7 +966,7 @@
       button.addEventListener("click", () => shareModal.close());
     });
 
-    authForm.addEventListener("submit", event => {
+    authForm.addEventListener("submit", async event => {
       event.preventDefault();
 
       const email = authEmail.value.trim().toLowerCase();
@@ -956,16 +979,42 @@
         return;
       }
 
-      // Demo session only.
-      // The password is NOT stored in localStorage and is NOT written anywhere public.
+      authMessage.textContent = currentAuthMode === "login"
+        ? "Checking archive credentials..."
+        : "Creating private archive account...";
+
+      let result;
+
+      if (currentAuthMode === "login") {
+        result = await bustaSupabase.auth.signInWithPassword({
+          email,
+          password
+        });
+      } else {
+        result = await bustaSupabase.auth.signUp({
+          email,
+          password
+        });
+      }
+
+      if (result.error) {
+        authMessage.textContent = result.error.message;
+        return;
+      }
+
+      const userEmail = result.data.user?.email || email;
+
       setAccount({
-        email,
-        access_level: "demo",
+        email: userEmail,
+        access_level: "supabase",
         created_at: new Date().toISOString()
       });
 
-      authMessage.textContent = "Archive session created. Password field ready. Private backend authentication will be connected next.";
-      window.setTimeout(() => authModal.close(), 800);
+      authMessage.textContent = currentAuthMode === "login"
+        ? "Access granted. Welcome back to the archive."
+        : "Account created. Check your email if confirmation is required.";
+
+      window.setTimeout(() => authModal.close(), 900);
     });
 
     document.addEventListener("click", event => {
@@ -1032,5 +1081,6 @@
     updateAuthUI();
 
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
