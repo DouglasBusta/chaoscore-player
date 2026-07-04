@@ -647,7 +647,7 @@
       <div class="auth-actions">
         <button class="auth-btn" type="button" data-auth-open="login">Log In</button>
         <button class="auth-btn auth-btn-primary" type="button" data-auth-open="signup">Sign Up</button>
-        <a class="account-avatar hidden" id="account-link" href="/account.html" aria-label="My Account" data-account-avatar>
+        <a class="account-avatar hidden" id="account-link" href="#" aria-label="My Account" data-account-avatar>
           <span class="account-avatar-head"></span>
           <span class="account-avatar-body"></span>
         </a>
@@ -741,11 +741,10 @@
         }
 
         const { data } = await bustaSupabase.auth.getSession();
-        const session = data?.session;
+        const session = data?.session || null;
 
         if (!session?.user) {
-          localStorage.removeItem("bustaAccount");
-          updateAuthUI();
+          updateAuthUI(null);
           openAuth("login");
           return;
         }
@@ -753,6 +752,7 @@
         window.location.href = "/account.html";
       });
     }
+
 
   </script>
   <script>
@@ -992,31 +992,27 @@
       updateAuthUI();
 
     async function restoreSupabaseSession() {
-      if (!bustaSupabase) return;
+      localStorage.removeItem("bustaAccount");
+
+      if (!bustaSupabase) {
+        updateAuthUI(null);
+        return;
+      }
 
       const { data } = await bustaSupabase.auth.getSession();
-      const session = data?.session;
+      const session = data?.session || null;
 
-      if (session?.user?.email) {
-        setAccount({
-          email: session.user.email,
-          access_level: "supabase",
-          created_at: session.user.created_at || new Date().toISOString()
-        });
-      } else {
-        localStorage.removeItem("bustaAccount");
-        updateAuthUI();
-      }
+      updateAuthUI(session);
     }
 
     restoreSupabaseSession();
 
     }
 
-    function updateAuthUI() {
-      const account = getAccount();
+    function updateAuthUI(session = null) {
+      const isLoggedIn = !!session?.user;
 
-      if (!account) {
+      if (!isLoggedIn) {
         document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.remove("hidden"));
         if (accountLink) accountLink.classList.add("hidden");
         return;
@@ -1107,11 +1103,8 @@
 
       const userEmail = session.user.email || email;
 
-      setAccount({
-        email: userEmail,
-        access_level: "supabase",
-        created_at: new Date().toISOString()
-      });
+      localStorage.removeItem("bustaAccount");
+      updateAuthUI(session);
 
       authMessage.textContent = currentAuthMode === "login"
         ? "Access granted. Welcome back to the archive."
