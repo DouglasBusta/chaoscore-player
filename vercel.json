@@ -23,6 +23,14 @@
     {
       "source": "/chaoscore/exclusive/",
       "destination": "/exclusive.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/account.html"
+    },
+    {
+      "source": "/account/",
+      "destination": "/account.html"
     }
   ]
 }
