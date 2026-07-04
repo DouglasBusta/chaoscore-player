@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Chaoscore Access — BUSTA FILES</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.34), transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(231,224,210,0.08), transparent 28%),
+        linear-gradient(180deg, #0c0908 0%, #030303 72%);
+      color: #e7e0d2;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .card {
+      width: min(560px, 100%);
+      border: 1px solid rgba(231,224,210,0.2);
+      border-radius: 28px;
+      padding: clamp(24px, 6vw, 42px);
+      background:
+        linear-gradient(135deg, rgba(231,224,210,0.08), rgba(231,224,210,0.025)),
+        rgba(0,0,0,0.34);
+      box-shadow: 0 32px 110px rgba(0,0,0,0.48);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stamp {
+      position: absolute;
+      right: -18px;
+      top: 24px;
+      transform: rotate(14deg);
+      border: 3px solid rgba(179,34,34,0.5);
+      color: rgba(179,34,34,0.58);
+      border-radius: 10px;
+      padding: 4px 14px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      font-size: clamp(1.8rem, 7vw, 4.2rem);
+      pointer-events: none;
+    }
+
+    .kicker {
+      color: rgba(231,224,210,0.56);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.72rem;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 11vw, 6rem);
+      line-height: 0.86;
+      letter-spacing: -0.08em;
+      margin: 0 0 18px;
+      text-transform: uppercase;
+      max-width: 440px;
+    }
+
+    p {
+      color: rgba(231,224,210,0.72);
+      line-height: 1.65;
+      margin: 0 0 18px;
+    }
+
+    .form {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.28);
+      color: #e7e0d2;
+      padding: 14px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: rgba(231,224,210,0.42);
+    }
+
+    button, a.button {
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(231,224,210,0.08);
+      color: #e7e0d2;
+      padding: 13px 15px;
+      font: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:hover, a.button:hover {
+      border-color: rgba(231,224,210,0.45);
+      background: rgba(231,224,210,0.12);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row button {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .message {
+      margin-top: 16px;
+      min-height: 24px;
+      color: rgba(231,224,210,0.74);
+      line-height: 1.55;
+      font-size: 0.82rem;
+    }
+
+    .success {
+      color: #d8f7cf;
+    }
+
+    .error {
+      color: #ffb3a9;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(216,247,207,0.38);
+      color: #d8f7cf;
+      background: rgba(216,247,207,0.08);
+      border-radius: 999px;
+      padding: 9px 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="stamp">NFC</div>
+    <div class="kicker">Busta Files Private Key</div>
+    <h1>Claim<br>Chaoscore</h1>
+    <p>
+      This NFC key unlocks private #chaoscore access on one account only.
+      Create an account or log in, then claim your Chaos Verificato status.
+    </p>
+
+    <div id="key-status" class="message">Reading Chaos NFC key...</div>
+
+    <form id="auth-form" class="form">
+      <input id="email" type="email" autocomplete="email" placeholder="Email" required>
+      <input id="password" type="password" autocomplete="current-password" placeholder="Password, min. 8 characters" required>
+      <div class="row">
+        <button id="signup" type="button">Create Account</button>
+        <button id="login" type="button">Log In</button>
+      </div>
+    </form>
+
+    <div id="claim-area" class="hidden">
+      <div class="badge">✓ Ready to claim</div>
+      <div class="row" style="margin-top:18px;">
+        <button id="claim" type="button">Unlock Chaoscore</button>
+        <a class="button" href="/exclusive">Back to Archive</a>
+      </div>
+    </div>
+
+    <div id="message" class="message"></div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+    const bustaSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const chaosKey = (params.get("key") || "").trim();
+
+    const keyStatus = document.getElementById("key-status");
+    const authForm = document.getElementById("auth-form");
+    const claimArea = document.getElementById("claim-area");
+    const message = document.getElementById("message");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const signup = document.getElementById("signup");
+    const login = document.getElementById("login");
+    const claim = document.getElementById("claim");
+
+    function setMessage(text, type = "") {
+      message.textContent = text;
+      message.className = "message " + type;
+    }
+
+    function setKeyStatus(text, type = "") {
+      keyStatus.textContent = text;
+      keyStatus.className = "message " + type;
+    }
+
+    async function refreshSession() {
+      const { data } = await bustaSupabase.auth.getSession();
+      const session = data?.session || null;
+
+      if (session?.user) {
+        authForm.classList.add("hidden");
+        claimArea.classList.remove("hidden");
+        setMessage("Logged in as " + (session.user.email || "Chaos user") + ".", "success");
+      } else {
+        authForm.classList.remove("hidden");
+        claimArea.classList.add("hidden");
+      }
+
+      return session;
+    }
+
+    async function signUpOrLogin(mode) {
+      const userEmail = email.value.trim().toLowerCase();
+      const userPassword = password.value;
+
+      if (!userEmail || !userPassword) {
+        setMessage("Enter email and password.", "error");
+        return;
+      }
+
+      if (userPassword.length < 8) {
+        setMessage("Password must be at least 8 characters.", "error");
+        return;
+      }
+
+      setMessage(mode === "signup" ? "Creating account..." : "Logging in...");
+
+      const result = mode === "signup"
+        ? await bustaSupabase.auth.signUp({
+            email: userEmail,
+            password: userPassword,
+            options: {
+              emailRedirectTo: "https://lookapp.org/claim?key=" + encodeURIComponent(chaosKey)
+            }
+          })
+        : await bustaSupabase.auth.signInWithPassword({
+            email: userEmail,
+            password: userPassword
+          });
+
+      if (result.error) {
+        setMessage(result.error.message, "error");
+        return;
+      }
+
+      await refreshSession();
+
+      if (mode === "signup") {
+        setMessage("Account created. Now unlock your Chaoscore access.", "success");
+      } else {
+        setMessage("Login successful. Now unlock your Chaoscore access.", "success");
+      }
+    }
+
+    async function claimChaosAccess() {
+      if (!chaosKey || chaosKey.length < 12) {
+        setMessage("Missing or invalid Chaos NFC key.", "error");
+        return;
+      }
+
+      const session = await refreshSession();
+
+      if (!session?.user) {
+        setMessage("Log in first to claim this NFC key.", "error");
+        return;
+      }
+
+      claim.disabled = true;
+      claim.textContent = "Unlocking...";
+
+      const { data, error } = await bustaSupabase.rpc("claim_chaos_nfc_key", {
+        p_key: chaosKey
+      });
+
+      if (error) {
+        claim.disabled = false;
+        claim.textContent = "Unlock Chaoscore";
+        setMessage(error.message, "error");
+        return;
+      }
+
+      const result = Array.isArray(data) ? data[0] : data;
+
+      if (!result?.success) {
+        claim.disabled = false;
+        claim.textContent = "Unlock Chaoscore";
+        setMessage(result?.message || "Chaos key could not be claimed.", "error");
+        return;
+      }
+
+      setMessage("✓ Chaos Verificato unlocked. Opening #chaoscore...", "success");
+
+      setTimeout(() => {
+        window.location.href = "/chaoscore";
+      }, 1000);
+    }
+
+    signup.addEventListener("click", () => signUpOrLogin("signup"));
+    login.addEventListener("click", () => signUpOrLogin("login"));
+    claim.addEventListener("click", claimChaosAccess);
+
+    if (!chaosKey || chaosKey.length < 12) {
+      setKeyStatus("Missing Chaos NFC key. Scan your physical tag again.", "error");
+    } else {
+      setKeyStatus("Chaos NFC key detected. Log in or create your account to claim it.", "success");
+    }
+
+    refreshSession();
+  </script>
+</body>
+</html>

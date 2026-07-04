@@ -755,7 +755,7 @@ dialog {
     }
 
   </style>
-</head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n</head>
 <body>
   <main class="shell">
     <section class="hero">
@@ -1470,6 +1470,108 @@ dialog {
   });
 })();
 </script>
+
+
+  <script id="chaoscore-access-guard">
+    window.addEventListener("DOMContentLoaded", async () => {
+      const isChaoscoreRoute = window.location.pathname.replace(/\/$/, "") === "/chaoscore";
+      if (!isChaoscoreRoute) return;
+
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function lockPage(message) {
+        document.body.innerHTML = `
+          <main style="
+            min-height:100vh;
+            display:grid;
+            place-items:center;
+            padding:24px;
+            background:
+              radial-gradient(circle at 20% 0%, rgba(139,23,23,.34), transparent 35%),
+              linear-gradient(180deg,#0c0908 0%,#030303 72%);
+            color:#e7e0d2;
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;
+          ">
+            <section style="
+              width:min(560px,100%);
+              border:1px solid rgba(231,224,210,.2);
+              border-radius:28px;
+              padding:clamp(24px,6vw,42px);
+              background:rgba(0,0,0,.34);
+              box-shadow:0 32px 110px rgba(0,0,0,.48);
+            ">
+              <div style="color:rgba(231,224,210,.56);text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;margin-bottom:14px;">
+                Private Album Access
+              </div>
+              <h1 style="
+                font-family:Georgia,'Times New Roman',serif;
+                font-size:clamp(3rem,11vw,6rem);
+                line-height:.86;
+                letter-spacing:-.08em;
+                margin:0 0 18px;
+                text-transform:uppercase;
+              ">Chaoscore<br>Locked</h1>
+              <p style="color:rgba(231,224,210,.72);line-height:1.65;margin:0 0 22px;">
+                ${message}
+              </p>
+              <a href="/exclusive" style="
+                display:inline-flex;
+                border:1px solid rgba(231,224,210,.24);
+                border-radius:999px;
+                background:rgba(231,224,210,.08);
+                color:#e7e0d2;
+                padding:13px 15px;
+                text-decoration:none;
+                text-transform:uppercase;
+                letter-spacing:.12em;
+                font-size:.72rem;
+              ">Back to Busta Files</a>
+            </section>
+          </main>
+        `;
+      }
+
+      if (!client) {
+        lockPage("Authentication could not be loaded. Scan your Chaoscore NFC key again.");
+        return;
+      }
+
+      const { data } = await client.auth.getSession();
+      const session = data?.session || null;
+
+      if (!session?.user) {
+        lockPage("Scan your physical Chaoscore NFC tag and create or log in to your account to unlock this album.");
+        return;
+      }
+
+      try {
+        const { data: accessData, error } = await client.rpc("get_my_chaos_access");
+
+        if (error) throw error;
+
+        const access = Array.isArray(accessData) ? accessData[0] : accessData;
+
+        if (!access?.chaos_verified) {
+          lockPage("Your account is not Chaos Verificato yet. Scan your Chaoscore NFC key to unlock the album.");
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+        lockPage("Chaoscore access could not be verified. Try again or scan your NFC key.");
+      }
+    });
+  </script>
 
 </body>
 </html>

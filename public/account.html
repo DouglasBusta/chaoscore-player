@@ -4,7 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account — BUSTA FILES</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    async function loadChaosAccessBadge() {
+      const badge = document.getElementById("chaos-access-badge");
+      if (!badge) return;
+
+      try {
+        const { data, error } = await bustaSupabase.rpc("get_my_chaos_access");
+
+        if (error) throw error;
+
+        const access = Array.isArray(data) ? data[0] : data;
+
+        if (access?.chaos_verified) {
+          badge.className = "chaos-badge";
+          badge.textContent = "✓ Chaos Verificato";
+        } else {
+          badge.className = "chaos-badge locked";
+          badge.textContent = "Chaos Locked — Scan NFC";
+        }
+      } catch (err) {
+        badge.className = "chaos-badge locked";
+        badge.textContent = "Chaos status unavailable";
+      }
+    }
+
+  </script>
   <style>
     :root {
       --paper: #e7e0d2;
@@ -217,6 +242,28 @@
       .grid { grid-template-columns: 1fr; }
       .topbar { align-items: flex-start; flex-direction: column; }
     }
+  
+    .chaos-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      border: 1px solid rgba(216,247,207,0.38);
+      color: #d8f7cf;
+      background: rgba(216,247,207,0.08);
+      border-radius: 999px;
+      padding: 9px 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .chaos-badge.locked {
+      border-color: rgba(231,224,210,0.2);
+      color: rgba(231,224,210,0.55);
+      background: rgba(231,224,210,0.04);
+    }
+
   </style>
 </head>
 <body>
@@ -234,6 +281,7 @@
       <div class="session">
         <strong id="account-email">Loading...</strong><br>
         This private account page is connected to Supabase Auth.
+        <div id="chaos-access-badge" class="chaos-badge locked">Chaos Locked — Scan NFC</div>
       </div>
     </section>
 
@@ -348,6 +396,7 @@
       accountPage.classList.remove("hidden");
 
       await loadSavedFiles();
+      await loadChaosAccessBadge();
     }
 
     logout.addEventListener("click", async () => {

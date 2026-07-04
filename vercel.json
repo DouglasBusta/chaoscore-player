@@ -1,36 +1,12 @@
 {
   "rewrites": [
-    {
-      "source": "/chaoscore",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/chaoscore/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/exclusive",
-      "destination": "/exclusive.html"
-    },
-    {
-      "source": "/exclusive/",
-      "destination": "/exclusive.html"
-    },
-    {
-      "source": "/chaoscore/exclusive",
-      "destination": "/exclusive.html"
-    },
-    {
-      "source": "/chaoscore/exclusive/",
-      "destination": "/exclusive.html"
-    },
-    {
-      "source": "/account",
-      "destination": "/account.html"
-    },
-    {
-      "source": "/account/",
-      "destination": "/account.html"
-    }
+    { "source": "/exclusive", "destination": "/exclusive.html" },
+    { "source": "/exclusive/", "destination": "/exclusive.html" },
+    { "source": "/account", "destination": "/account.html" },
+    { "source": "/account/", "destination": "/account.html" },
+    { "source": "/claim", "destination": "/claim.html" },
+    { "source": "/claim/", "destination": "/claim.html" },
+    { "source": "/chaoscore", "destination": "/index.html" },
+    { "source": "/chaoscore/", "destination": "/index.html" }
   ]
 }
