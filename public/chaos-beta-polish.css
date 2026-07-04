@@ -1,0 +1,106 @@
+/* chaos-beta-polish-v1 */
+
+/* Base anti micro-bug */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Evita che pulsanti fantasma coprano i click */
+[hidden],
+.is-hidden,
+.hidden {
+  pointer-events: none !important;
+}
+
+/* Back buttons sopra ma non sovrapposti ai player */
+a[href*="chaoscore"],
+a[href*="exclusive"],
+button,
+[role="button"] {
+  position: relative;
+}
+
+/* Player grande: priorità quando siamo su /chaoscore */
+body:not(.chaos-files-mode) section.player,
+body:not(.chaos-files-mode) .player {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Mini player: MAI visibile sulla pagina album normale */
+body:not(.chaos-files-mode) #chaos-safe-mini-player,
+body:not(.chaos-files-mode) .chaos-safe-mini-player,
+body:not(.chaos-files-mode) .chaos-safe-mini {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* In Busta Files: mini player visibile, player grande nascosto solo visivamente */
+body.chaos-files-mode #chaos-safe-mini-player,
+body.chaos-files-mode .chaos-safe-mini-player {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 99999 !important;
+}
+
+body.chaos-files-mode section.player,
+body.chaos-files-mode .player {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* L'audio vero non va mai toccato */
+#audio {
+  display: none;
+}
+
+/* Mini player stabile */
+#chaos-safe-mini-player {
+  max-width: calc(100vw - 16px) !important;
+}
+
+/* Evita che il mini copra contenuti/click in basso dentro iframe */
+body.chaos-files-mode {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile polish */
+@media (max-width: 720px) {
+  body {
+    min-height: 100dvh;
+  }
+
+  #chaos-safe-mini-player {
+    max-width: calc(100vw - 10px) !important;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    min-height: 32px;
+  }
+}
