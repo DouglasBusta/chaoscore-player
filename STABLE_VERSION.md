@@ -26,3 +26,14 @@ Known future improvements:
 
 Rollback command:
 git checkout stable-busta-files-v1
+
+
+## NFC private album route
+
+Current intended structure:
+- `/` is the private #chaoscore album page.
+- `/chaoscore` is an alias for the private #chaoscore album page.
+- `/exclusive` is the public Busta Files archive.
+- `/claim?key=...` is the NFC claim route.
+- Only Chaos Verificato accounts can access the album.
+- Each NFC key can be claimed by one account only.
