@@ -984,6 +984,194 @@ dialog {
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
+  <style id="chaoscore-safe-persistent-style">
+    .chaos-files-safe-shell {
+      position: fixed;
+      inset: 0;
+      z-index: 99990;
+      display: none;
+      background: #030303;
+    }
+
+    .chaos-files-safe-shell.is-open {
+      display: block;
+    }
+
+    .chaos-files-safe-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #030303;
+    }
+
+    .chaos-files-safe-back {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top));
+      left: 14px;
+      z-index: 99999;
+      display: none;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.64);
+      color: rgba(231,224,210,0.84);
+      backdrop-filter: blur(14px);
+      padding: 10px 13px;
+      font: inherit;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      cursor: pointer;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.32);
+    }
+
+    .chaos-files-safe-back.is-visible {
+      display: block;
+    }
+
+    .chaos-safe-mini-player {
+      position: fixed;
+      left: 50%;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(120%);
+      z-index: 100000;
+      width: min(620px, calc(100% - 18px));
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(139,23,23,0.34), transparent 42%),
+        linear-gradient(135deg, rgba(24,19,18,0.96), rgba(5,5,5,0.96));
+      color: #e7e0d2;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.58);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 200ms ease, opacity 200ms ease;
+    }
+
+    .chaos-safe-mini-player.is-visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .chaos-safe-mini-inner {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+    }
+
+    .chaos-safe-mini-cover {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      object-fit: cover;
+      border: 1px solid rgba(231,224,210,0.14);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .chaos-safe-mini-meta {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .chaos-safe-mini-title {
+      font-size: 0.74rem;
+      line-height: 1.1;
+      color: rgba(231,224,210,0.96);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chaos-safe-mini-sub {
+      font-size: 0.55rem;
+      color: rgba(231,224,210,0.52);
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chaos-safe-mini-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chaos-safe-mini-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(231,224,210,0.16);
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.86);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font: inherit;
+      line-height: 1;
+    }
+
+    .chaos-safe-mini-btn.play {
+      width: 40px;
+      height: 40px;
+      background: rgba(231,224,210,0.12);
+      color: #fff;
+    }
+
+    .chaos-safe-mini-progress {
+      height: 3px;
+      background: rgba(231,224,210,0.13);
+      cursor: pointer;
+    }
+
+    .chaos-safe-mini-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: rgba(231,224,210,0.82);
+    }
+
+    @media (max-width: 620px) {
+      .chaos-safe-mini-player {
+        width: calc(100% - 12px);
+        bottom: max(10px, env(safe-area-inset-bottom));
+        border-radius: 24px;
+      }
+
+      .chaos-safe-mini-inner {
+        gap: 8px;
+        padding: 7px 8px;
+      }
+
+      .chaos-safe-mini-cover {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+      }
+
+      .chaos-safe-mini-btn {
+        width: 32px;
+        height: 32px;
+      }
+
+      .chaos-safe-mini-btn.play {
+        width: 38px;
+        height: 38px;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <main class="shell">
@@ -1972,6 +2160,255 @@ dialog {
         }
       }
     });
+  </script>
+
+
+  <script id="chaoscore-safe-persistent-player">
+    (() => {
+      if (window.__chaoscoreSafePersistentMounted) return;
+      window.__chaoscoreSafePersistentMounted = true;
+
+      let userWantsPlaying = false;
+
+      function audio() {
+        return document.getElementById("audio");
+      }
+
+      function mainCover() {
+        return document.getElementById("main-cover");
+      }
+
+      function nowTitle() {
+        return document.getElementById("now-title")?.textContent?.trim() || "#chaoscore";
+      }
+
+      function fmt(value) {
+        if (!Number.isFinite(value)) return "0:00";
+        const m = Math.floor(value / 60);
+        const s = Math.floor(value % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+      }
+
+      async function resumeIfNeeded() {
+        const a = audio();
+        if (!a || !userWantsPlaying) return;
+
+        for (let i = 0; i < 8; i++) {
+          await new Promise(resolve => setTimeout(resolve, 80));
+
+          if (!audio()?.src) continue;
+
+          try {
+            await audio().play();
+            syncMini();
+            return;
+          } catch (_) {}
+        }
+      }
+
+      function buildFilesShell() {
+        if (document.getElementById("chaos-files-safe-shell")) return;
+
+        const shell = document.createElement("div");
+        shell.id = "chaos-files-safe-shell";
+        shell.className = "chaos-files-safe-shell";
+        shell.innerHTML = `<iframe id="chaos-files-safe-frame" class="chaos-files-safe-frame" src="about:blank" title="Busta Files"></iframe>`;
+
+        const back = document.createElement("button");
+        back.id = "chaos-files-safe-back";
+        back.className = "chaos-files-safe-back";
+        back.type = "button";
+        back.textContent = "← Back to #chaoscore";
+
+        const mini = document.createElement("div");
+        mini.id = "chaos-safe-mini-player";
+        mini.className = "chaos-safe-mini-player";
+        mini.innerHTML = `
+          <div class="chaos-safe-mini-inner">
+            <img id="chaos-safe-mini-cover" class="chaos-safe-mini-cover" src="/chaoscore-cover.png" alt="">
+            <div class="chaos-safe-mini-meta">
+              <div id="chaos-safe-mini-title" class="chaos-safe-mini-title">#chaoscore</div>
+              <div id="chaos-safe-mini-sub" class="chaos-safe-mini-sub">Douglas Busta · 0:00 / 0:00</div>
+            </div>
+            <div class="chaos-safe-mini-controls">
+              <button id="chaos-safe-mini-prev" class="chaos-safe-mini-btn" type="button" aria-label="Previous">‹</button>
+              <button id="chaos-safe-mini-play" class="chaos-safe-mini-btn play" type="button" aria-label="Play/Pause">▶</button>
+              <button id="chaos-safe-mini-next" class="chaos-safe-mini-btn" type="button" aria-label="Next">›</button>
+            </div>
+          </div>
+          <div id="chaos-safe-mini-progress" class="chaos-safe-mini-progress">
+            <div id="chaos-safe-mini-progress-fill" class="chaos-safe-mini-progress-fill"></div>
+          </div>
+        `;
+
+        document.body.appendChild(shell);
+        document.body.appendChild(back);
+        document.body.appendChild(mini);
+
+        back.addEventListener("click", closeFilesView);
+
+        document.getElementById("chaos-safe-mini-play")?.addEventListener("click", async () => {
+          const a = audio();
+          if (!a) return;
+
+          if (a.paused) {
+            userWantsPlaying = true;
+            await a.play();
+          } else {
+            userWantsPlaying = false;
+            a.pause();
+          }
+
+          syncMini();
+        });
+
+        document.getElementById("chaos-safe-mini-prev")?.addEventListener("click", () => {
+          const wasPlaying = userWantsPlaying || !audio()?.paused;
+          userWantsPlaying = wasPlaying;
+          document.getElementById("prev")?.click();
+          resumeIfNeeded();
+        });
+
+        document.getElementById("chaos-safe-mini-next")?.addEventListener("click", () => {
+          const wasPlaying = userWantsPlaying || !audio()?.paused;
+          userWantsPlaying = wasPlaying;
+          document.getElementById("next")?.click();
+          resumeIfNeeded();
+        });
+
+        document.getElementById("chaos-safe-mini-progress")?.addEventListener("click", event => {
+          const a = audio();
+          if (!a || !Number.isFinite(a.duration) || !a.duration) return;
+
+          const rect = event.currentTarget.getBoundingClientRect();
+          const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+          a.currentTime = ratio * a.duration;
+          syncMini();
+        });
+      }
+
+      function openFilesView() {
+        buildFilesShell();
+
+        const shell = document.getElementById("chaos-files-safe-shell");
+        const frame = document.getElementById("chaos-files-safe-frame");
+        const back = document.getElementById("chaos-files-safe-back");
+        const mini = document.getElementById("chaos-safe-mini-player");
+
+        if (!shell || !frame || !back || !mini) return;
+
+        if (frame.getAttribute("src") === "about:blank") {
+          frame.src = "/exclusive";
+        }
+
+        shell.classList.add("is-open");
+        back.classList.add("is-visible");
+        mini.classList.add("is-visible");
+
+        syncMini();
+      }
+
+      function closeFilesView() {
+        document.getElementById("chaos-files-safe-shell")?.classList.remove("is-open");
+        document.getElementById("chaos-files-safe-back")?.classList.remove("is-visible");
+        document.getElementById("chaos-safe-mini-player")?.classList.remove("is-visible");
+      }
+
+      function syncMini() {
+        const a = audio();
+
+        const title = document.getElementById("chaos-safe-mini-title");
+        const sub = document.getElementById("chaos-safe-mini-sub");
+        const play = document.getElementById("chaos-safe-mini-play");
+        const cover = document.getElementById("chaos-safe-mini-cover");
+        const fill = document.getElementById("chaos-safe-mini-progress-fill");
+
+        if (title) title.textContent = nowTitle();
+        if (sub && a) sub.textContent = `Douglas Busta · ${fmt(a.currentTime)} / ${fmt(a.duration)}`;
+        if (play && a) play.textContent = a.paused ? "▶" : "Ⅱ";
+        if (cover && mainCover()?.src) cover.src = mainCover().src;
+        if (fill && a) fill.style.width = `${a.duration ? (a.currentTime / a.duration) * 100 : 0}%`;
+      }
+
+      function bindSkipStability() {
+        const a = audio();
+        if (!a || a.dataset.skipStabilityBound === "1") return;
+        a.dataset.skipStabilityBound = "1";
+
+        a.addEventListener("play", () => {
+          userWantsPlaying = true;
+          syncMini();
+        });
+
+        a.addEventListener("pause", () => {
+          if (!a.ended) userWantsPlaying = false;
+          syncMini();
+        });
+
+        a.addEventListener("timeupdate", syncMini);
+        a.addEventListener("loadedmetadata", syncMini);
+        a.addEventListener("durationchange", syncMini);
+
+        a.addEventListener("ended", () => {
+          userWantsPlaying = true;
+          resumeIfNeeded();
+        });
+
+        ["prev", "next"].forEach(id => {
+          const button = document.getElementById(id);
+          if (!button || button.dataset.skipStabilityBound === "1") return;
+          button.dataset.skipStabilityBound = "1";
+
+          button.addEventListener("click", () => {
+            const wasPlaying = userWantsPlaying || !audio()?.paused;
+            userWantsPlaying = wasPlaying;
+
+            if (wasPlaying) {
+              resumeIfNeeded();
+            }
+
+            setTimeout(syncMini, 120);
+            setTimeout(syncMini, 400);
+          }, true);
+        });
+      }
+
+      function bindBackToFiles() {
+        document.addEventListener("click", event => {
+          const link = event.target.closest("a");
+          if (!link) return;
+
+          const href = link.getAttribute("href") || "";
+          const label = (link.textContent || "").toLowerCase();
+
+          const isBackToFiles =
+            label.includes("back to busta files") ||
+            href === "/" ||
+            href === "/exclusive" ||
+            href === "/exclusive.html";
+
+          if (!isBackToFiles) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          openFilesView();
+        }, true);
+      }
+
+      function boot() {
+        buildFilesShell();
+        bindSkipStability();
+        bindBackToFiles();
+        syncMini();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+      } else {
+        boot();
+      }
+    })();
   </script>
 
 </body>
