@@ -784,22 +784,32 @@ dialog {
       background: rgba(30,18,15,0.9);
     }
   
-    /* CLEAN COVER ARROWS */
-    button:has-text,
-    .cover-arrow-clean {
+    /* COVER ARROW REPAIR */
+    .cover-arrow-repaired {
       border: 0 !important;
       outline: 0 !important;
       box-shadow: none !important;
       background: transparent !important;
+      padding: 3px 10px !important;
+      min-width: auto !important;
+      width: auto !important;
+      height: auto !important;
+      color: rgba(231,224,210,0.92) !important;
+      font-size: 1rem !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      text-transform: none !important;
+      border-radius: 0 !important;
+      cursor: pointer !important;
     }
 
-    [aria-label="<★"],
-    [aria-label="★>"] {
-      border: 0 !important;
+    .cover-arrow-repaired:hover {
+      color: #fff !important;
       background: transparent !important;
+      border: 0 !important;
       box-shadow: none !important;
     }
-    /* END CLEAN COVER ARROWS */
+    /* END COVER ARROW REPAIR */
 
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1719,6 +1729,77 @@ dialog {
       link.href = "/";
       link.textContent = "← Back to Busta Files";
       document.body.appendChild(link);
+    });
+  </script>
+
+
+  <script id="cover-arrow-repair">
+    window.addEventListener("DOMContentLoaded", () => {
+      const coverSources = [
+        "/chaoscore-cover.png",
+        "/covers/cover chaoscore.png",
+        "/assets/chaoscore-spotify-cover.jpg",
+        "/covers/copertina icona chaoscore.jpeg"
+      ];
+
+      let currentCoverIndex = 0;
+
+      function getCoverImage() {
+        const candidates = Array.from(document.querySelectorAll("img")).filter((img) => {
+          const alt = (img.getAttribute("alt") || "").toLowerCase();
+          const src = (img.getAttribute("src") || "").toLowerCase();
+          return alt.includes("cover") || alt.includes("chaoscore") || src.includes("cover") || src.includes("chaoscore");
+        });
+
+        return candidates[0] || document.querySelector("img");
+      }
+
+      function setCover(index) {
+        const img = getCoverImage();
+        if (!img) return;
+
+        currentCoverIndex = (index + coverSources.length) % coverSources.length;
+        img.src = coverSources[currentCoverIndex];
+
+        if (!img.alt || img.alt.toLowerCase().includes("cover")) {
+          img.alt = "#Chaoscore cover";
+        }
+      }
+
+      function wireArrow(el) {
+        const label = (el.textContent || "").trim();
+        if (label !== "<★" && label !== "★>") return;
+
+        el.classList.add("cover-arrow-repaired");
+
+        if (el.tagName.toLowerCase() === "button") {
+          el.type = "button";
+        }
+
+        el.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (label === "<★") {
+            setCover(currentCoverIndex - 1);
+          } else {
+            setCover(currentCoverIndex + 1);
+          }
+        }, true);
+      }
+
+      document.querySelectorAll("button, a, span, div").forEach(wireArrow);
+
+      const img = getCoverImage();
+      if (img) {
+        const currentSrc = img.getAttribute("src") || "";
+        const foundIndex = coverSources.findIndex((src) => currentSrc.includes(src.replace("/", "")) || currentSrc === src);
+        currentCoverIndex = foundIndex >= 0 ? foundIndex : 0;
+
+        if (!img.complete || img.naturalWidth === 0) {
+          setCover(0);
+        }
+      }
     });
   </script>
 
