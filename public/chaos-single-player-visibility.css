@@ -1,0 +1,27 @@
+/* chaos-single-player-visibility-v1 */
+
+/* Di default il mini player NON deve vedersi sulla pagina album */
+body:not(.chaos-files-mode) #chaos-safe-mini-player {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Quando siamo dentro Busta Files, il mini player può vedersi */
+body.chaos-files-mode #chaos-safe-mini-player.is-visible {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Quando siamo dentro Busta Files, nascondiamo il player grande sotto */
+body.chaos-files-mode section.player,
+body.chaos-files-mode .player {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Ma NON tocchiamo mai l'audio */
+#audio {
+  display: none;
+}
