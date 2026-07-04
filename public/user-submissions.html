@@ -70,6 +70,41 @@
       font-size: 0.88rem;
     }
 
+    .search-wrap {
+      border: 1px solid rgba(231,224,210,0.14);
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(0,0,0,0.2);
+      margin: 0 0 18px;
+    }
+
+    .search-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(231,224,210,0.58);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.62rem;
+      margin-bottom: 8px;
+    }
+
+    #submission-search {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.045);
+      color: #e7e0d2;
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    #submission-search:focus {
+      border-color: rgba(231,224,210,0.38);
+      background: rgba(255,255,255,0.065);
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -200,6 +235,14 @@
     <h1>User<br>Submissions</h1>
     <div class="intro">
       Approved files submitted by Busta Files users. Each file has its own shareable link and can be saved to your account.
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-head">
+        <span>Search User Submissions</span>
+        <span id="search-count">0 results</span>
+      </div>
+      <input id="submission-search" type="search" placeholder="Search by title, filename, username..." autocomplete="off">
     </div>
 
     <section id="grid" class="grid">
@@ -364,6 +407,40 @@
       return a;
     }
 
+    let allFiles = [];
+    let currentSavedIds = new Set();
+
+    function searchableText(item) {
+      return [
+        item.title,
+        item.file_name,
+        item.description,
+        item.submitted_by_username,
+        item.folder
+      ].filter(Boolean).join(" ").toLowerCase();
+    }
+
+    function renderFiles() {
+      const input = document.getElementById("submission-search");
+      const count = document.getElementById("search-count");
+      const query = (input?.value || "").trim().toLowerCase();
+
+      const filtered = query
+        ? allFiles.filter(item => searchableText(item).includes(query))
+        : allFiles;
+
+      if (count) count.textContent = filtered.length + " result" + (filtered.length === 1 ? "" : "s");
+
+      grid.innerHTML = "";
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty">No matching user submissions.</div>`;
+        return;
+      }
+
+      filtered.forEach(item => grid.appendChild(card(item, currentSavedIds)));
+    }
+
     async function load() {
       const result = await client
         .from("approved_busta_files")
@@ -376,17 +453,19 @@
         return;
       }
 
-      const files = result.data || [];
+      allFiles = result.data || [];
+      currentSavedIds = await getSavedIds();
 
-      if (!files.length) {
+      if (!allFiles.length) {
         grid.innerHTML = `<div class="empty">No user submissions approved yet.</div>`;
+        const count = document.getElementById("search-count");
+        if (count) count.textContent = "0 results";
         return;
       }
 
-      const savedIds = await getSavedIds();
+      renderFiles();
 
-      grid.innerHTML = "";
-      files.forEach(item => grid.appendChild(card(item, savedIds)));
+      document.getElementById("submission-search")?.addEventListener("input", renderFiles);
 
       const params = new URLSearchParams(window.location.search);
       const wanted = params.get("file");
