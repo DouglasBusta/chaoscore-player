@@ -814,6 +814,7 @@ dialog {
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
   <style id="chaoscore-persistent-player-style">
     .chaos-files-shell {
       position: fixed;
@@ -840,15 +841,13 @@ dialog {
       position: fixed;
       top: max(14px, env(safe-area-inset-top));
       left: 14px;
-      z-index: 99994;
+      z-index: 99996;
       display: none;
-      gap: 8px;
-      align-items: center;
       pointer-events: none;
     }
 
     .chaos-files-shell.is-open + .chaos-files-topbar {
-      display: flex;
+      display: block;
     }
 
     .chaos-files-back {
@@ -869,145 +868,186 @@ dialog {
       box-shadow: 0 12px 36px rgba(0,0,0,0.32);
     }
 
-    .chaos-floating-player {
-      position: fixed;
-      left: 50%;
-      bottom: max(18px, env(safe-area-inset-bottom));
-      transform: translateX(-50%) translateY(130%);
-      z-index: 99999;
-      width: min(720px, calc(100% - 22px));
-      border: 1px solid rgba(231,224,210,0.18);
-      border-radius: 28px;
+    .chaos-player-handle {
+      display: none;
+    }
+
+    html.chaos-files-open body {
+      overflow: hidden;
+    }
+
+    html.chaos-files-open .player {
+      position: fixed !important;
+      left: 50% !important;
+      bottom: max(14px, env(safe-area-inset-bottom)) !important;
+      transform: translateX(-50%) !important;
+      z-index: 99999 !important;
+      width: min(760px, calc(100% - 20px)) !important;
+      max-height: calc(100dvh - 34px) !important;
+      border: 1px solid rgba(231,224,210,0.18) !important;
+      border-radius: 30px !important;
       background:
         radial-gradient(circle at 18% 0%, rgba(139,23,23,0.34), transparent 40%),
-        linear-gradient(135deg, rgba(24,19,18,0.94), rgba(5,5,5,0.94));
-      color: #e7e0d2;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 22px 70px rgba(0,0,0,0.58);
-      overflow: hidden;
-      opacity: 0;
-      pointer-events: none;
-      transition: transform 220ms ease, opacity 220ms ease;
+        linear-gradient(135deg, rgba(24,19,18,0.96), rgba(5,5,5,0.96)) !important;
+      backdrop-filter: blur(18px) !important;
+      box-shadow: 0 22px 70px rgba(0,0,0,0.58) !important;
+      transition: height 220ms ease, border-radius 220ms ease, transform 220ms ease !important;
+      overflow: hidden !important;
+      touch-action: none;
     }
 
-    .chaos-floating-player.is-visible {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-      pointer-events: auto;
+    html.chaos-files-open .player.chaos-player-compact {
+      height: 88px !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      grid-template-rows: auto 1fr !important;
+      align-items: center !important;
+      gap: 0 10px !important;
+      padding: 8px 10px 10px !important;
     }
 
-    .chaos-floating-inner {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto auto;
-      gap: 11px;
+    html.chaos-files-open .player.chaos-player-expanded {
+      height: min(410px, calc(100dvh - 34px)) !important;
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      grid-template-rows: auto auto 1fr auto auto !important;
+      align-items: stretch !important;
+      gap: 12px !important;
+      padding: 8px 14px 15px !important;
+      border-radius: 30px 30px 24px 24px !important;
+    }
+
+    html.chaos-files-open .chaos-player-handle {
+      display: block;
+      grid-column: 1 / -1;
+      width: 44px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(231,224,210,0.34);
+      margin: 0 auto 2px;
+      cursor: grab;
+    }
+
+    html.chaos-files-open .chaos-player-handle:active {
+      cursor: grabbing;
+    }
+
+    html.chaos-files-open .player .now {
+      min-width: 0 !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-compact .now {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      grid-column: 1 / 2 !important;
+      grid-row: 2 / 3 !important;
+      min-width: 0 !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .now {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      grid-column: 1 / -1 !important;
+    }
+
+    html.chaos-files-open .player .now img {
+      flex: 0 0 auto !important;
+      width: 44px !important;
+      height: 44px !important;
+      border-radius: 14px !important;
+      object-fit: cover !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .now img {
+      width: 64px !important;
+      height: 64px !important;
+      border-radius: 18px !important;
+    }
+
+    html.chaos-files-open .player .now-title {
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-compact .wave {
+      display: none !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .wave {
+      display: flex !important;
+      min-height: 88px !important;
+      align-items: end !important;
+      cursor: pointer;
+    }
+
+    html.chaos-files-open .player.chaos-player-compact .controls {
+      grid-column: 2 / 3 !important;
+      grid-row: 2 / 3 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .controls {
+      grid-column: 1 / -1 !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 10px !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-compact .time {
+      display: none !important;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .time {
+      display: block !important;
+    }
+
+    .chaos-player-volume {
+      display: none;
+    }
+
+    html.chaos-files-open .player.chaos-player-expanded .chaos-player-volume {
+      display: flex;
       align-items: center;
-      padding: 8px 10px;
-    }
-
-    .chaos-floating-cover {
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      object-fit: cover;
-      border: 1px solid rgba(231,224,210,0.14);
-      background: rgba(255,255,255,0.035);
-    }
-
-    .chaos-floating-meta {
-      min-width: 0;
-      display: grid;
-      gap: 4px;
-    }
-
-    .chaos-floating-title {
-      font-size: 0.78rem;
-      color: rgba(231,224,210,0.95);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .chaos-floating-sub {
-      font-size: 0.56rem;
-      color: rgba(231,224,210,0.48);
+      justify-content: center;
+      gap: 9px;
+      color: rgba(231,224,210,0.56);
+      font-size: 0.62rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
 
-    .chaos-floating-controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .chaos-floating-btn {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      border: 1px solid rgba(231,224,210,0.16);
-      background: rgba(255,255,255,0.045);
-      color: rgba(231,224,210,0.86);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      font: inherit;
-      line-height: 1;
-    }
-
-    .chaos-floating-btn.play {
-      width: 40px;
-      height: 40px;
-      background: rgba(231,224,210,0.12);
-      color: #fff;
-    }
-
-    .chaos-floating-volume {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 112px;
-    }
-
-    .chaos-floating-volume span {
-      font-size: 0.62rem;
-      color: rgba(231,224,210,0.55);
-    }
-
-    .chaos-floating-volume input {
-      width: 82px;
+    html.chaos-files-open .player.chaos-player-expanded .chaos-player-volume input {
+      width: min(300px, 64vw);
       accent-color: #e7e0d2;
     }
 
-    .chaos-floating-progress {
-      height: 4px;
-      background: rgba(231,224,210,0.13);
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .chaos-floating-progress-fill {
-      width: 0%;
-      height: 100%;
-      background: rgba(231,224,210,0.82);
-      transition: width 120ms linear;
-    }
-
     @media (max-width: 620px) {
-      .chaos-floating-inner {
-        grid-template-columns: auto minmax(0, 1fr) auto;
+      html.chaos-files-open .player.chaos-player-compact {
+        width: calc(100% - 14px) !important;
+        height: 86px !important;
+        border-radius: 26px !important;
       }
 
-      .chaos-floating-volume {
-        grid-column: 1 / -1;
-        justify-content: center;
-        min-width: 0;
-        padding-bottom: 3px;
+      html.chaos-files-open .player.chaos-player-expanded {
+        width: calc(100% - 14px) !important;
+        height: min(430px, calc(100dvh - 24px)) !important;
+        border-radius: 28px 28px 22px 22px !important;
       }
 
-      .chaos-floating-volume input {
-        width: min(260px, 60vw);
+      html.chaos-files-open .player .round {
+        width: 36px !important;
+        height: 36px !important;
+      }
+
+      html.chaos-files-open .player #play {
+        width: 42px !important;
+        height: 42px !important;
       }
     }
   </style>
@@ -2008,73 +2048,17 @@ dialog {
       if (window.__chaoscorePersistentPlayerMounted) return;
       window.__chaoscorePersistentPlayerMounted = true;
 
-      const TRACKS = [
-        { title: "banale", file: "/audio-mp3/1. banale.mp3" },
-        { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3" },
-        { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3" },
-        { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3" },
-        { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3" },
-        { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3" },
-        { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3" },
-        { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3" },
-        { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3" },
-        { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3" },
-        { title: "ma che ho fatto mo??...", file: "/audio-mp3/track11.mp3" },
-        { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3" },
-        { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3" },
-        { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3" },
-        { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3" }
-      ];
-
-      function absoluteUrl(path) {
-        return new URL(path, window.location.origin).href;
-      }
+      let sheetState = "compact";
+      let startY = 0;
+      let startState = "compact";
+      let dragging = false;
 
       function audio() {
         return document.getElementById("audio");
       }
 
-      function currentIndex() {
-        const a = audio();
-        if (!a || !a.src) return 0;
-        const index = TRACKS.findIndex(track => a.src === absoluteUrl(track.file));
-        return index >= 0 ? index : 0;
-      }
-
-      function currentTrack() {
-        return TRACKS[currentIndex()] || TRACKS[0];
-      }
-
-      function fmt(value) {
-        if (!Number.isFinite(value)) return "0:00";
-        const m = Math.floor(value / 60);
-        const s = Math.floor(value % 60).toString().padStart(2, "0");
-        return `${m}:${s}`;
-      }
-
-      function prepareFilesFrame() {
-        const frame = document.getElementById("chaos-files-frame");
-        if (!frame) return;
-
-        try {
-          const doc = frame.contentDocument;
-          if (!doc || doc.getElementById("chaos-frame-player-padding")) return;
-
-          const style = doc.createElement("style");
-          style.id = "chaos-frame-player-padding";
-          style.textContent = `
-            body {
-              padding-bottom: 120px !important;
-            }
-
-            @media (max-width: 620px) {
-              body {
-                padding-bottom: 170px !important;
-              }
-            }
-          `;
-          doc.head.appendChild(style);
-        } catch (_) {}
+      function player() {
+        return document.querySelector(".player");
       }
 
       function buildShell() {
@@ -2089,34 +2073,8 @@ dialog {
         topbar.className = "chaos-files-topbar";
         topbar.innerHTML = `<button class="chaos-files-back" id="chaos-files-back" type="button">← Back to #chaoscore</button>`;
 
-        const island = document.createElement("div");
-        island.id = "chaos-floating-player";
-        island.className = "chaos-floating-player";
-        island.innerHTML = `
-          <div class="chaos-floating-inner">
-            <img class="chaos-floating-cover" id="chaos-floating-cover" src="/chaoscore-cover.png" alt="">
-            <div class="chaos-floating-meta">
-              <div class="chaos-floating-title" id="chaos-floating-title">#chaoscore</div>
-              <div class="chaos-floating-sub" id="chaos-floating-sub">Douglas Busta · 0:00 / 0:00</div>
-            </div>
-            <div class="chaos-floating-controls">
-              <button class="chaos-floating-btn" id="chaos-floating-prev" type="button" aria-label="Previous track">‹</button>
-              <button class="chaos-floating-btn play" id="chaos-floating-play" type="button" aria-label="Play or pause">▶</button>
-              <button class="chaos-floating-btn" id="chaos-floating-next" type="button" aria-label="Next track">›</button>
-            </div>
-            <label class="chaos-floating-volume">
-              <span>VOL</span>
-              <input id="chaos-floating-volume" type="range" min="0" max="1" step="0.01" value="1">
-            </label>
-          </div>
-          <div class="chaos-floating-progress">
-            <div class="chaos-floating-progress-fill" id="chaos-floating-progress-fill"></div>
-          </div>
-        `;
-
         document.body.appendChild(shell);
         document.body.appendChild(topbar);
-        document.body.appendChild(island);
 
         const frame = document.getElementById("chaos-files-frame");
         if (frame) {
@@ -2128,82 +2086,185 @@ dialog {
         }
       }
 
-      function showIsland(force = false) {
-        const island = document.getElementById("chaos-floating-player");
-        const shell = document.getElementById("chaos-files-shell");
-        const a = audio();
-        if (!island) return;
+      function prepareRealPlayer() {
+        const p = player();
+        if (!p || p.dataset.sheetReady === "1") return;
 
-        const shouldShow = force || shell?.classList.contains("is-open") || (a && a.src && !a.paused);
-        island.classList.toggle("is-visible", Boolean(shouldShow));
-      }
+        p.dataset.sheetReady = "1";
 
-      function syncIsland() {
-        const a = audio();
-        const track = currentTrack();
+        const handle = document.createElement("div");
+        handle.className = "chaos-player-handle";
+        handle.setAttribute("aria-hidden", "true");
+        p.insertBefore(handle, p.firstChild);
 
-        const title = document.getElementById("chaos-floating-title");
-        const sub = document.getElementById("chaos-floating-sub");
-        const play = document.getElementById("chaos-floating-play");
-        const fill = document.getElementById("chaos-floating-progress-fill");
-        const cover = document.getElementById("chaos-floating-cover");
-        const mainCover = document.getElementById("main-cover");
-
-        if (title) title.textContent = track.title || "#chaoscore";
-        if (sub && a) sub.textContent = `Douglas Busta · ${fmt(a.currentTime)} / ${fmt(a.duration)}`;
-        if (play && a) play.textContent = a.paused ? "▶" : "Ⅱ";
-        if (fill && a) fill.style.width = `${a.duration ? (a.currentTime / a.duration) * 100 : 0}%`;
-
-        const vol = document.getElementById("chaos-floating-volume");
-        if (vol && a && document.activeElement !== vol) {
-          vol.value = String(a.volume);
+        if (!p.querySelector(".chaos-player-volume")) {
+          const volume = document.createElement("label");
+          volume.className = "chaos-player-volume";
+          volume.innerHTML = `<span>VOL</span><input id="chaos-player-volume" type="range" min="0" max="1" step="0.01" value="1">`;
+          p.appendChild(volume);
         }
 
-        if (cover && mainCover?.src) cover.src = mainCover.src;
+        bindDrag(handle, p);
+        bindPlayerExtras();
+      }
 
-        if ("mediaSession" in navigator && track) {
+      function bindPlayerExtras() {
+        const volume = document.getElementById("chaos-player-volume");
+        const a = audio();
+
+        if (volume && !volume.dataset.bound) {
+          volume.dataset.bound = "1";
+          volume.addEventListener("input", event => {
+            const realAudio = audio();
+            if (realAudio) realAudio.volume = Number(event.target.value);
+          });
+        }
+
+        const wave = document.getElementById("wave");
+        if (wave && !wave.dataset.seekBound) {
+          wave.dataset.seekBound = "1";
+          wave.addEventListener("click", event => {
+            if (sheetState !== "expanded") return;
+
+            const realAudio = audio();
+            if (!realAudio || !Number.isFinite(realAudio.duration) || !realAudio.duration) return;
+
+            const rect = wave.getBoundingClientRect();
+            const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+            realAudio.currentTime = ratio * realAudio.duration;
+          });
+        }
+
+        if (a && !a.dataset.sheetSyncBound) {
+          a.dataset.sheetSyncBound = "1";
+          ["volumechange", "play", "pause", "timeupdate", "loadedmetadata"].forEach(type => {
+            a.addEventListener(type, syncSheet);
+          });
+        }
+
+        syncSheet();
+      }
+
+      function syncSheet() {
+        const a = audio();
+        const volume = document.getElementById("chaos-player-volume");
+
+        if (a && volume && document.activeElement !== volume) {
+          volume.value = String(a.volume);
+        }
+
+        if ("mediaSession" in navigator) {
+          const title = document.getElementById("now-title")?.textContent?.trim() || "#chaoscore";
+          const cover = document.getElementById("main-cover")?.src || "/chaoscore-cover.png";
+
           try {
             navigator.mediaSession.metadata = new MediaMetadata({
-              title: track.title,
+              title,
               artist: "Douglas Busta",
               album: "#chaoscore",
-              artwork: [
-                { src: cover?.src || "/chaoscore-cover.png", sizes: "512x512", type: "image/png" }
-              ]
+              artwork: [{ src: cover, sizes: "512x512", type: "image/png" }]
             });
+
+            navigator.mediaSession.setActionHandler("play", () => audio()?.play());
+            navigator.mediaSession.setActionHandler("pause", () => audio()?.pause());
+            navigator.mediaSession.setActionHandler("previoustrack", () => document.getElementById("prev")?.click());
+            navigator.mediaSession.setActionHandler("nexttrack", () => document.getElementById("next")?.click());
           } catch (_) {}
         }
-
-        showIsland();
       }
 
-      function clickExisting(id) {
-        const button = document.getElementById(id);
-        if (button) button.click();
-      }
+      function bindDrag(handle, p) {
+        if (!handle || !p || handle.dataset.dragBound === "1") return;
+        handle.dataset.dragBound = "1";
 
-      async function playPause() {
-        const a = audio();
-        if (!a) return;
+        handle.addEventListener("pointerdown", event => {
+          if (!document.documentElement.classList.contains("chaos-files-open")) return;
 
-        if (!a.src) {
-          clickExisting("play");
-          return;
-        }
+          dragging = true;
+          startY = event.clientY;
+          startState = sheetState;
+          handle.setPointerCapture(event.pointerId);
+          p.style.transition = "none";
+        });
 
-        if (a.paused) {
-          try {
-            await a.play();
-          } catch (_) {
-            clickExisting("play");
+        handle.addEventListener("pointermove", event => {
+          if (!dragging) return;
+
+          const delta = event.clientY - startY;
+          const compactHeight = 88;
+          const expandedHeight = Math.min(430, window.innerHeight - 34);
+          const base = startState === "expanded" ? expandedHeight : compactHeight;
+          const next = Math.min(expandedHeight, Math.max(compactHeight, base - delta));
+
+          p.style.height = `${next}px`;
+        });
+
+        handle.addEventListener("pointerup", event => {
+          if (!dragging) return;
+
+          dragging = false;
+          handle.releasePointerCapture(event.pointerId);
+          p.style.transition = "";
+
+          const delta = event.clientY - startY;
+
+          if (delta < -34) {
+            setSheetState("expanded");
+          } else if (delta > 34) {
+            setSheetState("compact");
+          } else {
+            setSheetState(startState);
           }
-        } else {
-          a.pause();
-        }
+        });
+
+        handle.addEventListener("dblclick", () => {
+          setSheetState(sheetState === "expanded" ? "compact" : "expanded");
+        });
+      }
+
+      function setSheetState(state) {
+        const p = player();
+        if (!p) return;
+
+        sheetState = state === "expanded" ? "expanded" : "compact";
+
+        p.style.height = "";
+        p.classList.add("chaos-player-sheet");
+        p.classList.toggle("chaos-player-compact", sheetState === "compact");
+        p.classList.toggle("chaos-player-expanded", sheetState === "expanded");
+
+        prepareFilesFrame();
+      }
+
+      function prepareFilesFrame() {
+        const frame = document.getElementById("chaos-files-frame");
+        const p = player();
+        if (!frame || !p) return;
+
+        try {
+          const doc = frame.contentDocument;
+          if (!doc) return;
+
+          let style = doc.getElementById("chaos-frame-player-padding");
+          if (!style) {
+            style = doc.createElement("style");
+            style.id = "chaos-frame-player-padding";
+            doc.head.appendChild(style);
+          }
+
+          const height = sheetState === "expanded" ? 470 : 132;
+
+          style.textContent = `
+            body {
+              padding-bottom: ${height}px !important;
+            }
+          `;
+        } catch (_) {}
       }
 
       function openFilesView(push = true) {
         buildShell();
+        prepareRealPlayer();
 
         const shell = document.getElementById("chaos-files-shell");
         const frame = document.getElementById("chaos-files-frame");
@@ -2216,10 +2277,7 @@ dialog {
 
         shell.classList.add("is-open");
         document.documentElement.classList.add("chaos-files-open");
-        showIsland(true);
-        prepareFilesFrame();
-        setTimeout(prepareFilesFrame, 350);
-        setTimeout(prepareFilesFrame, 1000);
+        setSheetState("compact");
 
         if (push) {
           const url = new URL(window.location.href);
@@ -2230,10 +2288,16 @@ dialog {
 
       function closeFilesView(push = true) {
         const shell = document.getElementById("chaos-files-shell");
+        const p = player();
 
         if (shell) shell.classList.remove("is-open");
         document.documentElement.classList.remove("chaos-files-open");
-        showIsland();
+
+        if (p) {
+          p.classList.remove("chaos-player-sheet", "chaos-player-compact", "chaos-player-expanded");
+          p.style.height = "";
+          p.style.transition = "";
+        }
 
         if (push) {
           const url = new URL(window.location.href);
@@ -2242,8 +2306,9 @@ dialog {
         }
       }
 
-      function bind() {
+      function bindNavigation() {
         buildShell();
+        prepareRealPlayer();
 
         document.addEventListener("click", event => {
           const link = event.target.closest("a");
@@ -2267,40 +2332,6 @@ dialog {
         }, true);
 
         document.getElementById("chaos-files-back")?.addEventListener("click", () => closeFilesView(true));
-        document.getElementById("chaos-floating-play")?.addEventListener("click", playPause);
-        document.getElementById("chaos-floating-prev")?.addEventListener("click", () => clickExisting("prev"));
-        document.getElementById("chaos-floating-next")?.addEventListener("click", () => clickExisting("next"));
-
-        document.getElementById("chaos-floating-volume")?.addEventListener("input", event => {
-          const a = audio();
-          if (a) a.volume = Number(event.target.value);
-        });
-
-        document.querySelector(".chaos-floating-progress")?.addEventListener("click", event => {
-          const a = audio();
-          if (!a || !Number.isFinite(a.duration) || !a.duration) return;
-
-          const rect = event.currentTarget.getBoundingClientRect();
-          const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-          a.currentTime = ratio * a.duration;
-          syncIsland();
-        });
-
-        const a = audio();
-        if (a) {
-          ["play", "pause", "timeupdate", "loadedmetadata", "durationchange", "ended", "volumechange"].forEach(type => {
-            a.addEventListener(type, syncIsland);
-          });
-        }
-
-        if ("mediaSession" in navigator) {
-          try {
-            navigator.mediaSession.setActionHandler("play", () => audio()?.play());
-            navigator.mediaSession.setActionHandler("pause", () => audio()?.pause());
-            navigator.mediaSession.setActionHandler("previoustrack", () => clickExisting("prev"));
-            navigator.mediaSession.setActionHandler("nexttrack", () => clickExisting("next"));
-          } catch (_) {}
-        }
 
         window.addEventListener("popstate", () => {
           const url = new URL(window.location.href);
@@ -2315,14 +2346,12 @@ dialog {
         if (initial.searchParams.get("view") === "files") {
           openFilesView(false);
         }
-
-        syncIsland();
       }
 
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", bind);
+        document.addEventListener("DOMContentLoaded", bindNavigation);
       } else {
-        bind();
+        bindNavigation();
       }
     })();
   </script>
