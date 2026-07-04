@@ -1610,6 +1610,8 @@
         if (!session) return;
 
         if (saveButton) {
+          if (saveButton.dataset.saved === "true") return;
+
           const fileName = saveButton.dataset.saveFile;
           const item = findFileByName(fileName);
 
@@ -1631,7 +1633,8 @@
           }
 
           saveButton.textContent = "Saved";
-          saveButton.disabled = false;
+          saveButton.dataset.saved = "true";
+          saveButton.disabled = true;
           return;
         }
 

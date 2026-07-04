@@ -4,7 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account — BUSTA FILES</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    async function loadSavedFilesFromSupabase() {
+      const savedBox = document.getElementById("saved-files-list");
+      if (!savedBox) return;
+
+      const { data, error } = await bustaSupabase
+        .from("saved_files")
+        .select("file_name,file_url,folder,created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        savedBox.className = "empty";
+        savedBox.textContent = "Could not load saved files: " + error.message;
+        return;
+      }
+
+      if (!data || !data.length) {
+        savedBox.className = "empty";
+        savedBox.textContent = "No saved files yet.";
+        return;
+      }
+
+      savedBox.className = "";
+      savedBox.innerHTML = `
+        <ul class="saved-file-list">
+          ${data.map(file => `
+            <li class="saved-file-item">
+              <div class="saved-file-name">${file.file_name}</div>
+              <div class="saved-file-meta">${file.folder || "Busta Files"}</div>
+              ${file.file_url ? `<a class="saved-file-open" href="${file.file_url}" target="_blank" rel="noopener noreferrer">Open File</a>` : ""}
+            </li>
+          `).join("")}
+        </ul>
+      `;
+    }
+
+  </script>
   <style>
     :root {
       --paper: #e7e0d2;
@@ -231,6 +267,57 @@
         font-size: 2.6rem;
       }
     }
+  
+    .saved-file-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .saved-file-item {
+      border: 1px solid rgba(231,224,210,0.16);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .saved-file-name {
+      color: rgba(231,224,210,0.9);
+      font-size: 0.86rem;
+      line-height: 1.45;
+      word-break: break-word;
+      margin-bottom: 6px;
+    }
+
+    .saved-file-meta {
+      color: rgba(231,224,210,0.5);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .saved-file-open {
+      display: inline-flex;
+      border: 1px solid rgba(231,224,210,0.22);
+      border-radius: 999px;
+      padding: 7px 9px;
+      color: rgba(231,224,210,0.78);
+      text-decoration: none;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .saved-file-open:hover {
+      color: #fff;
+      border-color: rgba(231,224,210,0.42);
+      background: rgba(255,255,255,0.08);
+    }
+
   </style>
 </head>
 <body>
@@ -261,8 +348,8 @@
     <section class="grid">
       <article class="card">
         <h2>Saved Files</h2>
-        <div class="empty">
-          Your saved Busta Files will appear here after we connect the private database table.
+        <div id="saved-files-list" class="empty">
+          Loading saved files...
         </div>
       </article>
 
@@ -323,6 +410,8 @@
 
       loading.style.display = "none";
       accountPage.classList.remove("locked");
+
+      loadSavedFilesFromSupabase();
     }
 
     logout.addEventListener("click", async () => {
