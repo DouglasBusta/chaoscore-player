@@ -2257,32 +2257,6 @@
     });
   </script>
 
-  <script id="disable-old-auth-modal">
-    window.addEventListener("DOMContentLoaded", () => {
-      document.addEventListener("click", (event) => {
-        const authButton = event.target.closest("[data-auth-open]");
-        if (!authButton) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        window.location.href = "/auth";
-      }, true);
-
-      const modal = document.getElementById("auth-modal");
-      if (modal && modal.open) {
-        modal.close();
-      }
-
-      document.querySelectorAll("[data-auth-open]").forEach((button) => {
-        if (button.tagName.toLowerCase() === "a") {
-          button.href = "/auth";
-        }
-      });
-    });
-  </script>
-
 
   <dialog id="busta-upload-dialog" class="busta-upload-dialog">
     <form id="busta-upload-form" class="busta-upload-inner" method="dialog">
@@ -2492,6 +2466,124 @@
 
       closeButton?.addEventListener("click", () => dialog?.close());
       form?.addEventListener("submit", submitUpload);
+    });
+  </script>
+
+
+  <script id="busta-session-nav-fix">
+    window.addEventListener("DOMContentLoaded", async () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function getOrCreateAccountButton() {
+        let account = document.getElementById("account-link");
+
+        if (!account) {
+          account = document.createElement("a");
+          account.id = "account-link";
+          account.href = "/account";
+          account.textContent = "My Account";
+          account.className = "account-link hidden";
+
+          const header =
+            document.querySelector("header") ||
+            document.querySelector("nav") ||
+            document.body;
+
+          header.appendChild(account);
+        }
+
+        return account;
+      }
+
+      function setupAuthButtons() {
+        document.querySelectorAll("[data-auth-open]").forEach((button) => {
+          const mode = button.dataset.authOpen === "login" ? "login" : "signup";
+
+          if (button.tagName.toLowerCase() === "a") {
+            button.href = "/auth?mode=" + mode;
+          }
+
+          button.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            window.location.href = "/auth?mode=" + mode;
+          }, true);
+        });
+      }
+
+      function showLoggedOut() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => {
+          btn.classList.remove("hidden");
+          btn.style.display = "";
+        });
+
+        const account = getOrCreateAccountButton();
+        account.classList.add("hidden");
+        account.style.display = "none";
+      }
+
+      function showLoggedIn() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => {
+          btn.classList.add("hidden");
+          btn.style.display = "none";
+        });
+
+        const account = getOrCreateAccountButton();
+        account.classList.remove("hidden");
+        account.style.display = "";
+        account.href = "/account";
+      }
+
+      async function refreshSessionUI() {
+        if (!client) {
+          showLoggedOut();
+          return;
+        }
+
+        const { data, error } = await client.auth.getSession();
+
+        if (error) {
+          console.warn(error);
+          showLoggedOut();
+          return;
+        }
+
+        const session = data?.session || null;
+
+        if (session?.user) showLoggedIn();
+        else showLoggedOut();
+      }
+
+      setupAuthButtons();
+
+      const account = getOrCreateAccountButton();
+      account.addEventListener("click", (event) => {
+        event.preventDefault();
+        window.location.href = "/account";
+      });
+
+      if (client) {
+        client.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) showLoggedIn();
+          else showLoggedOut();
+        });
+      }
+
+      await refreshSessionUI();
+      setTimeout(refreshSessionUI, 700);
+      setTimeout(refreshSessionUI, 1600);
     });
   </script>
 

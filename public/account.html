@@ -788,7 +788,7 @@
           <div style="color:rgba(231,224,210,.68); line-height:1.6; margin-bottom:22px;">
             This private account page requires an active Busta Files session.
           </div>
-          <a class="pill" href="/exclusive">Back to Busta Files</a>
+          <a class="pill" href="/">Back to Busta Files</a>
         </div>
       `;
     }
@@ -1209,7 +1209,6 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         }
 
         alert("Delete request created. You will be logged out.");
-        await client.auth.signOut();
         window.location.href = "/";
       }
 
