@@ -1419,7 +1419,7 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         const folder = "Other Busta Files";
 
         try {
-          alert("Publishing file...");
+          alert("Step 1/5: loading pending file...");
 
           const pendingResult = await client
             .from("pending_uploads")
@@ -1431,23 +1431,25 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
 
           const item = pendingResult.data;
 
-          const signed = await client.storage
+          if (!item || !item.file_path) {
+            throw new Error("Missing pending file path.");
+          }
+
+          alert("Step 2/5: downloading private file...");
+
+          const downloaded = await client.storage
             .from("busta-submissions")
-            .createSignedUrl(item.file_path, 60 * 10);
+            .download(item.file_path);
 
-          if (signed.error) throw signed.error;
+          if (downloaded.error) throw downloaded.error;
 
-          if (!signed.data || !signed.data.signedUrl) {
-            throw new Error("Signed preview URL missing.");
+          const blob = downloaded.data;
+
+          if (!blob) {
+            throw new Error("Downloaded file is empty.");
           }
 
-          const fileResponse = await fetch(signed.data.signedUrl);
-
-          if (!fileResponse.ok) {
-            throw new Error("Could not read private submitted file. HTTP " + fileResponse.status);
-          }
-
-          const blob = await fileResponse.blob();
+          alert("Step 3/5: uploading public copy...");
 
           const safeName = (item.file_name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
           const publicPath = "Other_Busta_Files/" + Date.now() + "-" + safeName;
@@ -1461,6 +1463,8 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
             });
 
           if (uploadPublic.error) throw uploadPublic.error;
+
+          alert("Step 4/5: creating public database record...");
 
           const publicUrlResult = client.storage
             .from("busta-approved-files")
@@ -1488,6 +1492,8 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
             });
 
           if (approvedInsert.error) throw approvedInsert.error;
+
+          alert("Step 5/5: marking submission as approved...");
 
           const updatePending = await client
             .from("pending_uploads")
