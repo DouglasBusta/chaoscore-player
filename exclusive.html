@@ -1080,7 +1080,10 @@
       } else {
         result = await bustaSupabase.auth.signUp({
           email,
-          password
+          password,
+          options: {
+            emailRedirectTo: "https://lookapp.org/exclusive"
+          }
         });
       }
 
