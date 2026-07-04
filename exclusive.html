@@ -992,6 +992,33 @@
     }
     /* END BUSTA FILE UPLOAD */
 
+  
+    /* AUTH CLEAN V2 */
+    #auth-password-confirm-label.auth-hidden,
+    #auth-password-confirm.auth-hidden,
+    #auth-forgot-password.auth-hidden {
+      display: none !important;
+    }
+
+    .auth-forgot-password {
+      margin-top: 10px;
+      border: 0;
+      background: transparent;
+      color: rgba(231,224,210,0.58);
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      padding: 8px 0;
+      width: fit-content;
+    }
+
+    .auth-forgot-password:hover {
+      color: #fff;
+    }
+    /* END AUTH CLEAN V2 */
+
   </style>
 </head>
 <body>
@@ -1057,8 +1084,11 @@
 
           <label class="auth-label" for="auth-password">Password</label>
           <input id="auth-password" class="auth-input" type="password" placeholder="••••••••" minlength="8" required>
+          <label id="auth-password-confirm-label" for="auth-password-confirm">Confirm Password</label>
+          <input id="auth-password-confirm" type="password" autocomplete="new-password" placeholder="Repeat password">
 
           <button id="auth-submit-btn" class="auth-submit" type="submit">Enter Archive</button>
+          <button id="auth-forgot-password" class="auth-forgot-password" type="button">Forgot Password?</button>
         </form>
 
         <p id="auth-message" class="auth-message"></p>
@@ -1620,245 +1650,6 @@
 
   </script>
 
-  <script id="busta-auth-final-fix">
-    window.addEventListener("DOMContentLoaded", () => {
-      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
-      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
-
-      const client = window.supabase
-        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-            auth: {
-              persistSession: true,
-              autoRefreshToken: true,
-              detectSessionInUrl: true
-            }
-          })
-        : null;
-
-      const authModal = document.getElementById("auth-modal");
-      const authForm = document.getElementById("auth-form");
-      const authTitle = document.getElementById("auth-title");
-      const authCopy = document.getElementById("auth-copy");
-      const authEmail = document.getElementById("auth-email");
-      const authPassword = document.getElementById("auth-password");
-      const authMessage = document.getElementById("auth-message");
-      const authSubmit = document.getElementById("auth-submit-btn");
-      const accountLink = document.getElementById("account-link");
-      const showPassword = document.getElementById("auth-show-password");
-      const remember = document.getElementById("auth-remember");
-
-      let mode = "signup";
-
-      function showLoggedOut() {
-        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.remove("hidden"));
-        if (accountLink) accountLink.classList.add("hidden");
-      }
-
-      function showLoggedIn() {
-        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.add("hidden"));
-        if (accountLink) accountLink.classList.remove("hidden");
-      }
-
-      async function refreshSessionUI() {
-        if (!client) {
-          showLoggedOut();
-          return null;
-        }
-
-        const { data } = await client.auth.getSession();
-        const session = data?.session || null;
-
-        if (session?.user) {
-          showLoggedIn();
-        } else {
-          showLoggedOut();
-        }
-
-        return session;
-      }
-
-      function openAuth(nextMode) {
-        mode = nextMode || "signup";
-
-        if (authTitle) authTitle.textContent = mode === "login" ? "Log In" : "Sign Up";
-        if (authCopy) {
-          authCopy.textContent = mode === "login"
-            ? "Enter your email and password to access your private archive session."
-            : "Create your private Busta Files session.";
-        }
-
-        if (authMessage) authMessage.textContent = "";
-
-        const rememberedEmail = localStorage.getItem("bustaRememberedEmail") || "";
-        if (authEmail) authEmail.value = rememberedEmail;
-        if (remember) remember.checked = !!rememberedEmail;
-        if (authPassword) {
-          authPassword.value = "";
-          authPassword.type = "password";
-        }
-        if (showPassword) showPassword.checked = false;
-
-        if (authModal && !authModal.open) authModal.showModal();
-        setTimeout(() => authEmail?.focus(), 80);
-      }
-
-      document.querySelectorAll("[data-auth-open]").forEach(button => {
-        button.addEventListener("click", (event) => {
-          event.preventDefault();
-          openAuth(button.dataset.authOpen);
-        });
-      });
-
-      document.querySelectorAll("[data-auth-close]").forEach(button => {
-        button.addEventListener("click", () => authModal?.close());
-      });
-
-      if (showPassword && authPassword) {
-        showPassword.addEventListener("change", () => {
-          authPassword.type = showPassword.checked ? "text" : "password";
-        });
-      }
-
-      async function submitAuth(event) {
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-
-        if (!client) {
-          if (authMessage) authMessage.textContent = "Authentication service is not loaded. Refresh the page and try again.";
-          return;
-        }
-
-        const email = authEmail?.value.trim().toLowerCase() || "";
-        const password = authPassword?.value || "";
-
-        if (!email || !password) {
-          if (authMessage) authMessage.textContent = "Enter email and password.";
-          return;
-        }
-
-        if (password.length < 8) {
-          if (authMessage) authMessage.textContent = "Password must be at least 8 characters.";
-          return;
-        }
-
-        if (remember?.checked) {
-          localStorage.setItem("bustaRememberedEmail", email);
-        } else {
-          localStorage.removeItem("bustaRememberedEmail");
-        }
-
-        if (authSubmit) {
-          authSubmit.disabled = true;
-          authSubmit.textContent = mode === "login" ? "Checking..." : "Creating...";
-        }
-
-        if (authMessage) {
-          authMessage.textContent = mode === "login"
-            ? "Checking archive credentials..."
-            : "Creating archive account...";
-        }
-
-        let result;
-
-        try {
-          if (mode === "login") {
-            result = await client.auth.signInWithPassword({ email, password });
-          } else {
-            result = await client.auth.signUp({
-              email,
-              password,
-              options: {
-                emailRedirectTo: "https://lookapp.org/exclusive"
-              }
-            });
-          }
-        } catch (err) {
-          if (authMessage) authMessage.textContent = err.message || "Authentication failed.";
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        if (result?.error) {
-          if (authMessage) authMessage.textContent = result.error.message;
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        const { data } = await client.auth.getSession();
-        const session = data?.session || result?.data?.session || null;
-
-        if (!session?.user) {
-          if (authMessage) {
-            authMessage.textContent = mode === "signup"
-              ? "Account created. Now press Log In with the same email and password."
-              : "No active session found. Try again.";
-          }
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        showLoggedIn();
-
-        if (authMessage) {
-          authMessage.textContent = mode === "login"
-            ? "Access granted. Welcome back."
-            : "Account created. Archive session active.";
-        }
-
-        setTimeout(() => {
-          authModal?.close();
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-        }, 700);
-      }
-
-      if (authForm) {
-        authForm.addEventListener("submit", submitAuth);
-      }
-
-      if (authSubmit) {
-        authSubmit.addEventListener("click", submitAuth);
-      }
-
-      if (accountLink) {
-        accountLink.addEventListener("click", async (event) => {
-          event.preventDefault();
-
-          const session = await refreshSessionUI();
-
-          if (!session?.user) {
-            openAuth("login");
-            return;
-          }
-
-          window.location.href = "/account.html";
-        });
-      }
-
-      if (client) {
-        client.auth.onAuthStateChange((_event, session) => {
-          if (session?.user) showLoggedIn();
-          else showLoggedOut();
-        });
-      }
-
-      refreshSessionUI();
-    });
-  </script>
-
 
   <script id="busta-save-share-supabase-fix">
     window.addEventListener("DOMContentLoaded", () => {
@@ -2289,361 +2080,6 @@
   </script>
 
 
-  <script id="busta-auth-real-final">
-    window.addEventListener("DOMContentLoaded", () => {
-      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
-      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
-
-      const client = window.supabase
-        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-            auth: {
-              persistSession: true,
-              autoRefreshToken: true,
-              detectSessionInUrl: true
-            }
-          })
-        : null;
-
-      const authModal = document.getElementById("auth-modal");
-      let authForm = document.getElementById("auth-form");
-
-      if (authForm) {
-        const cleanForm = authForm.cloneNode(true);
-        authForm.parentNode.replaceChild(cleanForm, authForm);
-        authForm = cleanForm;
-      }
-
-      const authTitle = document.getElementById("auth-title");
-      const authCopy = document.getElementById("auth-copy");
-      const authEmail = document.getElementById("auth-email");
-      const authPassword = document.getElementById("auth-password");
-      const authMessage = document.getElementById("auth-message");
-      const authSubmit = document.getElementById("auth-submit-btn") || document.querySelector(".auth-submit");
-      const accountLink = document.getElementById("account-link");
-      const showPassword = document.getElementById("auth-show-password");
-      const remember = document.getElementById("auth-remember");
-
-      let mode = "signup";
-
-      function readableError(error) {
-        if (!error) return "Unknown authentication error.";
-        if (typeof error === "string") return error;
-        if (error.message) return error.message;
-        if (error.error_description) return error.error_description;
-        if (error.error) return error.error;
-        try {
-          const json = JSON.stringify(error);
-          if (json && json !== "{}") return json;
-        } catch (_) {}
-        return "Authentication failed. Check email/password and try again.";
-      }
-
-      function setMessage(text) {
-        if (authMessage) authMessage.textContent = text || "";
-      }
-
-      function showLoggedOut() {
-        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.remove("hidden"));
-        if (accountLink) accountLink.classList.add("hidden");
-      }
-
-      function showLoggedIn() {
-        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.add("hidden"));
-        if (accountLink) accountLink.classList.remove("hidden");
-      }
-
-      async function refreshSessionUI() {
-        if (!client) {
-          showLoggedOut();
-          return null;
-        }
-
-        const { data } = await client.auth.getSession();
-        const session = data?.session || null;
-
-        if (session?.user) showLoggedIn();
-        else showLoggedOut();
-
-        return session;
-      }
-
-      function openAuth(nextMode) {
-        mode = nextMode || "signup";
-
-        if (authTitle) authTitle.textContent = mode === "login" ? "Log In" : "Sign Up";
-
-        if (authCopy) {
-          authCopy.textContent = mode === "login"
-            ? "Enter your private Busta Files account."
-            : "Create your private Busta Files account.";
-        }
-
-        setMessage("");
-
-        const rememberedEmail = localStorage.getItem("bustaRememberedEmail") || "";
-        if (authEmail) authEmail.value = rememberedEmail;
-        if (remember) remember.checked = !!rememberedEmail;
-
-        if (authPassword) {
-          authPassword.value = "";
-          authPassword.type = "password";
-        }
-
-        if (showPassword) showPassword.checked = false;
-
-        if (authModal && !authModal.open) authModal.showModal();
-
-        setTimeout(() => authEmail?.focus(), 80);
-      }
-
-      document.addEventListener("click", (event) => {
-        const opener = event.target.closest("[data-auth-open]");
-        if (!opener) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        openAuth(opener.dataset.authOpen || "signup");
-      }, true);
-
-      document.querySelectorAll("[data-auth-close]").forEach(button => {
-        button.addEventListener("click", () => authModal?.close());
-      });
-
-      if (showPassword && authPassword) {
-        showPassword.addEventListener("change", () => {
-          authPassword.type = showPassword.checked ? "text" : "password";
-        });
-      }
-
-      async function submitAuth(event) {
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-        }
-
-        if (!client) {
-          setMessage("Authentication service is not loaded. Refresh and try again.");
-          return;
-        }
-
-        const email = authEmail?.value.trim().toLowerCase() || "";
-        const password = authPassword?.value || "";
-
-        if (!email || !password) {
-          setMessage("Enter email and password.");
-          return;
-        }
-
-        if (password.length < 8) {
-          setMessage("Password must be at least 8 characters.");
-          return;
-        }
-
-        if (remember?.checked) {
-          localStorage.setItem("bustaRememberedEmail", email);
-        } else {
-          localStorage.removeItem("bustaRememberedEmail");
-        }
-
-        if (authSubmit) {
-          authSubmit.disabled = true;
-          authSubmit.textContent = mode === "login" ? "Checking..." : "Creating...";
-        }
-
-        setMessage(mode === "login" ? "Checking account..." : "Creating account...");
-
-        let result;
-
-        try {
-          if (mode === "login") {
-            result = await client.auth.signInWithPassword({
-              email,
-              password
-            });
-          } else {
-            result = await client.auth.signUp({
-              email,
-              password,
-              options: {
-                emailRedirectTo: "https://lookapp.org"
-              }
-            });
-          }
-        } catch (err) {
-          setMessage(readableError(err));
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        if (result?.error) {
-          setMessage(readableError(result.error));
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        const { data } = await client.auth.getSession();
-        const session = data?.session || result?.data?.session || null;
-
-        if (!session?.user) {
-          setMessage("Account created. Now press Log In with the same email and password.");
-          mode = "login";
-          if (authTitle) authTitle.textContent = "Log In";
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-          return;
-        }
-
-        showLoggedIn();
-        setMessage(mode === "login" ? "Access granted." : "Account created. Access granted.");
-
-        setTimeout(() => {
-          authModal?.close();
-          if (authSubmit) {
-            authSubmit.disabled = false;
-            authSubmit.textContent = "Enter Archive";
-          }
-        }, 650);
-      }
-
-      if (authForm) {
-        authForm.addEventListener("submit", submitAuth, true);
-      }
-
-      if (authSubmit) {
-        authSubmit.addEventListener("click", submitAuth, true);
-      }
-
-      if (accountLink) {
-        accountLink.addEventListener("click", async (event) => {
-          event.preventDefault();
-
-          const session = await refreshSessionUI();
-
-          if (!session?.user) {
-            openAuth("login");
-            return;
-          }
-
-          window.location.href = "/account.html";
-        }, true);
-      }
-
-      if (client) {
-        client.auth.onAuthStateChange((_event, session) => {
-          if (session?.user) showLoggedIn();
-          else showLoggedOut();
-        });
-      }
-
-      refreshSessionUI();
-    });
-  </script>
-
-
-  <script id="auth-email-public-fix">
-    window.addEventListener("DOMContentLoaded", () => {
-      const emailInput = document.getElementById("auth-email");
-      const passwordInput = document.getElementById("auth-password");
-      const messageBox = document.getElementById("auth-message");
-      const submitButton = document.getElementById("auth-submit-btn") || document.querySelector(".auth-submit");
-
-      function setAuthMessage(text) {
-        if (messageBox) messageBox.textContent = text || "";
-      }
-
-      function checkEmailTypo(email) {
-        const value = (email || "").trim().toLowerCase();
-
-        if (value.endsWith("@gmail.cc")) {
-          return "This email looks wrong. Did you mean @gmail.com?";
-        }
-
-        if (value.endsWith("@gmai.com") || value.endsWith("@gmial.com") || value.endsWith("@gmail.con")) {
-          return "This email looks wrong. Did you mean @gmail.com?";
-        }
-
-        if (!value.includes("@") || !value.includes(".")) {
-          return "Enter a valid email address.";
-        }
-
-        return "";
-      }
-
-      if (emailInput) {
-        emailInput.addEventListener("input", () => {
-          const warning = checkEmailTypo(emailInput.value);
-          if (warning) setAuthMessage(warning);
-          else if ((messageBox?.textContent || "").trim() === "{}") setAuthMessage("");
-        });
-      }
-
-      if (submitButton) {
-        submitButton.addEventListener("click", (event) => {
-          const email = emailInput?.value || "";
-          const warning = checkEmailTypo(email);
-
-          if (warning) {
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-            setAuthMessage(warning);
-            return;
-          }
-
-          if (!passwordInput?.value || passwordInput.value.length < 8) {
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-            setAuthMessage("Password must be at least 8 characters.");
-            return;
-          }
-
-          if ((messageBox?.textContent || "").trim() === "{}") {
-            setAuthMessage("Authentication failed. Check email and password, then try again.");
-          }
-        }, true);
-      }
-
-      const observer = new MutationObserver(() => {
-        if (!messageBox) return;
-
-        const text = (messageBox.textContent || "").trim();
-
-        if (text === "{}") {
-          setAuthMessage("Authentication failed. Check email and password, then try again.");
-        }
-
-        if (text.toLowerCase().includes("email rate limit")) {
-          setAuthMessage("Too many email attempts. Wait a bit and try again.");
-        }
-
-        if (text.toLowerCase().includes("signup disabled")) {
-          setAuthMessage("Sign up is temporarily disabled. Contact Douglas.");
-        }
-      });
-
-      if (messageBox) {
-        observer.observe(messageBox, {
-          childList: true,
-          characterData: true,
-          subtree: true
-        });
-      }
-    });
-  </script>
-
-
   <dialog id="busta-upload-dialog" class="busta-upload-dialog">
     <form id="busta-upload-form" class="busta-upload-inner" method="dialog">
       <h3>Submit<br>File</h3>
@@ -2852,6 +2288,349 @@
 
       closeButton?.addEventListener("click", () => dialog?.close());
       form?.addEventListener("submit", submitUpload);
+    });
+  </script>
+
+
+  <script id="busta-auth-clean-v2">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      const authModal = document.getElementById("auth-modal");
+      let authForm = document.getElementById("auth-form");
+
+      // Cloniamo il form per togliere listener vecchi rimasti attaccati
+      if (authForm) {
+        const cleanForm = authForm.cloneNode(true);
+        authForm.parentNode.replaceChild(cleanForm, authForm);
+        authForm = cleanForm;
+      }
+
+      const authTitle = document.getElementById("auth-title");
+      const authCopy = document.getElementById("auth-copy");
+      const authEmail = document.getElementById("auth-email");
+      const authPassword = document.getElementById("auth-password");
+      const authPasswordConfirm = document.getElementById("auth-password-confirm");
+      const authPasswordConfirmLabel = document.getElementById("auth-password-confirm-label");
+      const authMessage = document.getElementById("auth-message");
+      const authSubmit = document.getElementById("auth-submit-btn") || document.querySelector(".auth-submit");
+      const forgotPassword = document.getElementById("auth-forgot-password");
+      const accountLink = document.getElementById("account-link");
+      const showPassword = document.getElementById("auth-show-password");
+      const remember = document.getElementById("auth-remember");
+
+      let mode = "signup";
+
+      function setMessage(text) {
+        if (authMessage) authMessage.textContent = text || "";
+      }
+
+      function readableError(error) {
+        if (!error) return "Authentication failed. Try again.";
+        if (typeof error === "string") return error;
+        if (error.message) return error.message;
+        if (error.error_description) return error.error_description;
+        if (error.error) return error.error;
+
+        try {
+          const json = JSON.stringify(error);
+          if (json && json !== "{}") return json;
+        } catch (_) {}
+
+        return "Authentication failed. Check email and password, then try again.";
+      }
+
+      function checkEmailTypo(email) {
+        const value = (email || "").trim().toLowerCase();
+
+        if (!value.includes("@") || !value.includes(".")) {
+          return "Enter a valid email address.";
+        }
+
+        if (
+          value.endsWith("@gmail.cc") ||
+          value.endsWith("@gmai.com") ||
+          value.endsWith("@gmial.com") ||
+          value.endsWith("@gmail.con")
+        ) {
+          return "This email looks wrong. Did you mean @gmail.com?";
+        }
+
+        return "";
+      }
+
+      function updateModeUI() {
+        const isSignup = mode === "signup";
+
+        if (authTitle) authTitle.textContent = isSignup ? "Sign Up" : "Log In";
+
+        if (authCopy) {
+          authCopy.textContent = isSignup
+            ? "Create your private Busta Files account."
+            : "Enter your private Busta Files account.";
+        }
+
+        if (authPasswordConfirm) {
+          authPasswordConfirm.classList.toggle("auth-hidden", !isSignup);
+          authPasswordConfirm.required = isSignup;
+          if (!isSignup) authPasswordConfirm.value = "";
+        }
+
+        if (authPasswordConfirmLabel) {
+          authPasswordConfirmLabel.classList.toggle("auth-hidden", !isSignup);
+        }
+
+        if (forgotPassword) {
+          forgotPassword.classList.toggle("auth-hidden", isSignup);
+        }
+      }
+
+      function showLoggedOut() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.remove("hidden"));
+        if (accountLink) accountLink.classList.add("hidden");
+      }
+
+      function showLoggedIn() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.add("hidden"));
+        if (accountLink) accountLink.classList.remove("hidden");
+      }
+
+      async function refreshSessionUI() {
+        if (!client) {
+          showLoggedOut();
+          return null;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (session?.user) showLoggedIn();
+        else showLoggedOut();
+
+        return session;
+      }
+
+      function openAuth(nextMode) {
+        mode = nextMode || "signup";
+        updateModeUI();
+        setMessage("");
+
+        const rememberedEmail = localStorage.getItem("bustaRememberedEmail") || "";
+        if (authEmail) authEmail.value = rememberedEmail;
+        if (remember) remember.checked = !!rememberedEmail;
+
+        if (authPassword) {
+          authPassword.value = "";
+          authPassword.type = "password";
+        }
+
+        if (authPasswordConfirm) {
+          authPasswordConfirm.value = "";
+          authPasswordConfirm.type = "password";
+        }
+
+        if (showPassword) showPassword.checked = false;
+
+        if (authModal && !authModal.open) authModal.showModal();
+        setTimeout(() => authEmail?.focus(), 80);
+      }
+
+      document.addEventListener("click", (event) => {
+        const opener = event.target.closest("[data-auth-open]");
+        if (!opener) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        openAuth(opener.dataset.authOpen || "signup");
+      }, true);
+
+      document.querySelectorAll("[data-auth-close]").forEach(button => {
+        button.addEventListener("click", () => authModal?.close());
+      });
+
+      if (showPassword && authPassword) {
+        showPassword.addEventListener("change", () => {
+          const type = showPassword.checked ? "text" : "password";
+          authPassword.type = type;
+          if (authPasswordConfirm) authPasswordConfirm.type = type;
+        });
+      }
+
+      async function submitAuth(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+        }
+
+        if (!client) {
+          setMessage("Authentication service is not loaded. Refresh and try again.");
+          return;
+        }
+
+        const email = authEmail?.value.trim().toLowerCase() || "";
+        const password = authPassword?.value || "";
+        const confirmPassword = authPasswordConfirm?.value || "";
+
+        const emailWarning = checkEmailTypo(email);
+        if (emailWarning) {
+          setMessage(emailWarning);
+          return;
+        }
+
+        if (password.length < 8) {
+          setMessage("Password must be at least 8 characters.");
+          return;
+        }
+
+        if (mode === "signup" && password !== confirmPassword) {
+          setMessage("Passwords do not match.");
+          return;
+        }
+
+        if (remember?.checked) {
+          localStorage.setItem("bustaRememberedEmail", email);
+        } else {
+          localStorage.removeItem("bustaRememberedEmail");
+        }
+
+        if (authSubmit) {
+          authSubmit.disabled = true;
+          authSubmit.textContent = mode === "login" ? "Checking..." : "Creating...";
+        }
+
+        setMessage(mode === "login" ? "Checking account..." : "Creating account...");
+
+        let result;
+
+        try {
+          if (mode === "login") {
+            result = await client.auth.signInWithPassword({
+              email,
+              password
+            });
+          } else {
+            result = await client.auth.signUp({
+              email,
+              password,
+              options: {
+                emailRedirectTo: "https://lookapp.org"
+              }
+            });
+          }
+        } catch (err) {
+          setMessage(readableError(err));
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        if (result?.error) {
+          setMessage(readableError(result.error));
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || result?.data?.session || null;
+
+        if (!session?.user) {
+          setMessage("Account created. Now press Log In with the same email and password.");
+          mode = "login";
+          updateModeUI();
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        showLoggedIn();
+        setMessage(mode === "login" ? "Access granted." : "Account created. Access granted.");
+
+        setTimeout(() => {
+          authModal?.close();
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+        }, 650);
+      }
+
+      async function resetPassword() {
+        if (!client) {
+          setMessage("Authentication service is not loaded.");
+          return;
+        }
+
+        const email = authEmail?.value.trim().toLowerCase() || "";
+        const emailWarning = checkEmailTypo(email);
+
+        if (emailWarning) {
+          setMessage(emailWarning);
+          return;
+        }
+
+        setMessage("Sending password reset email...");
+
+        const { error } = await client.auth.resetPasswordForEmail(email, {
+          redirectTo: "https://lookapp.org/account"
+        });
+
+        if (error) {
+          setMessage(readableError(error));
+          return;
+        }
+
+        setMessage("Password reset email sent. Check your inbox.");
+      }
+
+      if (authForm) authForm.addEventListener("submit", submitAuth, true);
+      if (authSubmit) authSubmit.addEventListener("click", submitAuth, true);
+      if (forgotPassword) forgotPassword.addEventListener("click", resetPassword);
+
+      if (accountLink) {
+        accountLink.addEventListener("click", async (event) => {
+          event.preventDefault();
+
+          const session = await refreshSessionUI();
+
+          if (!session?.user) {
+            openAuth("login");
+            return;
+          }
+
+          window.location.href = "/account.html";
+        }, true);
+      }
+
+      if (client) {
+        client.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) showLoggedIn();
+          else showLoggedOut();
+        });
+      }
+
+      updateModeUI();
+      refreshSessionUI();
     });
   </script>
 
