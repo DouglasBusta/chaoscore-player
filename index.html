@@ -1,21 +1,17 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>#chaoscore — Douglas Busta</title>
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <meta name="theme-color" content="#13070a" />
+  <title>BUSTA FILES — Declassified Archive</title>
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #090608;
-      --panel: rgba(255,255,255,0.055);
-      --panel-2: rgba(255,255,255,0.085);
-      --text: #fff;
-      --muted: rgba(255,255,255,0.62);
-      --soft: rgba(255,255,255,0.12);
-      --red: #6f101a;
+      --bg: #070706;
+      --paper: #e7e0d2;
+      --muted: rgba(231,224,210,0.68);
+      --line: rgba(231,224,210,0.18);
+      --red: #8b1717;
+      --red2: #b32222;
     }
 
     * { box-sizing: border-box; }
@@ -23,1461 +19,1342 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
       background:
-        radial-gradient(circle at 15% 15%, rgba(120, 0, 20, 0.24), transparent 36%),
-        radial-gradient(circle at 90% 75%, rgba(90, 0, 18, 0.18), transparent 38%),
-        #080608;
+        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.28), transparent 34%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06), transparent 28%),
+        linear-gradient(180deg, #0d0b08 0%, #050504 72%);
+      color: var(--paper);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow-x: hidden;
     }
 
-    button, a {
-      font: inherit;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,0.025) 0px,
+          rgba(255,255,255,0.025) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      mix-blend-mode: overlay;
+      opacity: 0.45;
+      z-index: 5;
     }
 
-    .shell {
-      width: min(1180px, calc(100% - 28px));
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.62) 78%);
+      z-index: 6;
+    }
+
+    a { color: inherit; }
+
+    .page {
+      position: relative;
+      z-index: 10;
+      width: min(1120px, calc(100% - 28px));
       margin: 0 auto;
-      padding: 42px 0 128px;
+      padding: 28px 0 64px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 28px;
+      color: rgba(231,224,210,0.78);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .back {
+      text-decoration: none;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(10px);
+    }
+
+    .agency {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0.88;
+    }
+
+    .seal {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(231,224,210,0.35);
+      display: grid;
+      place-items: center;
+      font-size: 0.7rem;
+      background: rgba(255,255,255,0.06);
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: minmax(240px, 340px) 1fr;
-      gap: 36px;
-      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: clamp(22px, 4vw, 42px);
+      background:
+        linear-gradient(135deg, rgba(231,224,210,0.08), rgba(231,224,210,0.025)),
+        rgba(0,0,0,0.28);
+      box-shadow: 0 26px 90px rgba(0,0,0,0.42);
+      position: relative;
+      overflow: hidden;
     }
 
-    .cover-wrap {
-      width: 100%;
+    .hero::before {
+      content: "DECLASSIFIED";
+      position: absolute;
+      right: -38px;
+      top: 30px;
+      transform: rotate(17deg);
+      border: 4px solid rgba(179,34,34,0.5);
+      color: rgba(179,34,34,0.55);
+      font-size: clamp(2rem, 7vw, 5.8rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      padding: 4px 18px;
+      border-radius: 10px;
+      pointer-events: none;
     }
 
-    .cover-credit {
-      margin: 10px 0 0;
-      color: rgba(255,255,255,0.58);
-      font-size: 0.88rem;
-      text-align: center;
-    }
-
-    .cover {
-      width: 100%;
-      display: block;
-      border-radius: 24px;
-      box-shadow: 0 22px 70px rgba(0,0,0,0.42);
-      background: rgba(255,255,255,0.05);
-    }
-    .cover-picker {
-      margin-top: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .cover-arrow {
-      width: 38px;
-      height: 38px;
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 999px;
-      color: rgba(255,255,255,0.72);
-      background: rgba(255,255,255,0.035);
-      cursor: pointer;
-      font-size: 1.7rem;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 3px;
-      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
-    }
-
-    .cover-arrow:hover {
-      background: rgba(255,255,255,0.10);
-      color: #fff;
-      transform: scale(1.04);
-    }
-
-    .cover-current {
-      display: none;
-    }
-
-.install-buttons {
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .clean-button {
-      border: 1px solid var(--soft);
-      border-radius: 14px;
-      min-height: 44px;
-      padding: 10px 12px;
-      color: var(--text);
-      background: rgba(16, 14, 16, 0.78);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-    }
-
-    .clean-button:hover {
-      background: rgba(255,255,255,0.095);
-    }
-
-
-    .quality-downloads {
-      margin-top: 10px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    .quality-button {
-      min-height: 42px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.13);
-      color: rgba(255,255,255,0.88);
-      background: rgba(255,255,255,0.045);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 650;
-      text-align: center;
-    }
-
-    .quality-button:hover {
-      color: #fff;
-      background: rgba(255,255,255,0.09);
-    }
-
-    .info {
-      padding-top: 8px;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: flex-end;
+    .eyebrow {
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
       margin-bottom: 14px;
     }
 
-    .pill {
-      border: 1px solid var(--soft);
-      border-radius: 999px;
-      padding: 9px 13px;
-      color: var(--text);
-      background: rgba(255,255,255,0.06);
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 0.92rem;
-    }
-
-    .pill:hover {
-      background: rgba(255,255,255,0.11);
-    }
-
     h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3.1rem, 10vw, 7.8rem);
+      line-height: 0.82;
       margin: 0;
-      font-size: clamp(2.65rem, 7vw, 5.4rem);
-      letter-spacing: -0.08em;
-      line-height: 0.86;
+      letter-spacing: -0.075em;
+      text-transform: uppercase;
     }
 
-    .artist {
-      margin: 10px 0 0;
-      color: var(--text);
-      font-weight: 650;
+    .subtitle {
+      max-width: 720px;
+      color: rgba(231,224,210,0.74);
+      font-size: clamp(0.95rem, 2vw, 1.12rem);
+      line-height: 1.7;
+      margin: 24px 0 0;
     }
 
-    .by {
-      margin: 4px 0 24px;
-      color: var(--muted);
-    }
-
-    .tracks {
+    .meta-grid {
       display: grid;
-      gap: 8px;
-      margin-top: 24px;
-    }
-
-    .track {
-      display: grid;
-      grid-template-columns: 36px 42px 1fr auto;
-      align-items: center;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
-      min-height: 58px;
-      border: 1px solid rgba(255,255,255,0.075);
-      border-radius: 16px;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.042);
-      cursor: pointer;
+      margin-top: 28px;
     }
 
-    .track:hover,
-    .track.active {
-      background: rgba(120, 15, 28, 0.23);
-      border-color: rgba(255,255,255,0.13);
+    .meta {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px;
+      background: rgba(0,0,0,0.22);
     }
 
-    .num {
-      color: var(--muted);
-      text-align: right;
+    .meta span {
+      display: block;
+      color: rgba(231,224,210,0.48);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 6px;
+    }
+
+    .meta strong {
       font-size: 0.9rem;
+      color: rgba(231,224,210,0.9);
     }
 
-    .play-small {
-      width: 34px;
-      height: 34px;
-      border: 0;
-      border-radius: 999px;
-      color: var(--text);
-      background: rgba(255,255,255,0.08);
-      cursor: pointer;
+    .notice {
+      margin: 22px 0;
+      border-left: 4px solid var(--red2);
+      padding: 16px 18px;
+      background: rgba(139,23,23,0.16);
+      color: rgba(231,224,210,0.82);
+      line-height: 1.6;
+      border-radius: 0 16px 16px 0;
     }
 
-    .track-title {
-      font-weight: 760;
-      line-height: 1.12;
+    .search-panel {
+      margin: 26px 0;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(0,0,0,0.32);
+      padding: 18px;
     }
 
-    .track-sub {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 0.86rem;
-    }
-
-    .credit-link {
-      border: 0;
-      background: transparent;
-      color: rgba(255,255,255,0.55);
-      cursor: pointer;
-      text-transform: lowercase;
-      padding: 8px;
-    }
-
-    .credit-link:hover {
-      color: white;
-    }
-
-
-    .track.playing {
-      animation: trackPulse 420ms ease;
-    }
-
-    .track.playing .play-small {
-      background: rgba(255,255,255,0.92);
-      color: #080608;
-      transform: scale(1.04);
-    }
-
-    .play-small {
-      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
-    }
-
-    @keyframes trackPulse {
-      0% {
-        transform: scale(1);
-      }
-      45% {
-        transform: scale(1.012);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-
-    .track {
-      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
-    }
-
-    .play-small {
-      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
-    }
-
-    .track.is-playing {
-      background: rgba(120, 15, 28, 0.34);
-      border-color: rgba(255,255,255,0.22);
-    }
-
-    .track.is-playing .play-small {
-      background: rgba(255,255,255,0.94);
-      color: #080608;
-      transform: scale(1.08);
-      box-shadow: 0 0 18px rgba(255,255,255,0.14);
-    }
-
-    .track.play-pop {
-      animation: trackPlayPop 360ms ease;
-    }
-
-    .track.pause-pop {
-      animation: trackPausePop 280ms ease;
-    }
-
-    @keyframes trackPlayPop {
-      0% { transform: scale(1); }
-      45% { transform: scale(1.014); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes trackPausePop {
-      0% { transform: scale(1.01); }
-      100% { transform: scale(1); }
-    }
-
-    .player {
-      position: fixed;
-      left: 18px;
-      right: 18px;
-      bottom: 16px;
-      z-index: 20;
-      display: grid;
-      grid-template-columns: minmax(160px, 260px) 1fr auto;
-      gap: 18px;
-      align-items: center;
-      padding: 12px 16px;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      background: rgba(12, 10, 12, 0.86);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 16px 50px rgba(0,0,0,0.46);
-    }
-
-    .now {
+    .search-title {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .now img {
-      width: 46px;
-      height: 46px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
-
-    .now-title {
-      font-weight: 760;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .now-sub {
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .wave {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      min-height: 42px;
-      padding: 0 4px;
-      cursor: pointer;
-    }
-
-    .bar {
-      flex: 1;
-      min-width: 4px;
-      height: calc(8px + var(--h) * 34px);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.15);
-    }
-
-    .bar.on {
-      background: rgba(255,255,255,0.58);
-    }
-
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .round {
-      width: 42px;
-      height: 42px;
-      border: 0;
-      border-radius: 999px;
-      background: white;
-      color: black;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .round.secondary {
-      width: 34px;
-      height: 34px;
-      background: rgba(255,255,255,0.08);
-      color: white;
-    }
-
-    .time {
-      color: var(--muted);
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(231,224,210,0.72);
       font-size: 0.82rem;
-      min-width: 82px;
-      text-align: right;
     }
 
+    .search-input {
+      width: 100%;
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 14px;
+      background: rgba(231,224,210,0.08);
+      color: var(--paper);
+      padding: 15px 16px;
+      font: inherit;
+      outline: none;
+    }
 
-    .credits-roll {
-      text-align: center;
+    .folder-grid {
       display: grid;
-      gap: 2rem;
-      padding: 4px 0 2px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 26px 0 34px;
     }
 
-    .credits-block {
+    .folder-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(231,224,210,0.075), rgba(231,224,210,0.025)), rgba(0,0,0,0.28);
+      cursor: pointer;
+      min-height: 154px;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .folder-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(231,224,210,0.42);
+      background: rgba(231,224,210,0.09);
+    }
+
+    .folder-icon {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      filter: grayscale(1);
+    }
+
+    .folder-label {
+      color: rgba(231,224,210,0.5);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .folder-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.35rem;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .folder-count {
+      margin-top: 14px;
+      color: rgba(231,224,210,0.54);
+      font-size: 0.78rem;
+    }
+
+    .section {
+      margin-top: 34px;
+      border-top: 1px solid var(--line);
+      padding-top: 26px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      letter-spacing: -0.06em;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .section-code {
+      color: rgba(231,224,210,0.46);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .evidence-grid {
       display: grid;
-      gap: 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
     }
 
-    .credits-role {
-      color: rgba(255,255,255,0.48);
-      font-size: 0.76rem;
+    .evidence {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.28);
+      display: block;
+      text-decoration: none;
+    }
+
+    .evidence img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.02) saturate(0.86);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .evidence-body {
+      padding: 12px;
+    }
+
+    .evidence-status {
+      display: inline-flex;
+      border: 1px solid rgba(179,34,34,0.42);
+      color: rgba(255,194,194,0.8);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.62rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      font-weight: 700;
+      margin-bottom: 10px;
     }
 
-    .credits-name {
-      color: rgba(255,255,255,0.88);
-      font-size: 0.98rem;
-      line-height: 1.35;
-      font-weight: 560;
+    .evidence-name {
+      font-size: 0.82rem;
+      color: rgba(231,224,210,0.86);
+      line-height: 1.45;
+      word-break: break-word;
     }
 
-    .credits-name a {
-      color: rgba(255,255,255,0.88);
+    .coming-soon {
+      border: 1px dashed rgba(231,224,210,0.24);
+      border-radius: 18px;
+      padding: 26px;
+      background: rgba(0,0,0,0.22);
+      color: rgba(231,224,210,0.58);
+      line-height: 1.7;
+    }
+
+    .coming-soon strong {
+      display: block;
+      color: rgba(231,224,210,0.82);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-bottom: 8px;
+    }
+
+    .empty {
+      border: 1px dashed rgba(231,224,210,0.22);
+      border-radius: 18px;
+      padding: 28px;
+      color: rgba(231,224,210,0.58);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      .meta-grid,
+      .folder-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero::before {
+        right: -54px;
+        top: 20px;
+        font-size: 2.5rem;
+      }
+    }
+  
+    .auth-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .auth-btn {
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.82);
+      font: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       text-decoration: none;
-      border-bottom: 1px solid rgba(255,255,255,0.26);
     }
 
-    .credits-name a:hover {
+    .auth-btn:hover {
+      border-color: rgba(231,224,210,0.48);
+      background: rgba(255,255,255,0.09);
       color: #fff;
-      border-bottom-color: rgba(255,255,255,0.72);
     }
 
-
-    .credits-block.credits-tight {
-      gap: 0.45rem;
+    .auth-btn-primary {
+      border-color: rgba(179,34,34,0.58);
+      background: rgba(139,23,23,0.28);
+      color: rgba(255,226,226,0.94);
     }
-dialog {
-      width: min(520px, calc(100% - 32px));
-      border: 1px solid rgba(255,255,255,0.12);
+
+    .account-link {
+      border-color: rgba(231,224,210,0.38);
+      background: rgba(231,224,210,0.09);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth-modal {
+      width: min(430px, calc(100% - 28px));
+      border: 1px solid rgba(231,224,210,0.2);
       border-radius: 22px;
-      color: white;
-      background: rgba(22, 20, 23, 0.96);
-      box-shadow: 0 28px 90px rgba(0,0,0,0.55);
       padding: 0;
+      background:
+        linear-gradient(135deg, rgba(231,224,210,0.09), rgba(231,224,210,0.03)),
+        rgba(7,7,6,0.97);
+      color: var(--paper);
+      box-shadow: 0 30px 100px rgba(0,0,0,0.62);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
-    dialog::backdrop {
-      background: rgba(0,0,0,0.62);
+    .auth-modal::backdrop {
+      background: rgba(0,0,0,0.72);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
-    .modal-inner {
-      padding: 22px;
+    .auth-card {
+      position: relative;
+      padding: 28px;
     }
 
-    .modal-inner h2 {
-      margin: 0 0 12px;
-      font-size: 1.25rem;
+    .auth-close {
+      all: unset;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(231,224,210,0.22);
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+      color: rgba(231,224,210,0.82);
+      font-size: 18px;
+      line-height: 1;
     }
 
-    .modal-inner p {
-      white-space: pre-line;
-      color: rgba(255,255,255,0.78);
+    .auth-close:hover {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+    }
+
+    .auth-kicker {
+      color: rgba(231,224,210,0.54);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      margin-bottom: 12px;
+    }
+
+    .auth-card h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.2rem;
+      letter-spacing: -0.06em;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    .auth-card p {
+      color: rgba(231,224,210,0.68);
       line-height: 1.55;
       margin: 0 0 18px;
     }
 
-    .modal-inner button {
+    .auth-label {
+      display: block;
+      color: rgba(231,224,210,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+      margin-bottom: 8px;
+    }
+
+    .auth-input {
       width: 100%;
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 14px;
+      background: rgba(231,224,210,0.08);
+      color: var(--paper);
+      padding: 14px 15px;
+      font: inherit;
+      outline: none;
+      margin-bottom: 12px;
     }
 
-    @media (max-width: 820px) {
-      .shell {
-        padding-top: 22px;
-      }
-
-      .hero {
-        grid-template-columns: 1fr;
-        gap: 22px;
-      }
-
-      .top-actions {
-        justify-content: flex-start;
-      }
-
-  
-    .track.playing {
-      animation: trackPulse 420ms ease;
-    }
-
-    .track.playing .play-small {
-      background: rgba(255,255,255,0.92);
-      color: #080608;
-      transform: scale(1.04);
-    }
-
-    .play-small {
-      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
-    }
-
-    @keyframes trackPulse {
-      0% {
-        transform: scale(1);
-      }
-      45% {
-        transform: scale(1.012);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-
-    .track {
-      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
-    }
-
-    .play-small {
-      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
-    }
-
-    .track.is-playing {
-      background: rgba(120, 15, 28, 0.34);
-      border-color: rgba(255,255,255,0.22);
-    }
-
-    .track.is-playing .play-small {
-      background: rgba(255,255,255,0.94);
-      color: #080608;
-      transform: scale(1.08);
-      box-shadow: 0 0 18px rgba(255,255,255,0.14);
-    }
-
-    .track.play-pop {
-      animation: trackPlayPop 360ms ease;
-    }
-
-    .track.pause-pop {
-      animation: trackPausePop 280ms ease;
-    }
-
-    @keyframes trackPlayPop {
-      0% { transform: scale(1); }
-      45% { transform: scale(1.014); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes trackPausePop {
-      0% { transform: scale(1.01); }
-      100% { transform: scale(1); }
-    }
-
-    .player {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-
-      .controls {
-        justify-content: center;
-      }
-
-      .track {
-        grid-template-columns: 28px 38px 1fr;
-      }
-
-      .credit-link {
-        grid-column: 3;
-        justify-self: start;
-        padding-left: 0;
-      }
-    }
-  
-    /* FORCE FINAL CREDITS SPACING */
-    .credits-block:has(a[href*="39redboy"]),
-    .credits-block:has(a[href*="ohmygador"]),
-    .credits-block:has(a[href*="dd_deffy"]),
-    .credits-block:has(a[href*="vitali.mp4"]) {
-      gap: 0.32rem !important;
-    }
-
-    .credits-block:has(a[href*="39redboy"]) .credits-tag,
-    .credits-block:has(a[href*="ohmygador"]) .credits-tag,
-    .credits-block:has(a[href*="dd_deffy"]) .credits-tag {
-      margin-top: -0.45rem !important;
-      padding-top: 0 !important;
-      line-height: 1.05 !important;
-    }
-
-    .credits-block:has(a[href*="39redboy"]) .credits-inline-tag,
-    .credits-block:has(a[href*="ohmygador"]) .credits-inline-tag,
-    .credits-block:has(a[href*="dd_deffy"]) .credits-inline-tag {
-      display: block !important;
-      margin-top: 0.18rem !important;
-      line-height: 1.05 !important;
-    }
-
-    .credits-block:has(a[href*="vitali.mp4"]) .credits-name {
-      margin-top: -0.25rem !important;
-    }
-
-  
-    /* REAL CIRCLE CLOSE BUTTON */
-    dialog {
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.26) transparent;
-      transition: opacity 160ms ease, transform 160ms ease;
-    }
-
-    dialog.modal-closing {
-      opacity: 0;
-      transform: translateY(8px) scale(0.985);
-    }
-
-    dialog::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    dialog::-webkit-scrollbar-track {
-      background: transparent;
+    .auth-submit {
+      width: 100%;
+      border: 1px solid rgba(179,34,34,0.58);
       border-radius: 999px;
-      margin: 18px 0;
+      background: rgba(139,23,23,0.34);
+      color: rgba(255,236,236,0.94);
+      font: inherit;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      padding: 13px 15px;
+      cursor: pointer;
     }
 
-    dialog::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.24);
-      border-radius: 999px;
-      border: 3px solid transparent;
-      background-clip: content-box;
+    .auth-message {
+      margin-top: 14px !important;
+      margin-bottom: 0 !important;
+      color: rgba(231,224,210,0.72) !important;
+      font-size: 0.86rem;
     }
 
-    dialog::-webkit-scrollbar-thumb:hover {
-      background: rgba(255,255,255,0.38);
-      border: 3px solid transparent;
-      background-clip: content-box;
-    }
-
-    .modal-inner {
-      position: relative;
-    }
-
-    #modal-close-circle {
-      position: sticky;
-      top: 10px;
-      z-index: 9999;
-
-      width: 26px;
-      height: 26px;
-      min-width: 26px;
-      min-height: 26px;
-      max-width: 26px;
-      max-height: 26px;
-
-      margin: -6px 0 -20px auto;
-
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.09);
-
+    .file-actions {
       display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .file-action {
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: rgba(231,224,210,0.72);
+      font: inherit;
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 7px 9px;
+      cursor: pointer;
+    }
+
+    .file-action:hover {
+      background: rgba(255,255,255,0.09);
+      color: #fff;
+      border-color: rgba(231,224,210,0.36);
+    }
+
+  
+    .auth-security-note {
+      margin-top: 14px !important;
+      margin-bottom: 0 !important;
+      color: rgba(231,224,210,0.46) !important;
+      font-size: 0.72rem !important;
+      line-height: 1.45 !important;
+    }
+
+  
+    .account-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(231,224,210,0.28);
+      background:
+        radial-gradient(circle at 50% 35%, rgba(231,224,210,0.16), transparent 36%),
+        rgba(255,255,255,0.055);
+      display: grid;
+      place-items: center;
+      position: relative;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 10px 24px rgba(0,0,0,0.24);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .account-avatar:hover {
+      border-color: rgba(231,224,210,0.52);
+      background: rgba(255,255,255,0.10);
+    }
+
+    .account-avatar-head {
+      position: absolute;
+      top: 8px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(231,224,210,0.82);
+    }
+
+    .account-avatar-body {
+      position: absolute;
+      bottom: 7px;
+      width: 20px;
+      height: 11px;
+      border-radius: 999px 999px 6px 6px;
+      background: rgba(231,224,210,0.82);
+    }
+
+  
+    .auth-return-banner {
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      top: 18px;
+      transform: translateX(-50%);
+      width: min(520px, calc(100% - 28px));
+      border: 1px solid rgba(231,224,210,0.24);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(231,224,210,0.10), rgba(231,224,210,0.035)),
+        rgba(7,7,6,0.94);
+      color: rgba(231,224,210,0.88);
+      padding: 14px 16px;
+      box-shadow: 0 20px 70px rgba(0,0,0,0.42);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .auth-return-banner strong {
+      display: block;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      margin-bottom: 4px;
+    }
+
+    .auth-return-banner.error {
+      border-color: rgba(179,34,34,0.58);
+      background:
+        linear-gradient(135deg, rgba(139,23,23,0.24), rgba(231,224,210,0.035)),
+        rgba(7,7,6,0.94);
+    }
+
+  
+    .file-action.saved-tick {
+      width: 30px;
+      min-width: 30px;
+      height: 30px;
+      padding: 0;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      border-color: rgba(231,224,210,0.34);
+      background: rgba(231,224,210,0.12);
+      color: rgba(231,224,210,0.95);
+      font-size: 0.98rem;
+      letter-spacing: 0;
+      cursor: default;
+    }
+
+    .file-action.saved-tick:hover {
+      background: rgba(231,224,210,0.16);
+      border-color: rgba(231,224,210,0.48);
+      color: #fff;
+    }
+
+  
+    .chaoscore-entry-button {
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      z-index: 80;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-
-      cursor: pointer;
-      user-select: none;
-
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        0 8px 18px rgba(0,0,0,0.24);
-
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-
-      transition:
-        transform 140ms ease,
-        background 140ms ease,
-        border-color 140ms ease,
-        opacity 140ms ease;
-    }
-
-    #modal-close-circle:hover {
-      background: rgba(255,255,255,0.16);
-      border-color: rgba(255,255,255,0.34);
-      transform: scale(1.08);
-    }
-
-    #modal-close-circle:active {
-      transform: scale(0.92);
-      opacity: 0.82;
-    }
-
-    .modal-close-line {
-      position: absolute;
-      width: 12px;
-      height: 1.6px;
+      gap: 8px;
+      border: 1px solid rgba(231,224,210,0.24);
       border-radius: 999px;
-      background: rgba(255,255,255,0.9);
-      pointer-events: none;
+      background: rgba(10,8,7,0.82);
+      color: rgba(231,224,210,0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 12px 14px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.38);
     }
 
-    .modal-close-line.line-a {
-      transform: rotate(45deg);
-    }
-
-    .modal-close-line.line-b {
-      transform: rotate(-45deg);
-    }
-
-  
-    /* FORCE CLOSE CIRCLE CLICK */
-    #modal-close-circle {
-      pointer-events: auto !important;
-    }
-
-    #modal-close-circle * {
-      pointer-events: none !important;
+    .chaoscore-entry-button:hover {
+      color: #fff;
+      border-color: rgba(231,224,210,0.45);
+      background: rgba(30,18,15,0.9);
     }
 
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n</head>
+</head>
 <body>
-  <main class="shell">
-    <section class="hero">
-      <div class="cover-wrap">
-        <img class="cover" id="main-cover" src="/assets/chaoscore-spotify-cover.jpg" alt="#chaoscore cover" />
-        <p class="cover-credit">Cover by @tuma.zz</p>
-        <div class="cover-picker" id="cover-picker">
-          <button class="cover-arrow" id="cover-prev" type="button" aria-label="Previous cover">‹</button>
-          <span class="cover-current" id="cover-current" aria-hidden="true"></span>
-          <button class="cover-arrow" id="cover-next" type="button" aria-label="Next cover">›</button>
-        </div>
-
-        <div class="install-buttons">
-          <button class="clean-button" id="ios-download"> Download iOS</button>
-          <button class="clean-button" id="android-download">🤖 Download Android</button>
-        </div>
-        <div class="quality-downloads">
-          <a class="quality-button" href="https://drive.google.com/drive/folders/1058oD--H9tKeTxN4ukLf_qZDHjH1gJqB?usp=drive_link" target="_blank" rel="noopener noreferrer">
-            Download
-          </a>
-        </div>
+  <main class="page">
+    <div class="topbar">
+      <a class="back" href="/">← Back to #chaoscore player</a>
+      <div class="agency">
+        <div class="seal">DB</div>
+        <div>Official Busta Archive</div>
       </div>
+      <div class="auth-actions">
+        <button class="auth-btn" type="button" data-auth-open="login">Log In</button>
+        <button class="auth-btn auth-btn-primary" type="button" data-auth-open="signup">Sign Up</button>
+        <a class="account-avatar hidden" id="account-link" href="#" aria-label="My Account" data-account-avatar>
+          <span class="account-avatar-head"></span>
+          <span class="account-avatar-body"></span>
+        </a>
+      </div>
+    </div>
 
-      <div class="info">
-        <div class="top-actions">
-          <a class="pill" href="/exclusive">exclusive</a>
-          <button class="pill" id="album-credits">credits</button>
-          <button class="round" id="hero-play">▶</button>
-        </div>
+    <section class="hero">
+      <div class="eyebrow">Douglas Busta Department of Declassified Materials</div>
+      <h1>Busta<br>Files</h1>
+      <p class="subtitle">
+        Declassified archive of exclusive Douglas Busta materials, live evidence, photo records,
+        restricted folders and #chaoscore-related case files.
+      </p>
 
-        <h1>#chaoscore</h1>
-        <p class="by">By Douglas Busta</p>
-
-        <div class="tracks" id="tracks"></div>
+      <div class="meta-grid">
+        <div class="meta"><span>Case ID</span><strong>CHAOSCORE-001</strong></div>
+        <div class="meta"><span>Status</span><strong>DECLASSIFIED</strong></div>
+        <div class="meta"><span>Subject</span><strong>DOUGLAS BUSTA</strong></div>
+        <div class="meta"><span>Files Indexed</span><strong id="file-count">0</strong></div>
       </div>
     </section>
+
+    <div class="notice">
+      <strong>Archive Notice:</strong> this page contains exclusive media recovered from the Busta Files database.
+      Some folders may remain sealed until new files are officially declassified.
+    </div>
+
+    <section class="search-panel">
+      <div class="search-title">
+        <span>Search Full Busta Library</span>
+        <span id="result-count">Loading...</span>
+      </div>
+      <input id="search" class="search-input" type="search" placeholder="Search by folder, event, file name, Villa Spada, NUMA, live evidence..." />
+    </section>
+
+    <section class="folder-grid" id="folder-grid"></section>
+    <div id="sections"></div>
+
+    <dialog id="auth-modal" class="auth-modal">
+      <div class="auth-card">
+        <button class="auth-close" type="button" data-auth-close aria-label="Close">×</button>
+        <div class="auth-kicker">BUSTA FILES ACCESS TERMINAL</div>
+        <h3 id="auth-title">Sign Up</h3>
+        <p id="auth-copy">Create your private Busta Files session.</p>
+
+        <form id="auth-form">
+          <label class="auth-label" for="auth-email">Email address</label>
+          <input id="auth-email" class="auth-input" type="email" placeholder="your@email.com" required>
+
+          <label class="auth-label" for="auth-password">Password</label>
+          <input id="auth-password" class="auth-input" type="password" placeholder="••••••••" minlength="8" required>
+
+          <button id="auth-submit-btn" class="auth-submit" type="submit">Enter Archive</button>
+        </form>
+
+        <p id="auth-message" class="auth-message"></p>
+        <p class="auth-security-note">
+          Passwords are not stored in this demo version. Private encrypted authentication will be connected next.
+        </p>
+      </div>
+    </dialog>
+
+    <dialog id="share-modal" class="auth-modal">
+      <div class="auth-card">
+        <button class="auth-close" type="button" data-share-close aria-label="Close">×</button>
+        <div class="auth-kicker">BUSTA FILES INTERNAL TRANSFER</div>
+        <h3>Share File</h3>
+        <p id="share-file-name">Select a file to share inside the archive.</p>
+
+        <form id="share-form">
+          <label class="auth-label" for="share-email">Recipient email</label>
+          <input id="share-email" class="auth-input" type="email" placeholder="friend@email.com" required>
+          <button class="auth-submit" type="submit">Send Internal Share</button>
+        </form>
+
+        <p id="share-message" class="auth-message"></p>
+      </div>
+    </dialog>
+
   </main>
 
-  <section class="player">
-    <div class="now">
-      <img src="/assets/chaoscore-spotify-cover.jpg" alt="" />
-      <div>
-        <div class="now-title" id="now-title">banale</div>
-        <div class="now-sub">#chaoscore</div>
-      </div>
-    </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    // FINAL ACCOUNT AVATAR SESSION CHECK
+    if (accountLink) {
+      accountLink.addEventListener("click", async (event) => {
+        event.preventDefault();
 
-    <div class="wave" id="wave"></div>
+        if (!bustaSupabase) {
+          openAuth("login");
+          return;
+        }
 
-    <div class="controls">
-      <button class="round secondary" id="prev">‹</button>
-      <button class="round" id="play">▶</button>
-      <button class="round secondary" id="next">›</button>
-      <div class="time" id="time">0:00 / 0:00</div>
-    </div>
-  </section>
+        const { data } = await bustaSupabase.auth.getSession();
+        const session = data?.session || null;
 
-  <audio id="audio" preload="metadata"></audio>
+        if (!session?.user) {
+          updateAuthUI(null);
+          openAuth("login");
+          return;
+        }
 
-  <dialog id="modal">
-    <div class="modal-inner">
-      <div id="modal-close-circle"
-        aria-label="Close panel"
-        role="button"
-        tabindex="0"
-        onclick="this.closest('dialog').close()"
-        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); this.closest('dialog').close(); }">
-        <span class="modal-close-line line-a"></span>
-        <span class="modal-close-line line-b"></span>
-      </div>
-      <h2 id="modal-title"></h2>
-      <p id="modal-text"></p>
-      <button class="clean-button" id="modal-close">chiudi</button>
-    </div>
-  </dialog>
+        window.location.href = "/account.html";
+      });
+    }
 
-  <script type="module">
 
-    const coverOptions = [
+  
+    // BUSTA AUTH REDIRECT HANDLER
+    function showAuthReturnBanner(title, message, type = "ok") {
+      const oldBanner = document.querySelector(".auth-return-banner");
+      if (oldBanner) oldBanner.remove();
+
+      const banner = document.createElement("div");
+      banner.className = "auth-return-banner" + (type === "error" ? " error" : "");
+      banner.innerHTML = `<strong>${title}</strong>${message}`;
+      document.body.appendChild(banner);
+
+      window.setTimeout(() => {
+        banner.style.opacity = "0";
+        banner.style.transform = "translateX(-50%) translateY(-8px)";
+        banner.style.transition = "opacity 220ms ease, transform 220ms ease";
+        window.setTimeout(() => banner.remove(), 240);
+      }, 5200);
+    }
+
+    async function handleSupabaseAuthRedirect() {
+      if (!bustaSupabase) return;
+
+      const url = new URL(window.location.href);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const code = url.searchParams.get("code");
+      const error = url.searchParams.get("error") || hashParams.get("error");
+      const errorDescription =
+        url.searchParams.get("error_description") ||
+        hashParams.get("error_description");
+
+      if (error) {
+        showAuthReturnBanner(
+          "Authentication error",
+          decodeURIComponent(errorDescription || "The confirmation link could not be completed."),
+          "error"
+        );
+        window.history.replaceState({}, document.title, "/exclusive");
+        return;
+      }
+
+      if (code) {
+        const { error: exchangeError } = await bustaSupabase.auth.exchangeCodeForSession(code);
+
+        if (exchangeError) {
+          showAuthReturnBanner(
+            "Confirmation problem",
+            exchangeError.message,
+            "error"
+          );
+          window.history.replaceState({}, document.title, "/exclusive");
+          return;
+        }
+      }
+
+      const { data } = await bustaSupabase.auth.getSession();
+      const session = data?.session || null;
+
+      if (session?.user) {
+        updateAuthUI(session);
+        showAuthReturnBanner(
+          "Email confirmed",
+          "Your Busta Files archive session is now active."
+        );
+        window.history.replaceState({}, document.title, "/exclusive");
+      }
+    }
+
+    handleSupabaseAuthRedirect();
+
+    if (bustaSupabase) {
+      bustaSupabase.auth.onAuthStateChange((_event, session) => {
+        updateAuthUI(session || null);
+      });
+    }
+
+  </script>
+  <script>
+    // BUSTA SUPABASE CONFIG
+    const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+    const bustaSupabase = window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+          auth: {
+            detectSessionInUrl: true,
+            persistSession: true,
+            autoRefreshToken: true
+          }
+        })
+      : null;
+
+    const files = [
       {
-            "label": "Spotify cover",
-            "src": "/assets/chaoscore-spotify-cover.jpg"
+            "name": "82179e2f-21b1-4e6d-93a0-9fab9566c5e7.jpg",
+            "src": "/exclusive/82179e2f-21b1-4e6d-93a0-9fab9566c5e7.jpg",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
       },
       {
-            "label": "cover chaoscore",
-            "src": "/covers/cover chaoscore.png"
+            "name": "DSC04317.JPG",
+            "src": "/exclusive/DSC04317.JPG",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
+      },
+      {
+            "name": "DSC04366.JPG",
+            "src": "/exclusive/DSC04366.JPG",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
+      },
+      {
+            "name": "IMG_1441.JPG",
+            "src": "/exclusive/IMG_1441.JPG",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
+      },
+      {
+            "name": "IMG_1462.JPG",
+            "src": "/exclusive/IMG_1462.JPG",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
+      },
+      {
+            "name": "IMG_1464.JPG",
+            "src": "/exclusive/IMG_1464.JPG",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
+      },
+      {
+            "name": "IMG_1468.JPG",
+            "src": "/exclusive/IMG_1468.JPG",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
+      },
+      {
+            "name": "IMG_1475.JPG",
+            "src": "/exclusive/IMG_1475.JPG",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
+      },
+      {
+            "name": "b3035dca-b3bc-4414-85f2-d19fdca86242.jpg",
+            "src": "/exclusive/b3035dca-b3bc-4414-85f2-d19fdca86242.jpg",
+            "folder": "Other Busta Files",
+            "category": "EVIDENCE ROOM",
+            "status": "REVIEWED",
+            "type": "PHOTO EVIDENCE"
       }
 ];
 
-    const tracks = [
-      { title: "banale", file: "/audio-mp3/1. banale.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3", credits: "Lyrics written by Douglas Busta and 39Redboy.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3", credits: "Lyrics written by Douglas Busta and Gador.\nProduced by Douglas Busta and Gador.\nMixed and mastered by Douglas Busta." },
-      { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3", credits: "Lyrics written by Douglas Busta and Deffy.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "ma che ho fatto mo??...", file: "/audio-mp3/track11.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
-      { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." }
+    const folders = [
+      {
+        title: "Live Evidence",
+        label: "Primary folder",
+        icon: "▣",
+        matcher: item => item.category === "LIVE EVIDENCE"
+      },
+      {
+        title: "Villa Spada Case File",
+        label: "Case file",
+        icon: "□",
+        matcher: item => item.folder === "Villa Spada Case File"
+      },
+      {
+        title: "NUMA Incident — 11 October 2025",
+        label: "Incident report",
+        icon: "◇",
+        matcher: item => item.folder === "NUMA Incident — 11 October 2025"
+      },
+      {
+        title: "Other Busta Files",
+        label: "Evidence room",
+        icon: "◌",
+        matcher: item => item.folder === "Other Busta Files"
+      }
     ];
 
-    const audio = document.getElementById("audio");
-    const tracksEl = document.getElementById("tracks");
-    const nowTitle = document.getElementById("now-title");
-    const play = document.getElementById("play");
-    const heroPlay = document.getElementById("hero-play");
-    const prev = document.getElementById("prev");
-    const next = document.getElementById("next");
-    const time = document.getElementById("time");
-    const wave = document.getElementById("wave");
-    const modal = document.getElementById("modal");
-    const modalTitle = document.getElementById("modal-title");
-    const modalText = document.getElementById("modal-text");
-    const modalClose = document.getElementById("modal-close");
+    const folderGrid = document.getElementById("folder-grid");
+    const sections = document.getElementById("sections");
+    const search = document.getElementById("search");
+    const fileCount = document.getElementById("file-count");
+    const resultCount = document.getElementById("result-count");
 
-    let current = 0;
+    fileCount.textContent = files.length;
 
-
-    function applyCover(src) {
-      const finalSrc = src || coverOptions[0]?.src || "/assets/chaoscore-spotify-cover.jpg";
-
-      document.querySelectorAll(".cover, .now img").forEach((img) => {
-        img.src = finalSrc;
-      });
-
-      localStorage.setItem("chaoscore-selected-cover", finalSrc);
-
-      document.querySelectorAll(".cover-option").forEach((button) => {
-        button.classList.toggle("active", button.dataset.src === finalSrc);
-      });
+    function slugify(text) {
+      return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     }
 
-    function renderCoverPicker() {
-      const picker = document.getElementById("cover-picker");
-      if (!picker) return;
-
-      picker.innerHTML = "";
-
-      coverOptions.forEach((cover, index) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "cover-option";
-        button.dataset.src = cover.src;
-        button.textContent = cover.label || `Cover ${index + 1}`;
-        button.addEventListener("click", () => applyCover(cover.src));
-        picker.appendChild(button);
-      });
-
-      const saved = localStorage.getItem("chaoscore-selected-cover");
-      applyCover(saved || coverOptions[0]?.src);
+    function matchesSearch(item, query) {
+      if (!query) return true;
+      const haystack = [item.name, item.folder, item.category, item.status, item.type].join(" ").toLowerCase();
+      return haystack.includes(query.toLowerCase());
     }
 
-    function fmt(seconds) {
-      if (!Number.isFinite(seconds)) return "0:00";
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60).toString().padStart(2, "0");
-      return `${m}:${s}`;
-    }
+    function render(query = "") {
+      const visibleFiles = files.filter(item => matchesSearch(item, query));
+      resultCount.textContent = `${visibleFiles.length} result${visibleFiles.length === 1 ? "" : "s"}`;
 
-    function popup(title, text, isHtml = false) {
-      modalTitle.textContent = title;
-
-      if (isHtml) {
-        modalText.innerHTML = text;
-      } else {
-        modalText.textContent = text;
-      }
-
-      modal.showModal();
-    }
-
-    modalClose.addEventListener("click", () => modal.close());
-
-    function renderWave(progress = 0) {
-      const heights = [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18];
-      wave.innerHTML = "";
-      heights.forEach((h, i) => {
-        const bar = document.createElement("span");
-        bar.className = "bar";
-        bar.style.setProperty("--h", h / 100);
-        if (i / heights.length <= progress) bar.classList.add("on");
-        wave.appendChild(bar);
-      });
-    }
-
-    function loadTrack(index, shouldPlay = false) {
-      current = index;
-      const track = tracks[current];
-      audio.src = track.file;
-      audio.load();
-      nowTitle.textContent = track.title;
-
-      document.querySelectorAll(".track").forEach((el, i) => {
-        el.classList.toggle("active", i === current);
-      });
-
-      renderWave(0);
-    updateTrackPlayButtons();
-
-      if (shouldPlay) {
-        audio.play().catch(() => popup("Audio", "Riprova cliccando Play o cliccando la traccia."));
-      }
-    }
-
-    function renderTracks() {
-      tracksEl.innerHTML = "";
-
-      tracks.forEach((track, index) => {
-        const row = document.createElement("article");
-        row.className = "track";
-        if (index === current) row.classList.add("active");
-
-        row.innerHTML = `
-          <div class="num">${index + 1}</div>
-          <button class="play-small">▶</button>
-          <div>
-            <div class="track-title"></div>
-            <div class="track-sub">Douglas Busta</div>
-          </div>
-          <button class="credit-link">credits</button>
+      folderGrid.innerHTML = "";
+      folders.forEach(folder => {
+        const count = visibleFiles.filter(folder.matcher).length;
+        const card = document.createElement("article");
+        card.className = "folder-card";
+        card.innerHTML = `
+          <div class="folder-icon">${folder.icon}</div>
+          <div class="folder-label">${folder.label}</div>
+          <div class="folder-title">${folder.title}</div>
+          <div class="folder-count">${count ? `${count} indexed file${count === 1 ? "" : "s"}` : "COMING SOON"}</div>
         `;
-
-        row.querySelector(".track-title").textContent = track.title;
-
-        row.addEventListener("click", () => loadTrack(index, true));
-
-        row.querySelector(".play-small").addEventListener("click", (event) => {
-          event.stopPropagation();
-          loadTrack(index, true);
+        card.addEventListener("click", () => {
+          const section = document.getElementById(slugify(folder.title));
+          if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
         });
-
-        row.querySelector(".credit-link").addEventListener("click", (event) => {
-          event.stopPropagation();
-          popup("Credits — " + track.title, track.credits);
-        });
-
-        tracksEl.appendChild(row);
+        folderGrid.appendChild(card);
       });
-    }
 
-    function togglePlay() {
-      if (!audio.src) loadTrack(current, false);
+      sections.innerHTML = "";
 
-      if (audio.paused) {
-        audio.play().catch(() => popup("Audio", "Riprova cliccando una traccia."));
-      } else {
-        audio.pause();
+      folders.forEach(folder => {
+        const folderFiles = visibleFiles.filter(folder.matcher);
+        const section = document.createElement("section");
+        section.className = "section";
+        section.id = slugify(folder.title);
+
+        if (!folderFiles.length) {
+          section.innerHTML = `
+            <div class="section-head">
+              <h2>${folder.title}</h2>
+              <div class="section-code">BUSTA FILES / ${folder.label}</div>
+            </div>
+            <div class="coming-soon">
+              <strong>COMING SOON</strong>
+              New files will be declassified and released in this folder soon.
+            </div>
+          `;
+        } else {
+          section.innerHTML = `
+            <div class="section-head">
+              <h2>${folder.title}</h2>
+              <div class="section-code">BUSTA FILES / ${folder.label}</div>
+            </div>
+            <div class="evidence-grid">
+              ${folderFiles.map(item => `
+                <a class="evidence" href="${item.src}" target="_blank" rel="noopener noreferrer">
+                  <img src="${item.src}" alt="${item.name}" loading="lazy">
+                  <div class="evidence-body">
+                    <div class="evidence-status">${item.status}</div>
+                    <div class="evidence-name">${item.name}</div>
+                    <div class="file-actions">
+                      <button class="file-action" type="button" data-save-file="${item.name}">Save</button>
+                      <button class="file-action" type="button" data-share-file="${item.name}">Share</button>
+                    </div>
+                  </div>
+                </a>
+              `).join("")}
+            </div>
+          `;
+        }
+
+        sections.appendChild(section);
+      });
+
+      if (!visibleFiles.length && query) {
+        sections.innerHTML = `
+          <div class="empty">
+            No files found in the current BUSTA FILES database.<br>
+            Try another keyword or wait for the next declassification drop.
+          </div>
+        `;
       }
     }
 
-    play.addEventListener("click", togglePlay);
-    heroPlay.addEventListener("click", togglePlay);
-
-    prev.addEventListener("click", () => {
-      const nextIndex = (current - 1 + tracks.length) % tracks.length;
-      loadTrack(nextIndex, true);
-    });
-
-    next.addEventListener("click", () => {
-      const nextIndex = (current + 1) % tracks.length;
-      loadTrack(nextIndex, true);
-    });
-
-    audio.addEventListener("play", () => {
-      play.textContent = "❚❚";
-      heroPlay.textContent = "❚❚";
-          updateTrackPlayButtons();
-    });
-
-    audio.addEventListener("pause", () => {
-      play.textContent = "▶";
-      heroPlay.textContent = "▶";
-          updateTrackPlayButtons();
-    });
-
-    audio.addEventListener("timeupdate", () => {
-      const progress = audio.duration ? audio.currentTime / audio.duration : 0;
-      renderWave(progress);
-      time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
-    });
-
-    audio.addEventListener("ended", () => {
-      const nextIndex = (current + 1) % tracks.length;
-      loadTrack(nextIndex, true);
-    });
-
-    wave.addEventListener("click", (event) => {
-      if (!audio.duration) return;
-      const rect = wave.getBoundingClientRect();
-      const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
-      audio.currentTime = ratio * audio.duration;
-    });
-
-    document.getElementById("album-credits").addEventListener("click", () => {
-      popup("Credits", `
-        <div class="credits-roll">
-          <div class="credits-block">
-            <div class="credits-role">Album</div>
-            <div class="credits-name">#chaoscore</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">All Lyrics Written By</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">All Tracks Produced and Composed By</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Recorded By</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Mixed and Mastered By</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Track 4 — so ki 6... ft. 39Redboy</div>
-            <div class="credits-name">
-              Additional lyrics by 39Redboy
-              <a class="credits-feature-tag" href="https://instagram.com/39redboy" target="_blank" rel="noopener noreferrer">@39redboy</a>
-            </div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Track 8 — Patto d'Achille ft. Gador</div>
-            <div class="credits-name">
-              Additional lyrics and production by Gador
-              <a class="credits-feature-tag" href="https://instagram.com/ohmygador" target="_blank" rel="noopener noreferrer">@ohmygador</a>
-            </div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Track 10 — sensibileh! ft. Deffy</div>
-            <div class="credits-name">
-              Additional lyrics by Deffy
-              <a class="credits-feature-tag" href="https://instagram.com/dd_deffy" target="_blank" rel="noopener noreferrer">@dd_deffy</a>
-            </div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Executive Producer</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Direction</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Cover</div>
-            <div class="credits-name">
-              Matteo Mazzetti
-              <a href="https://instagram.com/tuma.zz" target="_blank" rel="noopener noreferrer">@tuma.zz</a>
-              <br>
-              Douglas Busta
-            </div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Video Sound Design</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block credits-tight">
-            <div class="credits-role">Video Editing, Color and Camera</div>
-            <div class="credits-name">
-              Nicola Vitali
-              <a href="https://instagram.com/vitali.mp4" target="_blank" rel="noopener noreferrer">@vitali.mp4</a>
-            </div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Video AI Prompter</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Management and Label</div>
-            <div class="credits-name">
-              Giacomo (KAMI) Andreoli
-              <a href="https://instagram.com/lovekxmi" target="_blank" rel="noopener noreferrer">@lovekxmi</a>
-              <br>
-              KYMA Label
-              <a href="https://instagram.com/kyma_label" target="_blank" rel="noopener noreferrer">@kyma_label</a>
-            </div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Publishing</div>
-            <div class="credits-name">
-              KYMA Label
-              <a href="https://instagram.com/kyma_label" target="_blank" rel="noopener noreferrer">@kyma_label</a>
-            </div>
-          </div>
-
-          <div class="credits-block">
-            <div class="credits-role">Original Idea</div>
-            <div class="credits-name">Douglas Busta</div>
-          </div>
-        </div>
-      `, true);
-    });
-
-    document.getElementById("ios-download").addEventListener("click", () => {
-      popup("Download iOS", "Su iPhone apri questo sito in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”.");
-    });
-
-    document.getElementById("android-download").addEventListener("click", () => {
-      popup("Download Android", "Su Android apri il menu di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”.");
-    });
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((reg) => reg.unregister())).catch(() => {});
-    }
-
-    if ("caches" in window) {
-      caches.keys().then((keys) => keys.forEach((key) => caches.delete(key))).catch(() => {});
-    }
-
-    renderCoverPicker();
-    renderTracks();
-    renderWave(0);
-    loadTrack(0, false);
-
+    search.addEventListener("input", () => render(search.value.trim()));
+    render();
   
-    // Real circle modal close
-    function closeModalPanel() {
-      if (!modal || !modal.open) return;
+    // BUSTA ACCOUNT SYSTEM DEMO
+    const accountLink = document.getElementById("account-link");
+    const authModal = document.getElementById("auth-modal");
+    const authTitle = document.getElementById("auth-title");
+    const authCopy = document.getElementById("auth-copy");
+    const authForm = document.getElementById("auth-form");
+    const authEmail = document.getElementById("auth-email");
+    const authPassword = document.getElementById("auth-password");
+    const authMessage = document.getElementById("auth-message");
 
-      modal.classList.add("modal-closing");
+    const shareModal = document.getElementById("share-modal");
+    const shareForm = document.getElementById("share-form");
+    const shareEmail = document.getElementById("share-email");
+    const shareFileName = document.getElementById("share-file-name");
+    const shareMessage = document.getElementById("share-message");
 
-      window.setTimeout(() => {
-        modal.close();
-        modal.classList.remove("modal-closing");
-      }, 160);
+    let selectedShareFile = "";
+    let currentAuthMode = "signup";
+
+    function getAccount() {
+      return JSON.parse(localStorage.getItem("bustaAccount") || "null");
     }
 
-    document.addEventListener("click", (event) => {
-      const closeCircle = event.target.closest("#modal-close-circle");
-      if (!closeCircle) return;
+    function setAccount(account) {
+      localStorage.setItem("bustaAccount", JSON.stringify(account));
+      updateAuthUI();
 
-      event.preventDefault();
-      event.stopPropagation();
+    async function restoreSupabaseSession() {
+      localStorage.removeItem("bustaAccount");
 
-      closeModalPanel();
+      if (!bustaSupabase) {
+        updateAuthUI(null);
+        return;
+      }
+
+      const { data } = await bustaSupabase.auth.getSession();
+      const session = data?.session || null;
+
+      updateAuthUI(session);
+    }
+
+    restoreSupabaseSession();
+
+    }
+
+    function updateAuthUI(session = null) {
+      const isLoggedIn = !!session?.user;
+
+      if (!isLoggedIn) {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.remove("hidden"));
+        if (accountLink) accountLink.classList.add("hidden");
+        return;
+      }
+
+      document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.add("hidden"));
+      if (accountLink) accountLink.classList.remove("hidden");
+    }
+
+    function openAuth(mode) {
+      currentAuthMode = mode;
+      const isLogin = mode === "login";
+      authTitle.textContent = isLogin ? "Log In" : "Sign Up";
+      authCopy.textContent = isLogin
+        ? "Enter your email to reopen your private archive session."
+        : "Create your private Busta Files session.";
+      authMessage.textContent = "";
+      authEmail.value = "";
+      if (authPassword) authPassword.value = "";
+      authModal.showModal();
+      window.setTimeout(() => authEmail.focus(), 80);
+    }
+
+    document.querySelectorAll("[data-auth-open]").forEach(button => {
+      button.addEventListener("click", () => openAuth(button.dataset.authOpen));
     });
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-
-      const closeCircle = event.target.closest("#modal-close-circle");
-      if (!closeCircle) return;
-
-      event.preventDefault();
-      closeModalPanel();
+    document.querySelectorAll("[data-auth-close]").forEach(button => {
+      button.addEventListener("click", () => authModal.close());
     });
+
+    document.querySelectorAll("[data-share-close]").forEach(button => {
+      button.addEventListener("click", () => shareModal.close());
+    });
+
+    authForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const email = authEmail.value.trim().toLowerCase();
+      const password = authPassword ? authPassword.value : "";
+
+      if (!email || !password) return;
+
+      if (password.length < 8) {
+        authMessage.textContent = "Password must be at least 8 characters.";
+        return;
+      }
+
+      if (!bustaSupabase) {
+        authMessage.textContent = "Authentication service is still loading. Please refresh and try again.";
+        return;
+      }
+
+      authMessage.textContent = currentAuthMode === "login"
+        ? "Checking archive credentials..."
+        : "Creating private archive account...";
+
+      let result;
+
+      if (currentAuthMode === "login") {
+        result = await bustaSupabase.auth.signInWithPassword({
+          email,
+          password
+        });
+      } else {
+        result = await bustaSupabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: "https://lookapp.org/exclusive"
+          }
+        });
+      }
+
+      if (result.error) {
+        authMessage.textContent = result.error.message;
+        return;
+      }
+
+      const session = result.data.session;
+
+      if (!session || !session.user) {
+        localStorage.removeItem("bustaAccount");
+        updateAuthUI();
+
+        authMessage.textContent = currentAuthMode === "login"
+          ? "No active session found. Please check your credentials."
+          : "Account created. Check your email to confirm it, then come back and Log In.";
+        return;
+      }
+
+      const userEmail = session.user.email || email;
+
+      localStorage.removeItem("bustaAccount");
+      updateAuthUI(session);
+
+      authMessage.textContent = currentAuthMode === "login"
+        ? "Access granted. Welcome back to the archive."
+        : "Account created. Archive session is active.";
+
+      window.setTimeout(() => authModal.close(), 900);
+    });
+
+    document.addEventListener("click", event => {
+      const saveButton = event.target.closest("[data-save-file]");
+      const shareButton = event.target.closest("[data-share-file]");
+
+      if (saveButton) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const account = getAccount();
+        if (!account) {
+          openAuth("signup");
+          return;
+        }
+
+        const file = saveButton.dataset.saveFile;
+        const saved = JSON.parse(localStorage.getItem("bustaSavedFiles") || "[]");
+
+        if (!saved.includes(file)) {
+          saved.push(file);
+          localStorage.setItem("bustaSavedFiles", JSON.stringify(saved));
+        }
+
+        saveButton.textContent = "Saved";
+        return;
+      }
+
+      if (shareButton) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const account = getAccount();
+        if (!account) {
+          openAuth("signup");
+          return;
+        }
+
+        selectedShareFile = shareButton.dataset.shareFile;
+        shareFileName.textContent = selectedShareFile;
+        shareMessage.textContent = "";
+        shareEmail.value = "";
+        shareModal.showModal();
+      }
+    });
+
+    shareForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const recipient = shareEmail.value.trim().toLowerCase();
+      if (!recipient || !selectedShareFile) return;
+
+      const shares = JSON.parse(localStorage.getItem("bustaShares") || "[]");
+      shares.push({
+        file: selectedShareFile,
+        to: recipient,
+        created_at: new Date().toISOString()
+      });
+
+      localStorage.setItem("bustaShares", JSON.stringify(shares));
+      shareMessage.textContent = "Internal share saved in this demo session. Real delivery requires backend.";
+    });
+
+    updateAuthUI();
 
   </script>
 
-
-
-<script>
-/* FINAL MINI PLAYER + WAVEFORM FIX */
-(function () {
-  const tracks = [
-    { title: "banale", file: "/audio-mp3/1. banale.mp3" },
-    { title: "STAR II", file: "/audio-mp3/2. STAR II.mp3" },
-    { title: "stella vera reale.wav", file: "/audio-mp3/3. stella vera reale.wav.mp3" },
-    { title: "so ki 6... ft. 39Redboy", file: "/audio-mp3/4. so ki 6... ft. 39Redboy.mp3" },
-    { title: "sono triste e caco.", file: "/audio-mp3/5. sono triste e caco..mp3" },
-    { title: "blue hair", file: "/audio-mp3/6. blue hair.mp3" },
-    { title: "piccolo ME", file: "/audio-mp3/7. PICCOLO me.mp3" },
-    { title: "Patto d'Achille ft. Gador", file: "/audio-mp3/8. Patto d'Achille ft. Gador.mp3" },
-    { title: "Stop the EMOTIONS", file: "/audio-mp3/9. Stop the EMOTIONS.mp3" },
-    { title: "sensibileh! ft. Deffy", file: "/audio-mp3/10. sensibileh! ft. Deffy.mp3" },
-    { title: "ma che ho fatto mo??...", file: "/audio-mp3/track11.mp3" },
-    { title: "NO TIME!", file: "/audio-mp3/12. NO TIME!.mp3" },
-    { title: "GET OUT!", file: "/audio-mp3/13. GET OUT!.mp3" },
-    { title: "LOOK UP!", file: "/audio-mp3/14. LOOK UP!.mp3" },
-    { title: "1 normale (Bonus Track)", file: "/audio-mp3/15. 1 normale (Bonus Track).mp3" }
-  ];
-
-  const wavePatterns = [
-    [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18],
-    [40,52,63,72,41,29,58,84,91,66,36,24,44,70,88,76,55,39,28,35,61,83,96,71,48,31,23,42,67,89,80,59,33,25,47,73,92,64,38,20],
-    [22,28,44,67,91,86,60,34,25,37,59,78,94,88,62,41,29,23,35,54,75,97,82,57,36,26,30,49,69,90,84,63,40,27,21,39,61,79,58,33],
-    [64,38,25,31,56,83,96,71,45,29,22,48,77,91,68,42,30,53,87,94,73,51,35,24,44,69,89,78,57,36,28,50,81,93,66,43,32,55,76,48],
-    [20,21,25,31,44,68,92,95,73,48,29,24,36,55,79,90,61,39,27,34,52,74,88,69,46,30,22,28,43,65,84,76,53,35,26,32,47,70,91,58]
-  ];
-
-  let activeIndex = 0;
-
-  function absoluteUrl(path) {
-    return new URL(path, window.location.origin).href;
-  }
-
-  function getAudio() {
-    return document.getElementById("audio");
-  }
-
-  function getRows() {
-    return Array.from(document.querySelectorAll(".track"));
-  }
-
-  function getIndexFromAudio() {
-    const audio = getAudio();
-    if (!audio || !audio.src) return activeIndex;
-
-    const found = tracks.findIndex((track) => audio.src === absoluteUrl(track.file));
-    return found >= 0 ? found : activeIndex;
-  }
-
-  function fmt(seconds) {
-    if (!Number.isFinite(seconds)) return "0:00";
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  }
-
-  function setMiniPlayer(index) {
-    const track = tracks[index];
-    if (!track) return;
-
-    const nowTitle = document.getElementById("now-title");
-    const nowSubtitle = document.querySelector(".now-sub");
-
-    if (nowTitle) nowTitle.textContent = track.title;
-    if (nowSubtitle) nowSubtitle.textContent = "#chaoscore";
-  }
-
-  function renderWave(index, progress = 0) {
-    const wave = document.getElementById("wave");
-    if (!wave) return;
-
-    const pattern = wavePatterns[index % wavePatterns.length];
-    wave.innerHTML = "";
-
-    pattern.forEach((height, i) => {
-      const bar = document.createElement("span");
-      bar.className = "bar";
-      bar.style.setProperty("--h", height / 100);
-
-      if (i / pattern.length <= progress) {
-        bar.classList.add("on");
-      }
-
-      wave.appendChild(bar);
-    });
-  }
-
-  function animateRow(row, className) {
-    if (!row) return;
-    row.classList.remove("play-pop", "pause-pop");
-    void row.offsetWidth;
-    row.classList.add(className);
-    window.setTimeout(() => row.classList.remove(className), 430);
-  }
-
-  function syncUI(animationType) {
-    const audio = getAudio();
-    const rows = getRows();
-    const currentIndex = getIndexFromAudio();
-    const isPlaying = audio && !audio.paused;
-
-    activeIndex = currentIndex;
-    setMiniPlayer(currentIndex);
-
-    rows.forEach((row, index) => {
-      const button = row.querySelector(".play-small");
-      const currentAndPlaying = index === currentIndex && isPlaying;
-
-      row.classList.toggle("active", index === currentIndex);
-      row.classList.toggle("is-playing", currentAndPlaying);
-
-      if (button) {
-        button.textContent = currentAndPlaying ? "❚❚" : "▶";
-        button.setAttribute("aria-label", currentAndPlaying ? "Pause track" : "Play track");
-      }
-    });
-
-    const progress = audio && audio.duration ? audio.currentTime / audio.duration : 0;
-    renderWave(currentIndex, progress);
-
-    const time = document.getElementById("time");
-    if (time && audio) {
-      time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
-    }
-
-    if (animationType === "play") {
-      animateRow(rows[currentIndex], "play-pop");
-    }
-
-    if (animationType === "pause") {
-      animateRow(rows[currentIndex], "pause-pop");
-    }
-  }
-
-  async function toggleTrack(index) {
-    const audio = getAudio();
-    if (!audio) return;
-
-    const track = tracks[index];
-    if (!track) return;
-
-    const targetSrc = absoluteUrl(track.file);
-    const sameTrack = audio.src === targetSrc;
-
-    activeIndex = index;
-    setMiniPlayer(index);
-    renderWave(index, 0);
-
-    if (sameTrack && !audio.paused) {
-      audio.pause();
-      syncUI("pause");
-      return;
-    }
-
-    if (!sameTrack) {
-      audio.pause();
-      audio.src = targetSrc;
-      audio.load();
-    }
-
-    try {
-      await audio.play();
-      syncUI("play");
-    } catch (error) {
-      console.warn(error);
-      const status = document.getElementById("audio-status");
-      if (status) status.textContent = "Audio non partito: premi di nuovo play.";
-      syncUI("pause");
-    }
-  }
-
-  document.addEventListener("click", function (event) {
-    if (event.target.closest(".credit-link")) return;
-
-    const playButton = event.target.closest(".play-small");
-    const row = event.target.closest(".track");
-
-    if (!playButton && !row) return;
-
-    const rows = getRows();
-    const targetRow = row || playButton.closest(".track");
-    const index = rows.indexOf(targetRow);
-
-    if (index < 0) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
-    toggleTrack(index);
-  }, true);
-
-  document.addEventListener("click", function (event) {
-    const mainPlay = event.target.closest("#play, #hero-play");
-    if (!mainPlay) return;
-
-    const audio = getAudio();
-    if (!audio) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
-    if (!audio.paused) {
-      audio.pause();
-      syncUI("pause");
-    } else {
-      toggleTrack(activeIndex);
-    }
-  }, true);
-
-  const audio = getAudio();
-
-  if (audio) {
-    audio.addEventListener("play", () => syncUI("play"));
-    audio.addEventListener("pause", () => syncUI("pause"));
-    audio.addEventListener("ended", () => syncUI("pause"));
-    audio.addEventListener("loadedmetadata", () => syncUI());
-    audio.addEventListener("timeupdate", () => syncUI());
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    setMiniPlayer(0);
-    renderWave(0, 0);
-    syncUI();
-    setTimeout(syncUI, 300);
-    setTimeout(syncUI, 1000);
-  });
-
-  window.addEventListener("load", () => {
-    setMiniPlayer(activeIndex);
-    renderWave(activeIndex, 0);
-    syncUI();
-    setTimeout(syncUI, 300);
-    setTimeout(syncUI, 1000);
-  });
-})();
-</script>
-
-
-  <script id="chaoscore-access-guard">
-    window.addEventListener("DOMContentLoaded", async () => {
-      const cleanPath = window.location.pathname.replace(/\/$/, "") || "/";
-      const isPrivateAlbumRoute = cleanPath === "/chaoscore";
-      if (!isPrivateAlbumRoute) return;
-
+  <script id="busta-auth-final-fix">
+    window.addEventListener("DOMContentLoaded", () => {
       const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
       const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
 
@@ -1491,161 +1368,527 @@ dialog {
           })
         : null;
 
-      function lockPage(message) {
-        document.body.innerHTML = `
-          <main style="
-            min-height:100vh;
-            display:grid;
-            place-items:center;
-            padding:24px;
-            background:
-              radial-gradient(circle at 20% 0%, rgba(139,23,23,.34), transparent 35%),
-              radial-gradient(circle at 80% 20%, rgba(231,224,210,.08), transparent 28%),
-              linear-gradient(180deg,#0c0908 0%,#030303 72%);
-            color:#e7e0d2;
-            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;
-          ">
-            <section style="
-              width:min(680px,100%);
-              border:1px solid rgba(231,224,210,.2);
-              border-radius:28px;
-              padding:clamp(24px,6vw,48px);
-              background:
-                linear-gradient(135deg, rgba(231,224,210,.08), rgba(231,224,210,.025)),
-                rgba(0,0,0,.34);
-              box-shadow:0 32px 110px rgba(0,0,0,.48);
-              position:relative;
-              overflow:hidden;
-            ">
-              <div style="
-                position:absolute;
-                right:-20px;
-                top:26px;
-                transform:rotate(14deg);
-                border:3px solid rgba(179,34,34,.5);
-                color:rgba(179,34,34,.58);
-                border-radius:10px;
-                padding:4px 14px;
-                font-weight:900;
-                letter-spacing:.08em;
-                font-size:clamp(1.9rem,7vw,4.4rem);
-                pointer-events:none;
-              ">LOCKED</div>
+      const authModal = document.getElementById("auth-modal");
+      const authForm = document.getElementById("auth-form");
+      const authTitle = document.getElementById("auth-title");
+      const authCopy = document.getElementById("auth-copy");
+      const authEmail = document.getElementById("auth-email");
+      const authPassword = document.getElementById("auth-password");
+      const authMessage = document.getElementById("auth-message");
+      const authSubmit = document.getElementById("auth-submit-btn");
+      const accountLink = document.getElementById("account-link");
+      const showPassword = document.getElementById("auth-show-password");
+      const remember = document.getElementById("auth-remember");
 
-              <div style="
-                color:rgba(231,224,210,.56);
-                text-transform:uppercase;
-                letter-spacing:.18em;
-                font-size:.72rem;
-                margin-bottom:14px;
-              ">
-                Private NFC Album Access
-              </div>
+      let mode = "signup";
 
-              <h1 style="
-                font-family:Georgia,'Times New Roman',serif;
-                font-size:clamp(3rem,11vw,6rem);
-                line-height:.86;
-                letter-spacing:-.08em;
-                margin:0 0 18px;
-                text-transform:uppercase;
-              ">#chaoscore<br>Locked</h1>
-
-              <p style="color:rgba(231,224,210,.78);line-height:1.7;margin:0 0 18px;font-size:1rem;">
-                ${message}
-              </p>
-
-              <div style="
-                border:1px solid rgba(231,224,210,.18);
-                border-radius:18px;
-                padding:16px;
-                background:rgba(255,255,255,.045);
-                margin:18px 0 22px;
-              ">
-                <div style="
-                  color:#d8f7cf;
-                  text-transform:uppercase;
-                  letter-spacing:.14em;
-                  font-size:.72rem;
-                  margin-bottom:8px;
-                ">
-                  How to unlock
-                </div>
-                <div style="color:rgba(231,224,210,.74);line-height:1.65;">
-                  Avvicina il tuo tag NFC Chaoscore al telefono. Il tag aprirà automaticamente il link privato di sblocco.
-                  Dopo il login, la chiave verrà collegata al tuo account e l’album si aprirà.
-                </div>
-              </div>
-
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <a href="/" style="
-                  display:inline-flex;
-                  border:1px solid rgba(231,224,210,.24);
-                  border-radius:999px;
-                  background:rgba(231,224,210,.08);
-                  color:#e7e0d2;
-                  padding:13px 15px;
-                  text-decoration:none;
-                  text-transform:uppercase;
-                  letter-spacing:.12em;
-                  font-size:.72rem;
-                ">Open Busta Files</a>
-
-                <a href="/account" style="
-                  display:inline-flex;
-                  border:1px solid rgba(231,224,210,.16);
-                  border-radius:999px;
-                  background:rgba(0,0,0,.18);
-                  color:rgba(231,224,210,.76);
-                  padding:13px 15px;
-                  text-decoration:none;
-                  text-transform:uppercase;
-                  letter-spacing:.12em;
-                  font-size:.72rem;
-                ">My Account</a>
-              </div>
-
-              <p style="
-                margin-top:22px;
-                color:rgba(231,224,210,.46);
-                font-size:.72rem;
-                line-height:1.55;
-              ">
-                Nota: il sito non può leggere un tag NFC già aperto dentro la pagina. Devi scannerizzare il tag fisico: il tag apre il link /claim con la tua chiave.
-              </p>
-            </section>
-          </main>
-        `;
+      function showLoggedOut() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.remove("hidden"));
+        if (accountLink) accountLink.classList.add("hidden");
       }
 
-      if (!client) {
-        lockPage("Authentication could not be loaded. Scan your Chaoscore NFC key again.");
-        return;
+      function showLoggedIn() {
+        document.querySelectorAll("[data-auth-open]").forEach(btn => btn.classList.add("hidden"));
+        if (accountLink) accountLink.classList.remove("hidden");
       }
 
-      const { data } = await client.auth.getSession();
-      const session = data?.session || null;
+      async function refreshSessionUI() {
+        if (!client) {
+          showLoggedOut();
+          return null;
+        }
 
-      if (!session?.user) {
-        lockPage("This album is private. Only accounts unlocked with a physical Chaoscore NFC key can listen to it.");
-        return;
+        const { data } = await client.auth.getSession();
+        const session = data?.session || null;
+
+        if (session?.user) {
+          showLoggedIn();
+        } else {
+          showLoggedOut();
+        }
+
+        return session;
       }
 
-      try {
-        const { data: accessData, error } = await client.rpc("get_my_chaos_access");
+      function openAuth(nextMode) {
+        mode = nextMode || "signup";
 
-        if (error) throw error;
+        if (authTitle) authTitle.textContent = mode === "login" ? "Log In" : "Sign Up";
+        if (authCopy) {
+          authCopy.textContent = mode === "login"
+            ? "Enter your email and password to access your private archive session."
+            : "Create your private Busta Files session.";
+        }
 
-        const access = Array.isArray(accessData) ? accessData[0] : accessData;
+        if (authMessage) authMessage.textContent = "";
 
-        if (!access?.chaos_verified) {
-          lockPage("Your account is not Chaos Verificato yet. Scan your physical Chaoscore NFC key to unlock this album.");
+        const rememberedEmail = localStorage.getItem("bustaRememberedEmail") || "";
+        if (authEmail) authEmail.value = rememberedEmail;
+        if (remember) remember.checked = !!rememberedEmail;
+        if (authPassword) {
+          authPassword.value = "";
+          authPassword.type = "password";
+        }
+        if (showPassword) showPassword.checked = false;
+
+        if (authModal && !authModal.open) authModal.showModal();
+        setTimeout(() => authEmail?.focus(), 80);
+      }
+
+      document.querySelectorAll("[data-auth-open]").forEach(button => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          openAuth(button.dataset.authOpen);
+        });
+      });
+
+      document.querySelectorAll("[data-auth-close]").forEach(button => {
+        button.addEventListener("click", () => authModal?.close());
+      });
+
+      if (showPassword && authPassword) {
+        showPassword.addEventListener("change", () => {
+          authPassword.type = showPassword.checked ? "text" : "password";
+        });
+      }
+
+      async function submitAuth(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        if (!client) {
+          if (authMessage) authMessage.textContent = "Authentication service is not loaded. Refresh the page and try again.";
           return;
         }
-      } catch (err) {
-        console.error(err);
-        lockPage("Chaoscore access could not be verified. Try again or scan your NFC key.");
+
+        const email = authEmail?.value.trim().toLowerCase() || "";
+        const password = authPassword?.value || "";
+
+        if (!email || !password) {
+          if (authMessage) authMessage.textContent = "Enter email and password.";
+          return;
+        }
+
+        if (password.length < 8) {
+          if (authMessage) authMessage.textContent = "Password must be at least 8 characters.";
+          return;
+        }
+
+        if (remember?.checked) {
+          localStorage.setItem("bustaRememberedEmail", email);
+        } else {
+          localStorage.removeItem("bustaRememberedEmail");
+        }
+
+        if (authSubmit) {
+          authSubmit.disabled = true;
+          authSubmit.textContent = mode === "login" ? "Checking..." : "Creating...";
+        }
+
+        if (authMessage) {
+          authMessage.textContent = mode === "login"
+            ? "Checking archive credentials..."
+            : "Creating archive account...";
+        }
+
+        let result;
+
+        try {
+          if (mode === "login") {
+            result = await client.auth.signInWithPassword({ email, password });
+          } else {
+            result = await client.auth.signUp({
+              email,
+              password,
+              options: {
+                emailRedirectTo: "https://lookapp.org/exclusive"
+              }
+            });
+          }
+        } catch (err) {
+          if (authMessage) authMessage.textContent = err.message || "Authentication failed.";
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        if (result?.error) {
+          if (authMessage) authMessage.textContent = result.error.message;
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        const { data } = await client.auth.getSession();
+        const session = data?.session || result?.data?.session || null;
+
+        if (!session?.user) {
+          if (authMessage) {
+            authMessage.textContent = mode === "signup"
+              ? "Account created. Now press Log In with the same email and password."
+              : "No active session found. Try again.";
+          }
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+          return;
+        }
+
+        showLoggedIn();
+
+        if (authMessage) {
+          authMessage.textContent = mode === "login"
+            ? "Access granted. Welcome back."
+            : "Account created. Archive session active.";
+        }
+
+        setTimeout(() => {
+          authModal?.close();
+          if (authSubmit) {
+            authSubmit.disabled = false;
+            authSubmit.textContent = "Enter Archive";
+          }
+        }, 700);
       }
+
+      if (authForm) {
+        authForm.addEventListener("submit", submitAuth);
+      }
+
+      if (authSubmit) {
+        authSubmit.addEventListener("click", submitAuth);
+      }
+
+      if (accountLink) {
+        accountLink.addEventListener("click", async (event) => {
+          event.preventDefault();
+
+          const session = await refreshSessionUI();
+
+          if (!session?.user) {
+            openAuth("login");
+            return;
+          }
+
+          window.location.href = "/account.html";
+        });
+      }
+
+      if (client) {
+        client.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) showLoggedIn();
+          else showLoggedOut();
+        });
+      }
+
+      refreshSessionUI();
+    });
+  </script>
+
+
+  <script id="busta-save-share-supabase-fix">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      const shareModal = document.getElementById("share-modal");
+      const shareForm = document.getElementById("share-form");
+      const shareEmail = document.getElementById("share-email");
+      const shareFileName = document.getElementById("share-file-name");
+      const shareMessage = document.getElementById("share-message");
+
+      let selectedShareItem = null;
+
+      function findFileByName(fileName) {
+        if (!Array.isArray(window.files) && typeof files !== "undefined" && Array.isArray(files)) {
+          return files.find(item => item.name === fileName) || null;
+        }
+
+        if (Array.isArray(window.files)) {
+          return window.files.find(item => item.name === fileName) || null;
+        }
+
+        return null;
+      }
+
+      async function getRealSession() {
+        if (!client) return null;
+        const { data } = await client.auth.getSession();
+        return data?.session || null;
+      }
+
+      async function requireLogin() {
+        const session = await getRealSession();
+
+        if (!session?.user) {
+          const loginButton = document.querySelector('[data-auth-open="login"]');
+          if (loginButton) {
+            loginButton.click();
+          } else {
+            alert("Please log in first.");
+          }
+          return null;
+        }
+
+        return session;
+      }
+
+      document.addEventListener("click", async (event) => {
+        const saveButton = event.target.closest("[data-save-file]");
+        const shareButton = event.target.closest("[data-share-file]");
+
+        if (!saveButton && !shareButton) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const session = await requireLogin();
+        if (!session) return;
+
+        if (saveButton) {
+          if (saveButton.dataset.saved === "true") return;
+
+          const fileName = saveButton.dataset.saveFile;
+          const item = findFileByName(fileName);
+
+          saveButton.disabled = true;
+          saveButton.textContent = "Saving...";
+
+          const { error } = await client.rpc("save_busta_file", {
+            p_file_name: fileName,
+            p_file_url: item?.src || "",
+            p_folder: item?.folder || "Busta Files"
+          });
+
+          if (error) {
+            console.error(error);
+            saveButton.disabled = false;
+            saveButton.textContent = "Save";
+            alert("Save failed: " + error.message);
+            return;
+          }
+
+          saveButton.textContent = "Saved";
+          saveButton.dataset.saved = "true";
+          saveButton.disabled = true;
+          return;
+        }
+
+        if (shareButton) {
+          const fileName = shareButton.dataset.shareFile;
+          selectedShareItem = findFileByName(fileName) || {
+            name: fileName,
+            src: "",
+            folder: "Busta Files"
+          };
+
+          if (shareFileName) shareFileName.textContent = selectedShareItem.name;
+          if (shareMessage) shareMessage.textContent = "";
+          if (shareEmail) shareEmail.value = "";
+
+          if (shareModal && !shareModal.open) shareModal.showModal();
+        }
+      }, true);
+
+      if (shareForm) {
+        shareForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const session = await requireLogin();
+          if (!session || !selectedShareItem) return;
+
+          const recipient = shareEmail?.value.trim().toLowerCase() || "";
+
+          if (!recipient) {
+            if (shareMessage) shareMessage.textContent = "Enter recipient email.";
+            return;
+          }
+
+          if (shareMessage) shareMessage.textContent = "Sending internal share...";
+
+          const { error } = await client.from("shared_files").insert({
+            sender_id: session.user.id,
+            recipient_email: recipient,
+            file_name: selectedShareItem.name,
+            file_url: selectedShareItem.src || "",
+            folder: selectedShareItem.folder || "Busta Files",
+            message: "Shared from Busta Files archive."
+          });
+
+          if (error) {
+            console.error(error);
+            if (shareMessage) shareMessage.textContent = "Share failed: " + error.message;
+            return;
+          }
+
+          if (shareMessage) shareMessage.textContent = "File shared inside the archive.";
+        }, true);
+      }
+    });
+  </script>
+
+
+  <script id="busta-saved-state-final">
+    window.addEventListener("DOMContentLoaded", () => {
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function findArchiveFile(fileName) {
+        try {
+          if (typeof files !== "undefined" && Array.isArray(files)) {
+            return files.find(item => item.name === fileName) || null;
+          }
+        } catch (_) {}
+        return null;
+      }
+
+      function markButtonAsSaved(button) {
+        if (!button) return;
+        button.dataset.saved = "true";
+        button.textContent = "✓";
+        button.title = "File already saved";
+        button.setAttribute("aria-label", "File already saved");
+        button.classList.add("saved-tick");
+        button.disabled = true;
+      }
+
+      async function getSession() {
+        if (!client) return null;
+        const { data } = await client.auth.getSession();
+        return data?.session || null;
+      }
+
+      async function loadSavedState() {
+        const session = await getSession();
+        if (!session?.user) return;
+
+        let saved = [];
+
+        try {
+          const { data, error } = await client.rpc("get_my_saved_files");
+
+          if (error) {
+            console.warn("get_my_saved_files failed, falling back to direct select:", error.message);
+
+            const fallback = await client
+              .from("saved_files")
+              .select("file_name,file_url,folder,created_at")
+              .order("created_at", { ascending: false });
+
+            if (fallback.error) throw fallback.error;
+            saved = fallback.data || [];
+          } else {
+            saved = data || [];
+          }
+        } catch (err) {
+          console.error("Could not load saved state:", err);
+          return;
+        }
+
+        const savedNames = new Set(saved.map(file => file.file_name));
+        const savedUrls = new Set(saved.map(file => file.file_url));
+
+        document.querySelectorAll("[data-save-file]").forEach(button => {
+          const fileName = button.dataset.saveFile;
+          const item = findArchiveFile(fileName);
+          const fileUrl = item?.src || "";
+
+          if (savedNames.has(fileName) || savedUrls.has(fileUrl)) {
+            markButtonAsSaved(button);
+          }
+        });
+      }
+
+      document.addEventListener("click", async (event) => {
+        const saveButton = event.target.closest("[data-save-file]");
+        if (!saveButton) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        if (saveButton.dataset.saved === "true") return;
+
+        const session = await getSession();
+
+        if (!session?.user) {
+          const loginButton = document.querySelector('[data-auth-open="login"]');
+          if (loginButton) loginButton.click();
+          return;
+        }
+
+        const fileName = saveButton.dataset.saveFile;
+        const item = findArchiveFile(fileName);
+
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+
+        try {
+          const { error } = await client.rpc("save_busta_file", {
+            p_file_name: fileName,
+            p_file_url: item?.src || "",
+            p_folder: item?.folder || "Busta Files"
+          });
+
+          if (error) throw error;
+
+          markButtonAsSaved(saveButton);
+        } catch (err) {
+          console.error(err);
+          saveButton.disabled = false;
+          saveButton.textContent = "Save";
+          alert("Save failed: " + (err.message || "Unknown error"));
+        }
+      }, true);
+
+      if (client) {
+        client.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) loadSavedState();
+        });
+      }
+
+      loadSavedState();
+    });
+  </script>
+
+
+  <script id="busta-open-chaoscore-entry">
+    window.addEventListener("DOMContentLoaded", () => {
+      if (document.querySelector(".chaoscore-entry-button")) return;
+
+      const link = document.createElement("a");
+      link.className = "chaoscore-entry-button";
+      link.href = "/chaoscore";
+      link.textContent = "Open #chaoscore Album";
+      document.body.appendChild(link);
     });
   </script>
 
