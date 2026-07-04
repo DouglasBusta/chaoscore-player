@@ -700,6 +700,7 @@ dialog {
 
   <dialog id="modal">
     <div class="modal-inner">
+      <button id="modal-x" class="modal-x" type="button" aria-label="Close credits">×</button>
       <h2 id="modal-title"></h2>
       <p id="modal-text"></p>
       <button class="clean-button" id="modal-close">chiudi</button>
@@ -1066,6 +1067,13 @@ dialog {
     renderTracks();
     renderWave(0);
     loadTrack(0, false);
+  
+    // Close modal from top X
+    const modalX = document.getElementById("modal-x");
+    if (modalX) {
+      modalX.addEventListener("click", () => modal.close());
+    }
+
   </script>
 
 
