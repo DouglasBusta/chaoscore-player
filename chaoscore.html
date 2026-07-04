@@ -983,57 +983,10 @@ dialog {
 
   
 
-    /* chaos-safe-mini-player-polish-v1 */
-    .chaos-safe-mini-inner {
-      grid-template-columns: auto minmax(0, 1fr) auto auto;
-    }
-
-    .chaos-safe-mini-volume {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 94px;
-      color: rgba(231,224,210,0.52);
-      font-size: 0.54rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .chaos-safe-mini-volume input {
-      width: 72px;
-      accent-color: #e7e0d2;
-    }
-
-    .chaos-safe-mini-progress {
-      height: 4px;
-    }
-
-    .chaos-safe-mini-progress-fill {
-      transition: width 120ms linear;
-    }
-
-    @media (max-width: 620px) {
-      .chaos-safe-mini-inner {
-        grid-template-columns: auto minmax(0, 1fr) auto;
-      }
-
-      .chaos-safe-mini-volume {
-        grid-column: 1 / -1;
-        justify-content: center;
-        width: 100%;
-        min-width: 0;
-        padding: 0 4px 3px;
-      }
-
-      .chaos-safe-mini-volume input {
-        width: min(240px, 62vw);
-      }
-    }
-
-  </style>
+    </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="/chaos-main-volume.css?v=1">
-  <link rel="stylesheet" href="/chaos-files-overlay-player.css?v=1">
+  <link rel="stylesheet" href="/chaos-single-shell-player.css?v=1">
 </head>
 <body>
   <main class="shell">
@@ -2024,6 +1977,6 @@ dialog {
     });
   </script>
   <script src="/chaos-main-volume.js?v=1"></script>
-  <script src="/chaos-files-overlay-player.js?v=1"></script>
+  <script src="/chaos-single-shell-player.js?v=1"></script>
 </body>
 </html>
