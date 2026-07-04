@@ -1414,14 +1414,13 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
       }
 
       async function approveUpload(id, suggestedFolder) {
-        const folder = prompt("Where should this file go?", suggestedFolder || "Other Busta Files");
-        if (!folder) return;
-
         const title = prompt("Public title? Leave empty to use original filename.") || "";
         const description = prompt("Public description? Optional.") || "";
-        const note = prompt("Admin note? Optional.") || "";
+        const folder = "Other Busta Files";
 
         try {
+          alert("Publishing file...");
+
           const pendingResult = await client
             .from("pending_uploads")
             .select("*")
@@ -1438,16 +1437,20 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
 
           if (signed.error) throw signed.error;
 
+          if (!signed.data || !signed.data.signedUrl) {
+            throw new Error("Signed preview URL missing.");
+          }
+
           const fileResponse = await fetch(signed.data.signedUrl);
 
           if (!fileResponse.ok) {
-            throw new Error("Could not read private submitted file.");
+            throw new Error("Could not read private submitted file. HTTP " + fileResponse.status);
           }
 
           const blob = await fileResponse.blob();
 
-          const safeName = item.file_name.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const publicPath = folder.replace(/[^a-zA-Z0-9._-]/g, "_") + "/" + Date.now() + "-" + safeName;
+          const safeName = (item.file_name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+          const publicPath = "Other_Busta_Files/" + Date.now() + "-" + safeName;
 
           const uploadPublic = await client.storage
             .from("busta-approved-files")
@@ -1473,12 +1476,12 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
             .from("approved_busta_files")
             .insert({
               original_pending_id: item.id,
-              file_name: item.file_name,
+              file_name: item.file_name || safeName,
               file_url: publicUrl,
-              file_type: item.file_type || "",
-              file_size: item.file_size || 0,
+              file_type: item.file_type || blob.type || "",
+              file_size: item.file_size || blob.size || 0,
               folder: folder,
-              title: title || item.file_name,
+              title: title || item.file_name || safeName,
               description: description,
               submitted_by: item.uploader_id,
               submitted_by_username: item.uploader_username || "unknown"
@@ -1491,18 +1494,18 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
             .update({
               status: "approved",
               reviewed_at: new Date().toISOString(),
-              admin_note: note,
+              admin_note: "Published to Other Busta Files",
               target_folder: folder
             })
             .eq("id", id);
 
           if (updatePending.error) throw updatePending.error;
 
-          alert("Approved and published inside Busta Files.");
+          alert("Published inside Other Busta Files.");
           loadPending();
         } catch (err) {
-          console.error(err);
-          alert("Approve failed: " + (err.message || "Unknown error"));
+          console.error("APPROVE/PUBLISH ERROR", err);
+          alert("Publish failed: " + (err.message || JSON.stringify(err)));
         }
       }
 
