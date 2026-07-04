@@ -1,103 +1,20 @@
 (function () {
-  if (window.__chaosBetaPolishMountedV2) return;
-  window.__chaosBetaPolishMountedV2 = true;
+  if (window.__chaosBetaPolishMounted) return;
+  window.__chaosBetaPolishMounted = true;
 
   const STATE = {
     filesMode: false
   };
 
-  function setImportant(el, prop, value) {
-    try {
-      el.style.setProperty(prop, value, "important");
-    } catch (_) {}
-  }
-
-  function clearForcedMiniStyles(el) {
-    try {
-      el.style.removeProperty("display");
-      el.style.removeProperty("visibility");
-      el.style.removeProperty("opacity");
-      el.style.removeProperty("pointer-events");
-    } catch (_) {}
-  }
-
-  function isLikelyMiniPlayer(el) {
-    if (!el || el.nodeType !== 1) return false;
-    if (el.id === "audio") return false;
-    if (el.tagName === "AUDIO") return false;
-    if (el.closest("section.player")) return false;
-
-    const id = (el.id || "").toLowerCase();
-    const cls = (el.className || "").toString().toLowerCase();
-    const text = (el.textContent || "").toLowerCase();
-
-    if (
-      id.includes("chaos-safe-mini") ||
-      cls.includes("chaos-safe-mini") ||
-      id.includes("safe-mini") ||
-      cls.includes("safe-mini") ||
-      id.includes("mini-player") ||
-      cls.includes("mini-player")
-    ) {
-      return true;
-    }
-
-    const style = window.getComputedStyle(el);
-    const rect = el.getBoundingClientRect();
-
-    const looksBottomBar =
-      (style.position === "fixed" || style.position === "sticky") &&
-      rect.width > 260 &&
-      rect.height > 24 &&
-      rect.height < 170 &&
-      rect.bottom > window.innerHeight - 120;
-
-    const hasChaosText =
-      text.includes("#chaoscore") ||
-      text.includes("banale") ||
-      text.includes("douglas busta");
-
-    const hasControls = Boolean(el.querySelector("button, input, [role='button']"));
-
-    return looksBottomBar && hasChaosText && hasControls;
-  }
-
-  function getMiniPlayers() {
-    const direct = Array.from(document.querySelectorAll([
-      "#chaos-safe-mini-player",
-      ".chaos-safe-mini-player",
-      ".chaos-safe-mini",
-      "[id*='safe-mini']",
-      "[class*='safe-mini']",
-      "[id*='mini-player']",
-      "[class*='mini-player']"
-    ].join(",")));
-
-    const scanned = Array.from(document.body.querySelectorAll("div, aside, footer, section"))
-      .filter(isLikelyMiniPlayer);
-
-    return Array.from(new Set([...direct, ...scanned]));
-  }
-
-  function syncMiniVisibility() {
+  function setFilesMode(on) {
+    STATE.filesMode = Boolean(on);
     document.body.classList.toggle("chaos-files-mode", STATE.filesMode);
 
-    const minis = getMiniPlayers();
-
-    minis.forEach((mini) => {
+    const mini = document.getElementById("chaos-safe-mini-player");
+    if (mini) {
+      mini.classList.toggle("is-visible", STATE.filesMode);
       mini.setAttribute("aria-hidden", STATE.filesMode ? "false" : "true");
-
-      if (STATE.filesMode) {
-        clearForcedMiniStyles(mini);
-        mini.classList.add("is-visible");
-      } else {
-        mini.classList.remove("is-visible");
-        setImportant(mini, "display", "none");
-        setImportant(mini, "visibility", "hidden");
-        setImportant(mini, "opacity", "0");
-        setImportant(mini, "pointer-events", "none");
-      }
-    });
+    }
   }
 
   function textOf(el) {
@@ -121,7 +38,8 @@
       text.includes("back to busta files") ||
       text === "busta files" ||
       href.includes("/exclusive") ||
-      href.includes("exclusive.html")
+      href === "/" ||
+      href.includes("/index")
     );
   }
 
@@ -134,6 +52,35 @@
       text.includes("back to chaoscore") ||
       href.includes("/chaoscore")
     );
+  }
+
+  function keepOneVisiblePlayer() {
+    const mini = document.getElementById("chaos-safe-mini-player");
+
+    document.body.classList.toggle("chaos-files-mode", STATE.filesMode);
+
+    if (mini) {
+      mini.classList.toggle("is-visible", STATE.filesMode);
+      mini.setAttribute("aria-hidden", STATE.filesMode ? "false" : "true");
+    }
+  }
+
+  function protectAudio() {
+    const mainAudio = document.getElementById("audio");
+    if (!mainAudio) return;
+
+    document.querySelectorAll("audio").forEach((audio) => {
+      if (audio === mainAudio) return;
+
+      /*
+        Non rimuoviamo il secondo audio in modo aggressivo.
+        Lo mettiamo solo muto e senza controlli, così non può partire sopra.
+      */
+      audio.controls = false;
+      audio.muted = true;
+      audio.style.display = "none";
+      audio.setAttribute("aria-hidden", "true");
+    });
   }
 
   function addIframePadding() {
@@ -159,12 +106,12 @@
         }
 
         body {
-          padding-bottom: 160px !important;
+          padding-bottom: 150px !important;
         }
 
         @media (max-width: 720px) {
           body {
-            padding-bottom: 185px !important;
+            padding-bottom: 175px !important;
           }
         }
       `;
@@ -176,41 +123,43 @@
     if (!target) return;
 
     if (isBackToFiles(target)) {
-      STATE.filesMode = true;
-      setTimeout(syncMiniVisibility, 40);
-      setTimeout(function () {
-        syncMiniVisibility();
+      setTimeout(() => setFilesMode(true), 40);
+      setTimeout(() => {
+        setFilesMode(true);
         addIframePadding();
       }, 180);
-      setTimeout(function () {
-        syncMiniVisibility();
+      setTimeout(() => {
+        setFilesMode(true);
         addIframePadding();
-      }, 700);
+      }, 600);
       return;
     }
 
     if (isBackToChaoscore(target)) {
-      STATE.filesMode = false;
-      setTimeout(syncMiniVisibility, 40);
-      setTimeout(syncMiniVisibility, 180);
-      setTimeout(syncMiniVisibility, 700);
+      setTimeout(() => setFilesMode(false), 40);
+      setTimeout(() => setFilesMode(false), 180);
+      setTimeout(() => setFilesMode(false), 600);
     }
   }, true);
 
   window.addEventListener("pageshow", function () {
-    STATE.filesMode = false;
-    syncMiniVisibility();
+    setFilesMode(false);
+    protectAudio();
   });
 
   window.addEventListener("popstate", function () {
-    STATE.filesMode = false;
-    syncMiniVisibility();
+    setFilesMode(false);
+    protectAudio();
   });
 
-  window.addEventListener("resize", syncMiniVisibility);
+  window.addEventListener("resize", function () {
+    keepOneVisiblePlayer();
+    addIframePadding();
+  });
 
   const observer = new MutationObserver(function () {
-    syncMiniVisibility();
+    keepOneVisiblePlayer();
+    protectAudio();
 
     if (STATE.filesMode) {
       addIframePadding();
@@ -224,6 +173,6 @@
     attributeFilter: ["class", "style", "hidden", "aria-hidden"]
   });
 
-  STATE.filesMode = false;
-  syncMiniVisibility();
+  setFilesMode(false);
+  protectAudio();
 })();
