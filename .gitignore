@@ -16,3 +16,7 @@ assets/credits-preview.jpg
 guard.js
 public/exclusive/*.mov
 public/exclusive/*.MOV
+
+dist/
+node_modules/
+package-lock.json
