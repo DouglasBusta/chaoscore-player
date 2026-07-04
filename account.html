@@ -29,6 +29,45 @@
       }
     }
 
+  
+    async function releaseChaosKey() {
+      const ok = confirm("Release your Chaoscore NFC key? Your account will lose Chaos Verificato and the key will become available again.");
+      if (!ok) return;
+
+      const button = document.getElementById("release-chaos-key");
+      if (button) {
+        button.disabled = true;
+        button.textContent = "Releasing...";
+      }
+
+      try {
+        const { data, error } = await bustaSupabase.rpc("release_my_chaos_access");
+
+        if (error) throw error;
+
+        const result = Array.isArray(data) ? data[0] : data;
+
+        if (!result?.success) {
+          alert(result?.message || "Could not release Chaos access.");
+        } else {
+          alert("Chaos access released. Your NFC key can now be claimed again.");
+          window.location.reload();
+        }
+      } catch (err) {
+        alert("Release failed: " + (err.message || "Unknown error"));
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = "Release NFC Key";
+        }
+      }
+    }
+
+    const releaseButton = document.getElementById("release-chaos-key");
+    if (releaseButton) {
+      releaseButton.addEventListener("click", releaseChaosKey);
+    }
+
   </script>
   <style>
     :root {
@@ -264,6 +303,27 @@
       background: rgba(231,224,210,0.04);
     }
 
+  
+    .release-key-button {
+      margin-top: 12px;
+      border: 1px solid rgba(179,34,34,0.42);
+      border-radius: 999px;
+      background: rgba(139,23,23,0.16);
+      color: rgba(255,210,205,0.92);
+      padding: 10px 12px;
+      font: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+    }
+
+    .release-key-button:hover {
+      border-color: rgba(255,210,205,0.62);
+      background: rgba(139,23,23,0.26);
+      color: #fff;
+    }
+
   </style>
 </head>
 <body>
@@ -282,6 +342,7 @@
         <strong id="account-email">Loading...</strong><br>
         This private account page is connected to Supabase Auth.
         <div id="chaos-access-badge" class="chaos-badge locked">Chaos Locked — Scan NFC</div>
+        <button id="release-chaos-key" class="release-key-button" type="button">Release NFC Key</button>
       </div>
     </section>
 

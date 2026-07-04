@@ -1578,6 +1578,27 @@ dialog {
                 </div>
               </div>
 
+              <div style="
+                border:1px solid rgba(231,224,210,.18);
+                border-radius:18px;
+                padding:16px;
+                background:rgba(255,255,255,.035);
+                margin:0 0 22px;
+              ">
+                <div style="
+                  color:rgba(231,224,210,.72);
+                  text-transform:uppercase;
+                  letter-spacing:.14em;
+                  font-size:.72rem;
+                  margin-bottom:8px;
+                ">
+                  Other ways to listen
+                </div>
+                <div style="color:rgba(231,224,210,.62);line-height:1.65;">
+                  Coming Soon. Quando l’album sarà disponibile fuori dal tag NFC, qui appariranno i link ufficiali per ascoltarlo.
+                </div>
+              </div>
+
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <a href="/" style="
                   display:inline-flex;
@@ -1590,7 +1611,7 @@ dialog {
                   text-transform:uppercase;
                   letter-spacing:.12em;
                   font-size:.72rem;
-                ">Open Busta Files</a>
+                ">Back to Busta Files</a>
 
                 <a href="/account" style="
                   display:inline-flex;
@@ -1619,7 +1640,7 @@ dialog {
       const session = data?.session || null;
 
       if (!session?.user) {
-        lockPage("This album is private. Only accounts unlocked with a physical Chaoscore NFC key can listen to it.");
+        lockPage("This album is private. To unlock it, avvicina il tuo tag NFC Chaoscore al telefono. Il tag aprirà il link privato di sblocco e collegherà la key al tuo account.");
         return;
       }
 
@@ -1631,7 +1652,7 @@ dialog {
         const access = Array.isArray(accessData) ? accessData[0] : accessData;
 
         if (!access?.chaos_verified) {
-          lockPage("Your account is not Chaos Verificato yet. Scan your physical Chaoscore NFC key to unlock this album.");
+          lockPage("Your account is logged in, but it is not Chaos Verificato yet. Avvicina il tuo tag NFC Chaoscore al telefono per sbloccare l’album su questo account.");
           return;
         }
       } catch (err) {

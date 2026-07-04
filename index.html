@@ -725,6 +725,87 @@
       background: rgba(30,18,15,0.9);
     }
 
+  
+    .chaoscore-listen-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(231,224,210,0.26);
+      border-radius: 22px;
+      min-height: 260px;
+      padding: 22px;
+      display: grid;
+      align-content: end;
+      text-decoration: none;
+      color: #e7e0d2;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.72)),
+        radial-gradient(circle at 20% 0%, rgba(139,23,23,0.55), transparent 42%),
+        linear-gradient(135deg, rgba(231,224,210,0.12), rgba(231,224,210,0.02));
+      box-shadow: 0 26px 80px rgba(0,0,0,0.38);
+    }
+
+    .chaoscore-listen-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: var(--chaos-cover);
+      background-size: cover;
+      background-position: center;
+      opacity: 0.42;
+      filter: contrast(1.08) saturate(0.9);
+      transform: scale(1.02);
+    }
+
+    .chaoscore-listen-card::after {
+      content: "NFC ACCESS";
+      position: absolute;
+      top: 16px;
+      right: -8px;
+      transform: rotate(12deg);
+      border: 2px solid rgba(216,247,207,0.45);
+      color: rgba(216,247,207,0.72);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      font-weight: 900;
+      background: rgba(0,0,0,0.18);
+    }
+
+    .chaoscore-listen-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .chaoscore-listen-kicker {
+      color: rgba(216,247,207,0.78);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.7rem;
+      margin-bottom: 8px;
+    }
+
+    .chaoscore-listen-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.6rem, 8vw, 5.4rem);
+      line-height: 0.84;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+      margin: 0 0 12px;
+    }
+
+    .chaoscore-listen-copy {
+      color: rgba(231,224,210,0.76);
+      line-height: 1.55;
+      font-size: 0.86rem;
+      max-width: 520px;
+    }
+
+    .chaoscore-listen-card:hover {
+      border-color: rgba(231,224,210,0.48);
+      color: #fff;
+    }
+
   </style>
 </head>
 <body>
@@ -1880,15 +1961,41 @@
   </script>
 
 
-  <script id="busta-open-chaoscore-entry">
+  <script id="busta-chaoscore-first-file">
     window.addEventListener("DOMContentLoaded", () => {
-      if (document.querySelector(".chaoscore-entry-button")) return;
+      if (document.querySelector(".chaoscore-listen-card")) return;
 
-      const link = document.createElement("a");
-      link.className = "chaoscore-entry-button";
-      link.href = "/chaoscore";
-      link.textContent = "Open #chaoscore Album";
-      document.body.appendChild(link);
+      const coverCandidates = [
+        "/cover.jpg",
+        "/cover.png",
+        "/chaoscore.jpg",
+        "/chaoscore.png",
+        "/assets/cover.jpg",
+        "/assets/cover.png"
+      ];
+
+      const card = document.createElement("a");
+      card.className = "chaoscore-listen-card";
+      card.href = "/chaoscore";
+      card.style.setProperty("--chaos-cover", `url("${coverCandidates[0]}")`);
+      card.innerHTML = `
+        <div class="chaoscore-listen-kicker">Private Album File</div>
+        <h2 class="chaoscore-listen-title">Listen to<br>#chaoscore</h2>
+        <div class="chaoscore-listen-copy">
+          NFC-only private album access. Scan your Chaoscore tag to unlock this file on your account.
+        </div>
+      `;
+
+      const possibleContainers = [
+        document.querySelector(".folder-grid"),
+        document.querySelector(".files-grid"),
+        document.querySelector(".archive-grid"),
+        document.querySelector(".evidence-grid"),
+        document.querySelector("main")
+      ].filter(Boolean);
+
+      const container = possibleContainers[0] || document.body;
+      container.prepend(card);
     });
   </script>
 
