@@ -1,64 +1,69 @@
 (function () {
-  if (window.__chaosSinglePlayerVisibilityMounted) return;
-  window.__chaosSinglePlayerVisibilityMounted = true;
+  if (window.__chaosSinglePlayerVisibilityMountedV2) return;
+  window.__chaosSinglePlayerVisibilityMountedV2 = true;
 
-  function isVisible(el) {
-    if (!el) return false;
+  function setFilesMode(on) {
+    document.body.classList.toggle("chaos-files-mode", Boolean(on));
+  }
 
-    const style = window.getComputedStyle(el);
-    const rect = el.getBoundingClientRect();
+  function textOf(el) {
+    return (el?.textContent || el?.ariaLabel || el?.title || "").toLowerCase();
+  }
+
+  function hrefOf(el) {
+    return (el?.getAttribute?.("href") || "").toLowerCase();
+  }
+
+  function looksLikeBackToFiles(el) {
+    const t = textOf(el);
+    const h = hrefOf(el);
 
     return (
-      style.display !== "none" &&
-      style.visibility !== "hidden" &&
-      Number(style.opacity || "1") !== 0 &&
-      rect.width > 0 &&
-      rect.height > 0
+      t.includes("back to busta files") ||
+      t.includes("busta files") ||
+      h.includes("exclusive") ||
+      h === "/" ||
+      h.includes("index.html")
     );
   }
 
-  function filesModeIsOpen() {
-    const candidates = [
-      document.getElementById("chaos-files-safe-shell"),
-      document.getElementById("chaos-safe-shell"),
-      document.getElementById("chaos-files-shell"),
-      document.getElementById("chaos-files-safe-frame")?.parentElement
-    ].filter(Boolean);
+  function looksLikeBackToChaoscore(el) {
+    const t = textOf(el);
+    const h = hrefOf(el);
 
-    return candidates.some(isVisible);
+    return (
+      t.includes("back to #chaoscore") ||
+      t.includes("back to chaoscore") ||
+      t.includes("#chaoscore") ||
+      h.includes("chaoscore")
+    );
   }
 
-  function syncSinglePlayerState() {
-    const open = filesModeIsOpen();
-    const mini = document.getElementById("chaos-safe-mini-player");
+  document.addEventListener("click", function (event) {
+    const target = event.target.closest("a, button, [role='button']");
+    if (!target) return;
 
-    document.body.classList.toggle("chaos-files-mode", open);
-
-    if (!mini) return;
-
-    if (open) {
-      mini.classList.add("is-visible");
-    } else {
-      mini.classList.remove("is-visible");
+    if (looksLikeBackToFiles(target)) {
+      setTimeout(() => setFilesMode(true), 60);
+      setTimeout(() => setFilesMode(true), 250);
+      setTimeout(() => setFilesMode(true), 700);
+      return;
     }
-  }
 
-  syncSinglePlayerState();
+    if (looksLikeBackToChaoscore(target)) {
+      setTimeout(() => setFilesMode(false), 60);
+      setTimeout(() => setFilesMode(false), 250);
+      setTimeout(() => setFilesMode(false), 700);
+    }
+  }, true);
 
-  const observer = new MutationObserver(syncSinglePlayerState);
-
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["class", "style", "hidden", "aria-hidden"]
+  window.addEventListener("pageshow", function () {
+    setFilesMode(false);
   });
 
-  window.addEventListener("resize", syncSinglePlayerState);
-  window.addEventListener("pageshow", syncSinglePlayerState);
-  document.addEventListener("click", function () {
-    setTimeout(syncSinglePlayerState, 80);
-    setTimeout(syncSinglePlayerState, 250);
-    setTimeout(syncSinglePlayerState, 700);
-  }, true);
+  window.addEventListener("popstate", function () {
+    setFilesMode(false);
+  });
+
+  setFilesMode(false);
 })();
