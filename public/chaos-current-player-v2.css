@@ -382,3 +382,118 @@ body.chaos-current-busta-open #chaos-current-busta-close {
     padding: 13px;
   }
 }
+
+/* === Mega player polish v1 === */
+/* Solo estetica/layout mega. Non tocca audio, tracce o logica. */
+
+#chaos-current-player[data-expanded="true"] {
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(76, 12, 18, 0.46), transparent 42%),
+    radial-gradient(circle at 90% 100%, rgba(231, 224, 210, 0.08), transparent 38%),
+    rgba(8, 7, 7, 0.97);
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-height: min(82vh, 760px);
+  padding: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-bottom: 4px;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 7, 7, 0.98),
+    rgba(8, 7, 7, 0)
+  );
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-cover {
+  width: min(360px, 74vw);
+  border-radius: 34px;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-title {
+  font-size: clamp(1.3rem, 6vw, 2rem);
+  letter-spacing: -0.055em;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-artist {
+  font-size: 0.66rem;
+  opacity: 0.75;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-progress-area {
+  gap: 9px;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-progress {
+  height: 8px;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-time-row {
+  padding: 0 2px;
+  font-size: 0.66rem;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-controls {
+  gap: 13px;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-controls .chaos-current-btn {
+  width: 58px;
+  height: 58px;
+  font-size: 1.35rem;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-mega-controls .chaos-current-btn[data-action="play"] {
+  width: 72px;
+  height: 72px;
+  font-size: 1.42rem;
+  background: rgba(231,224,210,0.18);
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-volume {
+  display: grid;
+  opacity: 1;
+  margin-top: 2px;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-volume input {
+  height: 28px;
+}
+
+#chaos-current-player[data-expanded="true"] .chaos-current-status {
+  opacity: 0.78;
+}
+
+@media (max-width: 720px) {
+  #chaos-current-player[data-expanded="true"] .chaos-current-mega {
+    max-height: min(84vh, 720px);
+    padding: 14px;
+    gap: 14px;
+  }
+
+  #chaos-current-player[data-expanded="true"] .chaos-current-mega-cover {
+    width: min(330px, 76vw);
+    border-radius: 30px;
+  }
+
+  #chaos-current-player[data-expanded="true"] .chaos-current-mega-controls .chaos-current-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  #chaos-current-player[data-expanded="true"] .chaos-current-mega-controls .chaos-current-btn[data-action="play"] {
+    width: 66px;
+    height: 66px;
+  }
+}
