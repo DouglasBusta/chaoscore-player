@@ -1,0 +1,48 @@
+987:  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+988:  <link rel="stylesheet" href="/chaos-main-volume.css?v=1">
+989:  <link rel="stylesheet" href="/chaos-busta-overlay-same-player.css?v=1">
+1024:        <div class="tracks" id="tracks"></div>
+1029:  <section class="player">
+1048:  <audio id="audio" preload="metadata"></audio>
+1080:    const tracks = [
+1081:      { title: "banale", file: "/audio-flac/01-banale.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1082:      { title: "STAR II", file: "/audio-flac/02-star-ii.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1083:      { title: "stella vera reale.wav", file: "/audio-flac/03-stella-vera-reale.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1084:      { title: "so ki 6... ft. 39Redboy", file: "/audio-flac/04-so-ki-6-ft-39redboy.flac", credits: "Lyrics written by Douglas Busta and 39Redboy.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1085:      { title: "sono triste e caco.", file: "/audio-flac/05-sono-triste-e-caco.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1086:      { title: "blue hair", file: "/audio-flac/06-blue-hair.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1087:      { title: "piccolo ME", file: "/audio-flac/07-piccolo-me.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1088:      { title: "Patto d'Achille ft. Gador", file: "/audio-flac/08-patto-d-achille-ft-gador.flac", credits: "Lyrics written by Douglas Busta and Gador.\nProduced by Douglas Busta and Gador.\nMixed and mastered by Douglas Busta." },
+1089:      { title: "Stop the EMOTIONS", file: "/audio-flac/09-stop-the-emotions.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1090:      { title: "sensibileh! ft. Deffy", file: "/audio-flac/10-sensibileh-ft-deffy.flac", credits: "Lyrics written by Douglas Busta and Deffy.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1091:      { title: "ma che ho fatto mo??...", file: "/audio-flac/11-ma-che-ho-fatto-mo.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1092:      { title: "NO TIME!", file: "/audio-flac/12-no-time.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1093:      { title: "GET OUT!", file: "/audio-flac/13-get-out.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1094:      { title: "LOOK UP!", file: "/audio-flac/14-look-up.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." },
+1095:      { title: "1 normale (Bonus Track)", file: "/audio-flac/15-1-normale-bonus-track.flac", credits: "Lyrics written by Douglas Busta.\nProduced by Douglas Busta.\nMixed and mastered by Douglas Busta." }
+1099:    const tracksEl = document.getElementById("tracks");
+1468:  const tracks = [
+1469:    { title: "banale", file: "/audio-flac/01-banale.flac" },
+1470:    { title: "STAR II", file: "/audio-flac/02-star-ii.flac" },
+1471:    { title: "stella vera reale.wav", file: "/audio-flac/03-stella-vera-reale.flac" },
+1472:    { title: "so ki 6... ft. 39Redboy", file: "/audio-flac/04-so-ki-6-ft-39redboy.flac" },
+1473:    { title: "sono triste e caco.", file: "/audio-flac/05-sono-triste-e-caco.flac" },
+1474:    { title: "blue hair", file: "/audio-flac/06-blue-hair.flac" },
+1475:    { title: "piccolo ME", file: "/audio-flac/07-piccolo-me.flac" },
+1476:    { title: "Patto d'Achille ft. Gador", file: "/audio-flac/08-patto-d-achille-ft-gador.flac" },
+1477:    { title: "Stop the EMOTIONS", file: "/audio-flac/09-stop-the-emotions.flac" },
+1478:    { title: "sensibileh! ft. Deffy", file: "/audio-flac/10-sensibileh-ft-deffy.flac" },
+1479:    { title: "ma che ho fatto mo??...", file: "/audio-flac/11-ma-che-ho-fatto-mo.flac" },
+1480:    { title: "NO TIME!", file: "/audio-flac/12-no-time.flac" },
+1481:    { title: "GET OUT!", file: "/audio-flac/13-get-out.flac" },
+1482:    { title: "LOOK UP!", file: "/audio-flac/14-look-up.flac" },
+1483:    { title: "1 normale (Bonus Track)", file: "/audio-flac/15-1-normale-bonus-track.flac" }
+1713:      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+1716:      const client = window.supabase
+1717:        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+1845:                ">Back to Busta Files</a>
+1879:        const { data: accessData, error } = await client.rpc("get_my_chaos_access");
+1885:        if (!access?.chaos_verified) {
+1904:      link.textContent = "← Back to Busta Files";
+1979:  <script src="/chaos-main-volume.js?v=1"></script>
+1980:  <script src="/chaos-busta-overlay-same-player.js?v=1"></script>

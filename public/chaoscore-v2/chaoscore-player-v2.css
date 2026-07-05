@@ -1,0 +1,223 @@
+/* chaoscore-player-v2-draft-1 */
+/* Non collegato ancora alla pagina live. */
+
+#chaoscore-v2-player-root {
+  position: relative;
+  z-index: 1;
+}
+
+.chaos-v2-player {
+  --chaos-bg: rgba(9, 7, 7, 0.96);
+  --chaos-line: rgba(231, 224, 210, 0.14);
+  --chaos-text: rgba(231, 224, 210, 0.96);
+  --chaos-muted: rgba(231, 224, 210, 0.52);
+  --chaos-red: rgba(92, 16, 22, 0.84);
+
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  transform: translateX(-50%);
+  z-index: 1000;
+
+  width: min(720px, calc(100vw - 12px));
+  color: var(--chaos-text);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(92, 16, 22, 0.30), transparent 38%),
+    var(--chaos-bg);
+  border: 1px solid var(--chaos-line);
+  border-radius: 26px;
+  box-shadow: 0 24px 90px rgba(0,0,0,0.70);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.chaos-v2-mini,
+.chaos-v2-mega {
+  display: none;
+}
+
+.chaos-v2-player[data-expanded="false"] .chaos-v2-mini {
+  display: grid;
+}
+
+.chaos-v2-player[data-expanded="true"] .chaos-v2-mega {
+  display: grid;
+}
+
+.chaos-v2-mini {
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-rows: auto 4px;
+  gap: 8px 10px;
+  align-items: center;
+  padding: 8px 10px 9px;
+}
+
+.chaos-v2-mini-cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.chaos-v2-cover-btn,
+.chaos-v2-mini-meta,
+.chaos-v2-mini-controls button,
+.chaos-v2-mega button {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.chaos-v2-mini-meta {
+  min-width: 0;
+  display: grid;
+  text-align: left;
+  gap: 3px;
+}
+
+.chaos-v2-mini-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.78rem;
+}
+
+.chaos-v2-mini-artist,
+.chaos-v2-subtitle,
+.chaos-v2-kicker,
+.chaos-v2-mega-artist {
+  color: var(--chaos-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.chaos-v2-mini-controls,
+.chaos-v2-mega-controls {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.chaos-v2-mini-controls button,
+.chaos-v2-mega button {
+  border: 1px solid var(--chaos-line);
+  background: rgba(255,255,255,0.055);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.chaos-v2-mini-controls button {
+  width: 34px;
+  height: 34px;
+}
+
+.chaos-v2-progress {
+  width: 100%;
+  border-radius: 999px;
+  background: rgba(231,224,210,0.14);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.chaos-v2-mini-progress {
+  grid-column: 1 / -1;
+  height: 4px;
+}
+
+.chaos-v2-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: rgba(231,224,210,0.92);
+}
+
+.chaos-v2-mega {
+  max-height: min(82vh, 760px);
+  overflow: auto;
+  padding: 16px;
+  gap: 14px;
+  justify-items: center;
+}
+
+.chaos-v2-mega-top,
+.chaos-v2-mega-progress-area,
+.chaos-v2-volume,
+.chaos-v2-status {
+  width: min(560px, 100%);
+}
+
+.chaos-v2-mega-top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.chaos-v2-mega-cover {
+  width: min(330px, 72vw);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 32px;
+  border: 1px solid var(--chaos-line);
+}
+
+.chaos-v2-mega-meta {
+  text-align: center;
+}
+
+.chaos-v2-mega-title {
+  font-size: clamp(1.05rem, 4vw, 1.65rem);
+  line-height: 1.05;
+}
+
+.chaos-v2-mega-progress {
+  height: 7px;
+}
+
+.chaos-v2-time-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--chaos-muted);
+  font-size: 0.62rem;
+}
+
+.chaos-v2-mega-controls button {
+  width: 54px;
+  height: 54px;
+}
+
+.chaos-v2-volume {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.chaos-v2-status {
+  color: var(--chaos-muted);
+  text-align: center;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 720px) {
+  .chaos-v2-player {
+    width: calc(100vw - 10px);
+    border-radius: 23px;
+  }
+
+  .chaos-v2-mini {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 7px 8px;
+    padding: 7px 8px 8px;
+  }
+
+  .chaos-v2-mini-cover {
+    width: 44px;
+    height: 44px;
+  }
+}

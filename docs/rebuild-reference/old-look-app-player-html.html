@@ -1,0 +1,48 @@
+
+        <div class="tracks" id="tracks"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="player">
+    <div class="now">
+      <img src="/chaoscore-cover.png" alt="" />
+      <div>
+        <div class="now-title" id="now-title">banale</div>
+        <div class="now-sub">#chaoscore</div>
+      </div>
+    </div>
+
+    <div class="wave" id="wave"></div>
+
+    <div class="controls">
+      <button class="round secondary" id="prev">‹</button>
+      <button class="round" id="play">▶</button>
+      <button class="round secondary" id="next">›</button>
+      <div class="time" id="time">0:00 / 0:00</div>
+    </div>
+  </section>
+
+  <audio id="audio" preload="metadata"></audio>
+
+  <dialog id="modal">
+    <div class="modal-inner">
+      <div id="modal-close-circle"
+        aria-label="Close panel"
+        role="button"
+        tabindex="0"
+        onclick="this.closest('dialog').close()"
+        onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); this.closest('dialog').close(); }">
+        <span class="modal-close-line line-a"></span>
+        <span class="modal-close-line line-b"></span>
+      </div>
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <button class="clean-button" id="modal-close">chiudi</button>
+    </div>
+  </dialog>
+
+  <script type="module">
+
+    const coverOptions = [
+      {
