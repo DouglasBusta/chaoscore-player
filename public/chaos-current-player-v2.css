@@ -523,29 +523,3 @@ body.chaos-current-busta-open #chaos-current-busta-close {
 .chaos-current-progress:hover .chaos-current-fill {
   filter: brightness(1.18);
 }
-
-/* === Progress interaction polish v1 === */
-/* Hit area più comoda per click/drag, soprattutto mobile. */
-
-.chaos-current-progress {
-  position: relative;
-  touch-action: none;
-}
-
-.chaos-current-progress::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -10px;
-  bottom: -10px;
-}
-
-#chaos-current-player[data-expanded="true"] .chaos-current-mega-progress::before {
-  top: -14px;
-  bottom: -14px;
-}
-
-.chaos-current-progress:hover .chaos-current-fill {
-  filter: brightness(1.18);
-}
