@@ -8,8 +8,7 @@
   "/covers/copertina icona chaoscore.jpeg",
   "/assets/chaoscore-spotify-cover.jpg",
   "/chaoscore-cover.png",
-  "/covers/cover chaoscore.png",
-  "/brand/look-app-logo-chaos-red.png"
+  "/covers/cover chaoscore.png"
 ];
 
   let currentIndex = 0;
@@ -32,7 +31,13 @@
   }
 
   function findCurrentIndex() {
-    const saved = localStorage.getItem("chaoscore-selected-cover");
+    let saved = localStorage.getItem("chaoscore-selected-cover");
+
+    if (saved && (saved.includes("/brand/") || saved.toLowerCase().includes("look-app"))) {
+      localStorage.removeItem("chaoscore-selected-cover");
+      saved = "";
+    }
+
     const cover = getMainCover();
     const src = normalizeSrc(saved || cover?.getAttribute("src") || cover?.src || "");
 
@@ -51,7 +56,7 @@
     prev.id = "cover-prev";
     prev.type = "button";
     prev.setAttribute("aria-label", "Previous cover");
-    prev.textContent = "✦‹";
+    prev.textContent = "‹★";
 
     const current = document.createElement("span");
     current.className = "cover-current";
@@ -63,7 +68,7 @@
     next.id = "cover-next";
     next.type = "button";
     next.setAttribute("aria-label", "Next cover");
-    next.textContent = "›✦";
+    next.textContent = "★›";
 
     picker.append(prev, current, next);
 
@@ -104,12 +109,8 @@
   }
 
   function changeCover(direction) {
-    if (locked) return;
-
     const main = getMainCover();
     if (!main || !coverSources.length) return;
-
-    locked = true;
 
     currentIndex = (currentIndex + direction + coverSources.length) % coverSources.length;
     const nextSrc = coverSources[currentIndex];
@@ -118,11 +119,6 @@
 
     main.classList.remove("is-cover-sliding-next", "is-cover-sliding-prev");
 
-    /*
-      Il cambio sorgente avviene subito:
-      1 click = 1 cover nuova.
-      L'animazione è solo visiva, non ritarda più il cambio.
-    */
     applyCoverSrc(nextSrc);
 
     requestAnimationFrame(function () {
@@ -131,8 +127,7 @@
 
     window.setTimeout(function () {
       main.classList.remove(cls);
-      locked = false;
-    }, 260);
+    }, 240);
   }
 
   function boot() {

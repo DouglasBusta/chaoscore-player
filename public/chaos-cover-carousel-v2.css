@@ -129,3 +129,48 @@
   opacity: 0.9;
   filter: brightness(0.94);
 }
+
+/* === Cover carousel final fix === */
+
+.cover-picker {
+  width: fit-content !important;
+  margin: 12px auto 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.cover-arrow {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 999px !important;
+  line-height: 1 !important;
+  font-size: 0.95rem !important;
+  letter-spacing: -0.10em !important;
+  font-weight: 700 !important;
+}
+
+.cover-current {
+  display: none !important;
+}
+
+.cover.is-cover-sliding-next {
+  transform: translateX(10px) scale(0.982) rotate(0.6deg) !important;
+  opacity: 0.92 !important;
+  filter: brightness(0.96) !important;
+}
+
+.cover.is-cover-sliding-prev {
+  transform: translateX(-10px) scale(0.982) rotate(-0.6deg) !important;
+  opacity: 0.92 !important;
+  filter: brightness(0.96) !important;
+}
