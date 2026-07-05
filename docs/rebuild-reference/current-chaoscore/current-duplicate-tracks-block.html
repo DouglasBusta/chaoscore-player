@@ -1,0 +1,96 @@
+
+    document.addEventListener("click", (event) => {
+      const closeCircle = event.target.closest("#modal-close-circle");
+      if (!closeCircle) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      closeModalPanel();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+
+      const closeCircle = event.target.closest("#modal-close-circle");
+      if (!closeCircle) return;
+
+      event.preventDefault();
+      closeModalPanel();
+    });
+
+  </script>
+
+
+
+<script>
+/* FINAL MINI PLAYER + WAVEFORM FIX */
+(function () {
+  const tracks = [
+    { title: "banale", file: "/audio-flac/01-banale.flac" },
+    { title: "STAR II", file: "/audio-flac/02-star-ii.flac" },
+    { title: "stella vera reale.wav", file: "/audio-flac/03-stella-vera-reale.flac" },
+    { title: "so ki 6... ft. 39Redboy", file: "/audio-flac/04-so-ki-6-ft-39redboy.flac" },
+    { title: "sono triste e caco.", file: "/audio-flac/05-sono-triste-e-caco.flac" },
+    { title: "blue hair", file: "/audio-flac/06-blue-hair.flac" },
+    { title: "piccolo ME", file: "/audio-flac/07-piccolo-me.flac" },
+    { title: "Patto d'Achille ft. Gador", file: "/audio-flac/08-patto-d-achille-ft-gador.flac" },
+    { title: "Stop the EMOTIONS", file: "/audio-flac/09-stop-the-emotions.flac" },
+    { title: "sensibileh! ft. Deffy", file: "/audio-flac/10-sensibileh-ft-deffy.flac" },
+    { title: "ma che ho fatto mo??...", file: "/audio-flac/11-ma-che-ho-fatto-mo.flac" },
+    { title: "NO TIME!", file: "/audio-flac/12-no-time.flac" },
+    { title: "GET OUT!", file: "/audio-flac/13-get-out.flac" },
+    { title: "LOOK UP!", file: "/audio-flac/14-look-up.flac" },
+    { title: "1 normale (Bonus Track)", file: "/audio-flac/15-1-normale-bonus-track.flac" }
+  ];
+
+  const wavePatterns = [
+    [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18],
+    [40,52,63,72,41,29,58,84,91,66,36,24,44,70,88,76,55,39,28,35,61,83,96,71,48,31,23,42,67,89,80,59,33,25,47,73,92,64,38,20],
+    [22,28,44,67,91,86,60,34,25,37,59,78,94,88,62,41,29,23,35,54,75,97,82,57,36,26,30,49,69,90,84,63,40,27,21,39,61,79,58,33],
+    [64,38,25,31,56,83,96,71,45,29,22,48,77,91,68,42,30,53,87,94,73,51,35,24,44,69,89,78,57,36,28,50,81,93,66,43,32,55,76,48],
+    [20,21,25,31,44,68,92,95,73,48,29,24,36,55,79,90,61,39,27,34,52,74,88,69,46,30,22,28,43,65,84,76,53,35,26,32,47,70,91,58]
+  ];
+
+  let activeIndex = 0;
+
+  function absoluteUrl(path) {
+    return new URL(path, window.location.origin).href;
+  }
+
+  function getAudio() {
+    return document.getElementById("audio");
+  }
+
+  function getRows() {
+    return Array.from(document.querySelectorAll(".track"));
+  }
+
+  function getIndexFromAudio() {
+    const audio = getAudio();
+    if (!audio || !audio.src) return activeIndex;
+
+    const found = tracks.findIndex((track) => audio.src === absoluteUrl(track.file));
+    return found >= 0 ? found : activeIndex;
+  }
+
+  function fmt(seconds) {
+    if (!Number.isFinite(seconds)) return "0:00";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  }
+
+  function setMiniPlayer(index) {
+    const track = tracks[index];
+    if (!track) return;
+
+    const nowTitle = document.getElementById("now-title");
+    const nowSubtitle = document.querySelector(".now-sub");
+
+    if (nowTitle) nowTitle.textContent = track.title;
+    if (nowSubtitle) nowSubtitle.textContent = "#chaoscore";
+  }
+
+  function renderWave(index, progress = 0) {
+    const wave = document.getElementById("wave");

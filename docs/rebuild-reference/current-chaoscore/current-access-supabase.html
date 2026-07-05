@@ -1,0 +1,216 @@
+    renderWave(0, 0);
+    syncUI();
+    setTimeout(syncUI, 300);
+    setTimeout(syncUI, 1000);
+  });
+
+  window.addEventListener("load", () => {
+    setMiniPlayer(activeIndex);
+    renderWave(activeIndex, 0);
+    syncUI();
+    setTimeout(syncUI, 300);
+    setTimeout(syncUI, 1000);
+  });
+})();
+</script>
+
+
+  <script id="chaoscore-access-guard">
+    window.addEventListener("DOMContentLoaded", async () => {
+      const cleanPath = window.location.pathname.replace(/\/$/, "") || "/";
+      const isPrivateAlbumRoute = cleanPath === "/chaoscore" || cleanPath === "/chaoscore.html";
+      if (!isPrivateAlbumRoute) return;
+
+      const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
+
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          })
+        : null;
+
+      function lockPage(message) {
+        document.body.innerHTML = `
+          <main style="
+            min-height:100vh;
+            display:grid;
+            place-items:center;
+            padding:24px;
+            background:
+              radial-gradient(circle at 20% 0%, rgba(139,23,23,.34), transparent 35%),
+              radial-gradient(circle at 80% 20%, rgba(231,224,210,.08), transparent 28%),
+              linear-gradient(180deg,#0c0908 0%,#030303 72%);
+            color:#e7e0d2;
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;
+          ">
+            <section style="
+              width:min(680px,100%);
+              border:1px solid rgba(231,224,210,.2);
+              border-radius:28px;
+              padding:clamp(24px,6vw,48px);
+              background:
+                linear-gradient(135deg, rgba(231,224,210,.08), rgba(231,224,210,.025)),
+                rgba(0,0,0,.34);
+              box-shadow:0 32px 110px rgba(0,0,0,.48);
+              position:relative;
+              overflow:hidden;
+            ">
+              <div style="
+                position:absolute;
+                right:-20px;
+                top:26px;
+                transform:rotate(14deg);
+                border:3px solid rgba(179,34,34,.5);
+                color:rgba(179,34,34,.58);
+                border-radius:10px;
+                padding:4px 14px;
+                font-weight:900;
+                letter-spacing:.08em;
+                font-size:clamp(1.9rem,7vw,4.4rem);
+                pointer-events:none;
+              ">LOCKED</div>
+
+              <div style="
+                color:rgba(231,224,210,.56);
+                text-transform:uppercase;
+                letter-spacing:.18em;
+                font-size:.72rem;
+                margin-bottom:14px;
+              ">
+                Private NFC Album Access
+              </div>
+
+              <h1 style="
+                font-family:Georgia,'Times New Roman',serif;
+                font-size:clamp(3rem,11vw,6rem);
+                line-height:.86;
+                letter-spacing:-.08em;
+                margin:0 0 18px;
+                text-transform:uppercase;
+              ">#chaoscore<br>Locked</h1>
+
+              <p style="color:rgba(231,224,210,.78);line-height:1.7;margin:0 0 18px;font-size:1rem;">
+                ${message}
+              </p>
+
+              <div style="
+                border:1px solid rgba(231,224,210,.18);
+                border-radius:18px;
+                padding:16px;
+                background:rgba(255,255,255,.045);
+                margin:18px 0 22px;
+              ">
+                <div style="
+                  color:#d8f7cf;
+                  text-transform:uppercase;
+                  letter-spacing:.14em;
+                  font-size:.72rem;
+                  margin-bottom:8px;
+                ">
+                  How to unlock
+                </div>
+                <div style="color:rgba(231,224,210,.74);line-height:1.65;">
+                  Avvicina il tuo tag NFC #Chaoscore al telefono. Il tag aprirà automaticamente il link privato di sblocco.
+                  Dopo il login, la chiave verrà collegata al tuo account e l’album si aprirà.
+                </div>
+              </div>
+
+              <div style="
+                border:1px solid rgba(231,224,210,.18);
+                border-radius:18px;
+                padding:16px;
+                background:rgba(255,255,255,.035);
+                margin:0 0 22px;
+              ">
+                <div style="
+                  color:rgba(231,224,210,.72);
+                  text-transform:uppercase;
+                  letter-spacing:.14em;
+                  font-size:.72rem;
+                  margin-bottom:8px;
+                ">
+                  Other ways to listen
+                </div>
+                <div style="color:rgba(231,224,210,.62);line-height:1.65;">
+                  Coming Soon. Quando l’album sarà disponibile fuori dal tag NFC, qui appariranno i link ufficiali per ascoltarlo.
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="/" style="
+                  display:inline-flex;
+                  border:1px solid rgba(231,224,210,.24);
+                  border-radius:999px;
+                  background:rgba(231,224,210,.08);
+                  color:#e7e0d2;
+                  padding:13px 15px;
+                  text-decoration:none;
+                  text-transform:uppercase;
+                  letter-spacing:.12em;
+                  font-size:.72rem;
+                ">Back to Busta Files</a>
+
+                <a href="/account" style="
+                  display:inline-flex;
+                  border:1px solid rgba(231,224,210,.16);
+                  border-radius:999px;
+                  background:rgba(0,0,0,.18);
+                  color:rgba(231,224,210,.76);
+                  padding:13px 15px;
+                  text-decoration:none;
+                  text-transform:uppercase;
+                  letter-spacing:.12em;
+                  font-size:.72rem;
+                ">My Account</a>
+              </div>
+            </section>
+          </main>
+        `;
+      }
+
+      if (!client) {
+        lockPage("Authentication could not be loaded. Scan your #Chaoscore NFC key again.");
+        return;
+      }
+
+      const { data } = await client.auth.getSession();
+      const session = data?.session || null;
+
+      if (!session?.user) {
+        lockPage("This album is private. To unlock it, avvicina il tuo tag NFC #Chaoscore al telefono. Il tag aprirà il link privato di sblocco e collegherà la key al tuo account.");
+        return;
+      }
+
+      try {
+        const { data: accessData, error } = await client.rpc("get_my_chaos_access");
+
+        if (error) throw error;
+
+        const access = Array.isArray(accessData) ? accessData[0] : accessData;
+
+        if (!access?.chaos_verified) {
+          lockPage("Your account is logged in, but it is not Chaos Verificato yet. Avvicina il tuo tag NFC #Chaoscore al telefono per sbloccare l’album su questo account.");
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+        lockPage("#Chaoscore access could not be verified. Try again or scan your NFC key.");
+      }
+    });
+  </script>
+
+
+  <script id="chaoscore-back-to-files">
+    window.addEventListener("DOMContentLoaded", () => {
+      if (document.querySelector(".chaoscore-back-to-files")) return;
+
+      const link = document.createElement("a");
+      link.className = "chaoscore-back-to-files";
+      link.href = "/";
+      link.textContent = "← Back to Busta Files";
+      document.body.appendChild(link);
