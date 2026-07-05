@@ -987,6 +987,57 @@ dialog {
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="/chaos-current-player-v2.css?v=2">
   <link rel="stylesheet" href="/chaos-cover-carousel-v2.css?v=5">
+
+<style id="look-shop-floating-button-style">
+  .look-shop-floating-button {
+    position: fixed;
+    right: 18px;
+    bottom: 88px;
+    z-index: 9997;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 15px;
+    border-radius: 999px;
+    border: 1px solid rgba(231,224,210,0.18);
+    background: rgba(20,8,10,0.82);
+    color: rgba(231,224,210,0.94);
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    box-shadow: 0 18px 44px rgba(0,0,0,0.38);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+  }
+
+  .look-shop-floating-button:hover {
+    transform: translateY(-1px) scale(1.02);
+    background: rgba(80,12,22,0.9);
+    border-color: rgba(231,224,210,0.28);
+  }
+
+  .look-shop-floating-button span {
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  @media (max-width: 720px) {
+    .look-shop-floating-button {
+      right: 12px;
+      bottom: 78px;
+      min-height: 40px;
+      padding: 0 13px;
+      font-size: 0.66rem;
+    }
+  }
+</style>
+
 </head>
 <body>
   <main class="shell">
