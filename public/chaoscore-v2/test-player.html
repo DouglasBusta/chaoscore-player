@@ -118,7 +118,7 @@
         <span class="track-number">${track.number}</span>
         <span>
           <span class="track-title">${track.title}</span><br>
-          <span class="track-artist">${track.artist}</span>
+          <span class="track-artist">${Array.isArray(track.artists) ? track.artists.join(", ") : track.artist}</span>
         </span>
         <span>PLAY</span>
       `;

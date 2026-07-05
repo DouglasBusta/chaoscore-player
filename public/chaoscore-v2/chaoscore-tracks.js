@@ -1,93 +1,92 @@
 window.CHAOSCORE_TRACKS = [
   {
     number: "01",
-    title: "BANALE",
-    artist: "Douglas Busta",
+    title: "banale",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/01-banale.flac"
   },
   {
     number: "02",
     title: "STAR II",
-    artist: "Douglas Busta",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/02-star-ii.flac"
   },
   {
     number: "03",
-    title: "STELLA VERA REALE",
-    artist: "Douglas Busta",
+    title: "stella vera reale.wav",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/03-stella-vera-reale.flac"
   },
   {
     number: "04",
-    title: "SO KI 6",
-    artist: "Douglas Busta feat. 39redboy",
+    title: "so ki 6... ft. 39Redboy",
+    artists: ["Douglas Busta", "39Redboy"],
     src: "/audio-flac/04-so-ki-6-ft-39redboy.flac"
   },
   {
     number: "05",
-    title: "SONO TRISTE E CACO",
-    artist: "Douglas Busta",
+    title: "sono triste e caco.",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/05-sono-triste-e-caco.flac"
   },
   {
     number: "06",
-    title: "BLUE HAIR",
-    artist: "Douglas Busta",
+    title: "blue hair",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/06-blue-hair.flac"
   },
   {
     number: "07",
-    title: "PICCOLO ME",
-    artist: "Douglas Busta",
+    title: "piccolo ME",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/07-piccolo-me.flac"
   },
   {
     number: "08",
-    title: "PATTO D'ACHILLE",
-    artist: "Douglas Busta feat. Gador",
+    title: "Patto d'Achille ft. Gador",
+    artists: ["Douglas Busta", "Gador"],
     src: "/audio-flac/08-patto-d-achille-ft-gador.flac"
   },
   {
     number: "09",
-    title: "STOP THE EMOTIONS",
-    artist: "Douglas Busta",
+    title: "Stop the EMOTIONS",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/09-stop-the-emotions.flac"
   },
   {
     number: "10",
-    title: "SENSIBILEH",
-    artist: "Douglas Busta feat. Deffy",
+    title: "sensibileh! ft. Deffy",
+    artists: ["Douglas Busta", "Deffy"],
     src: "/audio-flac/10-sensibileh-ft-deffy.flac"
   },
   {
     number: "11",
-    title: "MA CHE HO FATTO MO",
-    artist: "Douglas Busta",
+    title: "ma che ho fatto mo??...",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/11-ma-che-ho-fatto-mo.flac"
   },
   {
     number: "12",
-    title: "NO TIME",
-    artist: "Douglas Busta",
+    title: "NO TIME!",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/12-no-time.flac"
   },
   {
     number: "13",
-    title: "GET OUT",
-    artist: "Douglas Busta",
+    title: "GET OUT!",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/13-get-out.flac"
   },
   {
     number: "14",
-    title: "LOOK UP",
-    artist: "Douglas Busta",
+    title: "LOOK UP!",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/14-look-up.flac"
   },
   {
     number: "15",
-    title: "1 NORMALE",
-    artist: "Douglas Busta",
-    subtitle: "Bonus Track",
+    title: "1 normale (Bonus Track)",
+    artists: ["Douglas Busta"],
     src: "/audio-flac/15-1-normale-bonus-track.flac"
   }
 ];

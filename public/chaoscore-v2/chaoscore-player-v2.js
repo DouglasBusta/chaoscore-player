@@ -73,6 +73,14 @@
     return state.tracks[state.currentIndex] || null;
   }
 
+  function displayArtists(track) {
+    if (!track) return "Douglas Busta";
+    if (Array.isArray(track.artists) && track.artists.length) {
+      return track.artists.join(", ");
+    }
+    return track.artist || "Douglas Busta";
+  }
+
   function loadTrack(index, autoplay = false) {
     if (!state.tracks.length) return;
 
@@ -331,7 +339,7 @@
     });
 
     root.querySelectorAll("[data-artist]").forEach((el) => {
-      el.textContent = track ? track.artist : "Douglas Busta";
+      el.textContent = displayArtists(track);
     });
 
     root.querySelectorAll("[data-cover]").forEach((el) => {
