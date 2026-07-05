@@ -151,7 +151,7 @@
 
     /*
       Se clicchi un link chaoscore dentro Busta Files, chiudiamo la vista.
-      Non creiamo nessun tasto Back to #chaoscore.
+      Non creiamo nessun tasto return-to-chaoscore.
     */
     if (!doc.__lookAppChaosLinkInterceptor) {
       doc.__lookAppChaosLinkInterceptor = true;

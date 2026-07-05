@@ -346,7 +346,7 @@ body.chaos-current-player-v2-ready section.player {
 
 /* === LOOK APP global view v1 === */
 /* Busta Files diventa una vista interna sotto lo stesso PIP player.
-   Nessun secondo player. Nessun tasto Back to #chaoscore creato dal player. */
+   Nessun secondo player. Nessun tasto return-to-chaoscore creato dal player. */
 
 #look-app-global-view {
   position: fixed;
