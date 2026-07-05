@@ -3,7 +3,7 @@
 
   const coverSources = [
     "/covers/copertina icona chaoscore.jpeg",
-    "/assets/chaoscore-spotify-cover.jpg"
+    "/covers/cover chaoscore.png"
   ];
 
   let currentIndex = 0;
