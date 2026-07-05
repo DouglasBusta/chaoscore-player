@@ -1,0 +1,89 @@
+/* chaos-cover-carousel-v2 */
+/* Fix cover arrows: 1 click = 1 cambio cover, con animazione card/vinile. */
+
+.cover-wrap {
+  position: relative;
+}
+
+.cover {
+  will-change: transform, opacity, filter;
+  transform: translateX(0) scale(1) rotate(0deg);
+  transition:
+    transform 360ms cubic-bezier(.2,.8,.2,1),
+    opacity 260ms ease,
+    filter 260ms ease;
+}
+
+.cover.is-cover-sliding-next {
+  transform: translateX(22px) scale(0.965) rotate(1.2deg);
+  opacity: 0.82;
+  filter: blur(0.4px) brightness(0.9);
+}
+
+.cover.is-cover-sliding-prev {
+  transform: translateX(-22px) scale(0.965) rotate(-1.2deg);
+  opacity: 0.82;
+  filter: blur(0.4px) brightness(0.9);
+}
+
+.cover-picker {
+  display: grid !important;
+  grid-template-columns: 42px minmax(28px, auto) 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  user-select: none;
+}
+
+.cover-arrow {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(231,224,210,0.16);
+  background: rgba(255,255,255,0.045);
+  color: rgba(231,224,210,0.92);
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.cover-arrow:active {
+  transform: scale(0.94);
+}
+
+.cover-arrow:hover {
+  background: rgba(255,255,255,0.085);
+  border-color: rgba(231,224,210,0.26);
+}
+
+.cover-current {
+  min-width: 34px;
+  color: rgba(231,224,210,0.52);
+  font-size: 0.66rem;
+  letter-spacing: 0.10em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .cover-picker {
+    grid-template-columns: 40px minmax(26px, auto) 40px;
+    gap: 9px;
+  }
+
+  .cover-arrow {
+    width: 40px;
+    height: 40px;
+  }
+}
