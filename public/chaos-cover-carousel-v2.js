@@ -5,11 +5,12 @@
   window.__chaosCoverCarouselV2Mounted = true;
 
   const coverSources = [
-    "/covers/copertina icona chaoscore.jpeg",
-    "/assets/chaoscore-spotify-cover.jpg"
-  ];
+  "/covers/copertina icona chaoscore.jpeg",
+  "/assets/chaoscore-spotify-cover.jpg"
+];
 
   let currentIndex = 0;
+  let locked = false;
 
   function getMainCover() {
     return document.getElementById("main-cover") || document.querySelector(".cover");
@@ -38,11 +39,7 @@
     const cover = getMainCover();
     const src = normalizeSrc(saved || cover?.getAttribute("src") || cover?.src || "");
 
-    const found = coverSources.findIndex((item) => {
-      const itemPath = normalizeSrc(item);
-      return itemPath === src || src.endsWith(itemPath);
-    });
-
+    const found = coverSources.findIndex((item) => normalizeSrc(item) === src || src.endsWith(normalizeSrc(item)));
     currentIndex = found >= 0 ? found : 0;
   }
 
@@ -59,6 +56,11 @@
     prev.setAttribute("aria-label", "Previous cover");
     prev.textContent = "‹★";
 
+    const current = document.createElement("span");
+    current.className = "cover-current";
+    current.id = "cover-current";
+    current.setAttribute("aria-hidden", "true");
+
     const next = document.createElement("button");
     next.className = "cover-arrow";
     next.id = "cover-next";
@@ -66,24 +68,31 @@
     next.setAttribute("aria-label", "Next cover");
     next.textContent = "★›";
 
-    picker.append(prev, next);
+    picker.append(prev, current, next);
 
-    prev.onclick = function (event) {
+    prev.addEventListener("click", function (event) {
       event.preventDefault();
+      event.stopPropagation();
       changeCover(-1);
-      return false;
-    };
+    });
 
-    next.onclick = function (event) {
+    next.addEventListener("click", function (event) {
       event.preventDefault();
+      event.stopPropagation();
       changeCover(1);
-      return false;
-    };
+    });
+
+    updateCounter();
+  }
+
+  function updateCounter() {
+    const current = document.getElementById("cover-current");
+    if (!current) return;
+    current.textContent = `${currentIndex + 1}/${coverSources.length}`;
   }
 
   function applyCoverSrc(src) {
     const main = getMainCover();
-
     if (main) {
       main.src = src;
       main.alt = "#chaoscore cover";
@@ -94,19 +103,41 @@
     });
 
     localStorage.setItem("chaoscore-selected-cover", src);
+    updateCounter();
   }
 
   function changeCover(direction) {
     const main = getMainCover();
     if (!main || !coverSources.length) return;
 
-    currentIndex = (currentIndex + direction + coverSources.length) % coverSources.length;
-    const nextSrc = coverSources[currentIndex];
+    const currentPath = normalizeSrc(main.getAttribute("src") || main.src || "");
+    let nextIndex = currentIndex;
 
+    /*
+      Hard fix:
+      1 click deve sempre portare a una cover diversa.
+      Se la prossima sorgente è uguale alla corrente, la saltiamo.
+    */
+    for (let i = 0; i < coverSources.length; i++) {
+      nextIndex = (nextIndex + direction + coverSources.length) % coverSources.length;
+      const candidate = coverSources[nextIndex];
+      const candidatePath = normalizeSrc(candidate);
+
+      if (candidatePath !== currentPath) {
+        currentIndex = nextIndex;
+        break;
+      }
+    }
+
+    const nextSrc = coverSources[currentIndex];
     const cls = direction > 0 ? "is-cover-sliding-next" : "is-cover-sliding-prev";
 
     main.classList.remove("is-cover-sliding-next", "is-cover-sliding-prev");
 
+    /*
+      Cambio immediato: non aspettiamo l'animazione.
+      L'animazione accompagna il cambio, non lo ritarda.
+    */
     applyCoverSrc(nextSrc);
 
     requestAnimationFrame(function () {
@@ -118,9 +149,52 @@
     }, 220);
   }
 
+  let lastArrowPointerTime = 0;
+
+  function bindImmediateArrowControls() {
+    if (window.__chaosCoverCarouselImmediateBound) return;
+    window.__chaosCoverCarouselImmediateBound = true;
+
+    /*
+      Fix doppio click:
+      pointerdown cambia subito la cover e blocca i vecchi handler click/touch.
+      Il click sintetico successivo viene soppresso.
+    */
+    document.addEventListener("pointerdown", function (event) {
+      const arrow = event.target.closest(".cover-arrow");
+      if (!arrow) return;
+
+      const picker = arrow.closest("#cover-picker, .cover-picker");
+      if (!picker) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      lastArrowPointerTime = Date.now();
+
+      const direction =
+        arrow.id === "cover-prev" || arrow.textContent.includes("‹")
+          ? -1
+          : 1;
+
+      changeCover(direction);
+    }, true);
+
+    document.addEventListener("click", function (event) {
+      const arrow = event.target.closest(".cover-arrow");
+      if (!arrow) return;
+
+      if (Date.now() - lastArrowPointerTime < 700) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+  }
+
   function boot() {
     findCurrentIndex();
     renderPicker();
+    bindImmediateArrowControls();
     applyCoverSrc(coverSources[currentIndex]);
   }
 
