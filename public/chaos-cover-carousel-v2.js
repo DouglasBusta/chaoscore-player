@@ -5,11 +5,12 @@
   window.__chaosCoverCarouselV2Mounted = true;
 
   const coverSources = [
-    "/chaoscore-cover.png",
-    "/covers/cover chaoscore.png",
-    "/assets/chaoscore-spotify-cover.jpg",
-    "/covers/copertina icona chaoscore.jpeg"
-  ];
+  "/covers/copertina icona chaoscore.jpeg",
+  "/assets/chaoscore-spotify-cover.jpg",
+  "/chaoscore-cover.png",
+  "/covers/cover chaoscore.png",
+  "/brand/look-app-logo-chaos-red.png"
+];
 
   let currentIndex = 0;
   let locked = false;
@@ -50,7 +51,7 @@
     prev.id = "cover-prev";
     prev.type = "button";
     prev.setAttribute("aria-label", "Previous cover");
-    prev.textContent = "‹";
+    prev.textContent = "✦‹";
 
     const current = document.createElement("span");
     current.className = "cover-current";
@@ -62,7 +63,7 @@
     next.id = "cover-next";
     next.type = "button";
     next.setAttribute("aria-label", "Next cover");
-    next.textContent = "›";
+    next.textContent = "›✦";
 
     picker.append(prev, current, next);
 
@@ -106,22 +107,32 @@
     if (locked) return;
 
     const main = getMainCover();
-    if (!main) return;
+    if (!main || !coverSources.length) return;
 
     locked = true;
-
-    const cls = direction > 0 ? "is-cover-sliding-next" : "is-cover-sliding-prev";
-    main.classList.remove("is-cover-sliding-next", "is-cover-sliding-prev");
-    main.classList.add(cls);
 
     currentIndex = (currentIndex + direction + coverSources.length) % coverSources.length;
     const nextSrc = coverSources[currentIndex];
 
+    const cls = direction > 0 ? "is-cover-sliding-next" : "is-cover-sliding-prev";
+
+    main.classList.remove("is-cover-sliding-next", "is-cover-sliding-prev");
+
+    /*
+      Il cambio sorgente avviene subito:
+      1 click = 1 cover nuova.
+      L'animazione è solo visiva, non ritarda più il cambio.
+    */
+    applyCoverSrc(nextSrc);
+
+    requestAnimationFrame(function () {
+      main.classList.add(cls);
+    });
+
     window.setTimeout(function () {
-      applyCoverSrc(nextSrc);
       main.classList.remove(cls);
       locked = false;
-    }, 180);
+    }, 260);
   }
 
   function boot() {

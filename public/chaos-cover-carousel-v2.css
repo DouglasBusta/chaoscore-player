@@ -87,3 +87,45 @@
     height: 40px;
   }
 }
+
+/* === Cover carousel alignment/click fix v2 === */
+
+.cover-picker {
+  width: max-content !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  grid-template-columns: 44px auto 44px !important;
+  place-items: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.cover-arrow {
+  padding: 0 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  align-items: center !important;
+  justify-items: center !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  font-size: 1.05rem !important;
+  letter-spacing: -0.08em !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+}
+
+.cover-current {
+  display: none !important;
+}
+
+.cover.is-cover-sliding-next {
+  transform: translateX(14px) scale(0.975) rotate(0.8deg);
+  opacity: 0.9;
+  filter: brightness(0.94);
+}
+
+.cover.is-cover-sliding-prev {
+  transform: translateX(-14px) scale(0.975) rotate(-0.8deg);
+  opacity: 0.9;
+  filter: brightness(0.94);
+}
