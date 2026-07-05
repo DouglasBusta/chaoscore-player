@@ -112,13 +112,34 @@
     const main = getMainCover();
     if (!main || !coverSources.length) return;
 
-    currentIndex = (currentIndex + direction + coverSources.length) % coverSources.length;
-    const nextSrc = coverSources[currentIndex];
+    const currentPath = normalizeSrc(main.getAttribute("src") || main.src || "");
+    let nextIndex = currentIndex;
 
+    /*
+      Hard fix:
+      1 click deve sempre portare a una cover diversa.
+      Se la prossima sorgente è uguale alla corrente, la saltiamo.
+    */
+    for (let i = 0; i < coverSources.length; i++) {
+      nextIndex = (nextIndex + direction + coverSources.length) % coverSources.length;
+      const candidate = coverSources[nextIndex];
+      const candidatePath = normalizeSrc(candidate);
+
+      if (candidatePath !== currentPath) {
+        currentIndex = nextIndex;
+        break;
+      }
+    }
+
+    const nextSrc = coverSources[currentIndex];
     const cls = direction > 0 ? "is-cover-sliding-next" : "is-cover-sliding-prev";
 
     main.classList.remove("is-cover-sliding-next", "is-cover-sliding-prev");
 
+    /*
+      Cambio immediato: non aspettiamo l'animazione.
+      L'animazione accompagna il cambio, non lo ritarda.
+    */
     applyCoverSrc(nextSrc);
 
     requestAnimationFrame(function () {
@@ -127,7 +148,7 @@
 
     window.setTimeout(function () {
       main.classList.remove(cls);
-    }, 240);
+    }, 220);
   }
 
   function boot() {
