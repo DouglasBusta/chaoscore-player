@@ -266,14 +266,18 @@
     loadTrack(Math.max(0, state.index - 1), true);
   }
 
-  function seek(event, bar) {
-    if (!audio || !audio.duration) return;
+  function seekFromClientX(clientX, bar) {
+    if (!audio || !audio.duration || !bar) return;
 
     const rect = bar.getBoundingClientRect();
-    const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
 
     audio.currentTime = ratio * audio.duration;
     render();
+  }
+
+  function seek(event, bar) {
+    seekFromClientX(event.clientX, bar);
   }
 
   function setExpanded(value) {
@@ -419,6 +423,36 @@
 
       event.preventDefault();
       seek(event, bar);
+    });
+
+    let draggingProgress = null;
+
+    section.addEventListener("pointerdown", function (event) {
+      const bar = event.target.closest("[data-progress]");
+      if (!bar) return;
+
+      draggingProgress = bar;
+      bar.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+      seekFromClientX(event.clientX, bar);
+    });
+
+    section.addEventListener("pointermove", function (event) {
+      if (!draggingProgress) return;
+
+      event.preventDefault();
+      seekFromClientX(event.clientX, draggingProgress);
+    });
+
+    section.addEventListener("pointerup", function (event) {
+      if (!draggingProgress) return;
+
+      draggingProgress.releasePointerCapture?.(event.pointerId);
+      draggingProgress = null;
+    });
+
+    section.addEventListener("pointercancel", function () {
+      draggingProgress = null;
     });
 
     section.addEventListener("input", function (event) {
