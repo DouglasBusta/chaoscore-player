@@ -8,94 +8,121 @@
 
   let currentIndex = 0;
 
-  function getMainCover() {
-    return document.getElementById("main-cover") || document.querySelector(".cover");
+  function getCover() {
+    return document.getElementById("main-cover") || document.querySelector("img.cover") || document.querySelector(".cover img");
   }
 
-  function getMiniCoverImages() {
+  function getMiniCovers() {
     return Array.from(document.querySelectorAll("[data-cover], .now img")).filter(Boolean);
   }
 
+  function normalize(path) {
+    try {
+      return new URL(path, window.location.origin).pathname;
+    } catch (_) {
+      return path || "";
+    }
+  }
+
+  function syncIndexFromCurrentImage() {
+    const cover = getCover();
+    const currentSrc = normalize(cover?.getAttribute("src") || cover?.src || "");
+
+    const found = coverSources.findIndex(function (src) {
+      const srcPath = normalize(src);
+      return currentSrc === srcPath || currentSrc.endsWith(srcPath);
+    });
+
+    if (found >= 0) currentIndex = found;
+  }
+
   function setCover(index) {
-    const cover = getMainCover();
-    if (!cover) return;
+    const cover = getCover();
+    if (!cover) {
+      console.warn("[chaos cover] main cover non trovata");
+      return;
+    }
 
     currentIndex = (index + coverSources.length) % coverSources.length;
-
     const nextSrc = coverSources[currentIndex];
 
+    cover.setAttribute("src", nextSrc);
     cover.src = nextSrc;
     cover.alt = "#chaoscore cover";
 
-    getMiniCoverImages().forEach(function (img) {
+    getMiniCovers().forEach(function (img) {
+      img.setAttribute("src", nextSrc);
       img.src = nextSrc;
     });
 
     localStorage.setItem("chaoscore-selected-cover", nextSrc);
+
+    console.log("[chaos cover] cambiata cover:", nextSrc);
   }
 
-  function goPreviousCover() {
-    setCover(currentIndex - 1);
-  }
-
-  function goNextCover() {
+  function nextCover() {
+    syncIndexFromCurrentImage();
     setCover(currentIndex + 1);
   }
 
-  function readInitialCover() {
-    const saved = localStorage.getItem("chaoscore-selected-cover") || "";
-    const found = coverSources.findIndex(function (src) {
-      return saved.includes(src);
-    });
-
-    currentIndex = found >= 0 ? found : 0;
+  function previousCover() {
+    syncIndexFromCurrentImage();
+    setCover(currentIndex - 1);
   }
 
-  function buildCoverButtons() {
-    const oldPicker = document.getElementById("cover-picker");
-    if (!oldPicker) return;
+  function rebuildButtons() {
+    const picker = document.getElementById("cover-picker");
+    if (!picker) return;
 
-    /*
-      Cancelliamo proprio il contenuto vecchio dei tasti.
-      Da qui in poi esistono solo questi due bottoni.
-    */
-    oldPicker.innerHTML = "";
+    picker.innerHTML = "";
 
-    const previousButton = document.createElement("button");
-    previousButton.type = "button";
-    previousButton.id = "cover-prev";
-    previousButton.className = "cover-arrow";
-    previousButton.textContent = "‹★";
-    previousButton.setAttribute("aria-label", "Cover precedente");
+    const prev = document.createElement("button");
+    prev.type = "button";
+    prev.id = "cover-prev";
+    prev.className = "cover-arrow";
+    prev.textContent = "‹★";
+    prev.setAttribute("aria-label", "Cover precedente");
 
-    const nextButton = document.createElement("button");
-    nextButton.type = "button";
-    nextButton.id = "cover-next";
-    nextButton.className = "cover-arrow";
-    nextButton.textContent = "★›";
-    nextButton.setAttribute("aria-label", "Cover successiva");
+    const next = document.createElement("button");
+    next.type = "button";
+    next.id = "cover-next";
+    next.className = "cover-arrow";
+    next.textContent = "★›";
+    next.setAttribute("aria-label", "Cover successiva");
 
-    /*
-      Linguaggio di programmazione semplice:
-      se X clicca il tasto sinistro, cambia immagine indietro.
-      se X clicca il tasto destro, cambia immagine avanti.
-    */
-    previousButton.onclick = function () {
-      goPreviousCover();
-    };
-
-    nextButton.onclick = function () {
-      goNextCover();
-    };
-
-    oldPicker.appendChild(previousButton);
-    oldPicker.appendChild(nextButton);
+    picker.appendChild(prev);
+    picker.appendChild(next);
   }
 
   function boot() {
-    readInitialCover();
-    buildCoverButtons();
+    rebuildButtons();
+
+    const saved = localStorage.getItem("chaoscore-selected-cover") || "";
+    const savedIndex = coverSources.findIndex(function (src) {
+      return saved.includes(src);
+    });
+
+    currentIndex = savedIndex >= 0 ? savedIndex : 0;
     setCover(currentIndex);
+
+    /*
+      Funzionamento vero:
+      se X clicca cover-prev, cambia immagine indietro.
+      se X clicca cover-next, cambia immagine avanti.
+      Sta sul document, quindi funziona anche se i bottoni vengono ricreati.
+    */
+    document.addEventListener("click", function (event) {
+      const prev = event.target.closest("#cover-prev");
+      const next = event.target.closest("#cover-next");
+
+      if (!prev && !next) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (prev) previousCover();
+      if (next) nextCover();
+    }, true);
   }
 
   if (document.readyState === "loading") {
