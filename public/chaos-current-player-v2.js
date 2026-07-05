@@ -169,12 +169,6 @@
     player = shell;
 
   }
-  function removeBustaOverlayGhosts() {
-    document.body.classList.remove("chaos-current-busta-open");
-    document.getElementById("chaos-current-busta-overlay")?.remove();
-    document.getElementById("chaos-current-busta-close")?.remove();
-  }
-
   async function play() {
     if (!audio) return;
 
@@ -377,10 +371,6 @@
   }
 
   function boot() {
-    removeBustaOverlayGhosts();
-
-    window.addEventListener("pageshow", removeBustaOverlayGhosts);
-
     if (!window.CHAOSCORE_TRACKS || !window.CHAOSCORE_TRACKS.length) {
       console.warn("[chaos current player v2] missing CHAOSCORE_TRACKS");
     }
