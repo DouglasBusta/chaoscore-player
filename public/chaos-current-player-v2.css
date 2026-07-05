@@ -297,46 +297,7 @@ body.chaos-current-player-v2-ready section.player {
   text-align: center;
 }
 
-#chaos-current-busta-overlay {
-  position: fixed;
-  inset: 0;
-  display: none;
-  z-index: 900000;
-  background: #050505;
-}
-
-body.chaos-current-busta-open #chaos-current-busta-overlay {
-  display: block;
-}
-
-#chaos-current-busta-overlay iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-  background: #050505;
-}
-
-#chaos-current-busta-close {
-  position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + 10px);
-  left: 10px;
-  z-index: 1000006;
-  display: none;
-  border: 1px solid rgba(231,224,210,0.18);
-  border-radius: 999px;
-  background: rgba(5,5,5,0.82);
-  color: var(--chaos-text);
-  padding: 9px 12px;
-  font: inherit;
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-body.chaos-current-busta-open #chaos-current-busta-close {
-  display: block;
-}
+/* Busta Files overlay disattivato: niente secondo layer. */
 
 @media (max-width: 720px) {
   body.chaos-current-player-v2-ready {

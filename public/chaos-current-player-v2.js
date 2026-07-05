@@ -168,25 +168,11 @@
     section.appendChild(shell);
     player = shell;
 
-    ensureBustaOverlay();
   }
-
-  function ensureBustaOverlay() {
-    if (!document.getElementById("chaos-current-busta-overlay")) {
-      const overlay = document.createElement("div");
-      overlay.id = "chaos-current-busta-overlay";
-      overlay.innerHTML = '<iframe id="chaos-current-busta-frame" src="about:blank" title="Busta Files"></iframe>';
-      document.body.appendChild(overlay);
-    }
-
-    if (!document.getElementById("chaos-current-busta-close")) {
-      const close = document.createElement("button");
-      close.id = "chaos-current-busta-close";
-      close.type = "button";
-      close.textContent = "← Back to #chaoscore";
-      close.addEventListener("click", closeBustaFiles);
-      document.body.appendChild(close);
-    }
+  function removeBustaOverlayGhosts() {
+    document.body.classList.remove("chaos-current-busta-open");
+    document.getElementById("chaos-current-busta-overlay")?.remove();
+    document.getElementById("chaos-current-busta-close")?.remove();
   }
 
   async function play() {
@@ -296,59 +282,6 @@
     audio.muted = !audio.muted;
     render();
   }
-
-  function openBustaFiles() {
-    ensureBustaOverlay();
-
-    const frame = document.getElementById("chaos-current-busta-frame");
-    if (frame && frame.src === "about:blank") frame.src = "/exclusive";
-
-    document.body.classList.add("chaos-current-busta-open");
-    setExpanded(false);
-
-    setTimeout(cleanBustaIframe, 400);
-    setTimeout(cleanBustaIframe, 1200);
-  }
-
-  function closeBustaFiles() {
-    document.body.classList.remove("chaos-current-busta-open");
-
-    const frame = document.getElementById("chaos-current-busta-frame");
-    if (frame) frame.src = "about:blank";
-  }
-
-  function cleanBustaIframe() {
-    const frame = document.getElementById("chaos-current-busta-frame");
-    if (!frame) return;
-
-    let doc;
-    let href = "";
-
-    try {
-      doc = frame.contentDocument;
-      href = frame.contentWindow.location.href.toLowerCase();
-    } catch (_) {
-      return;
-    }
-
-    if (!doc) return;
-
-    if (href.includes("/chaoscore") || href.includes("chaoscore.html")) {
-      closeBustaFiles();
-      return;
-    }
-
-    doc.querySelectorAll("audio, section.player, .player, [id*='player'], [class*='player']").forEach((el) => {
-      try { el.remove(); } catch (_) {}
-    });
-
-    if (!doc.__chaosCurrentNoIframePlayerObserver) {
-      doc.__chaosCurrentNoIframePlayerObserver = true;
-      const observer = new MutationObserver(cleanBustaIframe);
-      observer.observe(doc.documentElement, { childList: true, subtree: true });
-    }
-  }
-
   function render() {
     if (!player || !audio) return;
 
@@ -427,31 +360,7 @@
 
       setVolume(volume.value);
     });
-
-    document.addEventListener("click", function (event) {
-      const target = event.target.closest("a, button, [role='button']");
-      if (!target || target.closest("section.player")) return;
-
-      const text = (
-        target.textContent ||
-        target.getAttribute("aria-label") ||
-        target.getAttribute("title") ||
-        ""
-      ).toLowerCase();
-
-      const href = (target.getAttribute("href") || "").toLowerCase();
-
-      if (
-        text.includes("back to busta files") ||
-        text.includes("busta files") ||
-        href.includes("/exclusive") ||
-        href.includes("exclusive.html")
-      ) {
-        event.preventDefault();
-        event.stopPropagation();
-        openBustaFiles();
-      }
-    }, true);
+    /* Back to Busta Files overlay disattivato: il link torna a comportarsi normalmente. */
 
     if (audio) {
       audio.addEventListener("play", render);
@@ -468,6 +377,10 @@
   }
 
   function boot() {
+    removeBustaOverlayGhosts();
+
+    window.addEventListener("pageshow", removeBustaOverlayGhosts);
+
     if (!window.CHAOSCORE_TRACKS || !window.CHAOSCORE_TRACKS.length) {
       console.warn("[chaos current player v2] missing CHAOSCORE_TRACKS");
     }
