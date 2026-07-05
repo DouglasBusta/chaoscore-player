@@ -174,3 +174,23 @@
   opacity: 0.92 !important;
   filter: brightness(0.96) !important;
 }
+
+/* === Cover carousel pointerdown fix === */
+
+.cover-arrow {
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.cover-arrow {
+  font-family: inherit !important;
+}
+
+.cover-arrow#cover-prev,
+.cover-arrow#cover-next {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

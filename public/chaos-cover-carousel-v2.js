@@ -6,9 +6,7 @@
 
   const coverSources = [
   "/covers/copertina icona chaoscore.jpeg",
-  "/assets/chaoscore-spotify-cover.jpg",
-  "/chaoscore-cover.png",
-  "/covers/cover chaoscore.png"
+  "/assets/chaoscore-spotify-cover.jpg"
 ];
 
   let currentIndex = 0;
@@ -151,9 +149,52 @@
     }, 220);
   }
 
+  let lastArrowPointerTime = 0;
+
+  function bindImmediateArrowControls() {
+    if (window.__chaosCoverCarouselImmediateBound) return;
+    window.__chaosCoverCarouselImmediateBound = true;
+
+    /*
+      Fix doppio click:
+      pointerdown cambia subito la cover e blocca i vecchi handler click/touch.
+      Il click sintetico successivo viene soppresso.
+    */
+    document.addEventListener("pointerdown", function (event) {
+      const arrow = event.target.closest(".cover-arrow");
+      if (!arrow) return;
+
+      const picker = arrow.closest("#cover-picker, .cover-picker");
+      if (!picker) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      lastArrowPointerTime = Date.now();
+
+      const direction =
+        arrow.id === "cover-prev" || arrow.textContent.includes("‹")
+          ? -1
+          : 1;
+
+      changeCover(direction);
+    }, true);
+
+    document.addEventListener("click", function (event) {
+      const arrow = event.target.closest(".cover-arrow");
+      if (!arrow) return;
+
+      if (Date.now() - lastArrowPointerTime < 700) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+  }
+
   function boot() {
     findCurrentIndex();
     renderPicker();
+    bindImmediateArrowControls();
     applyCoverSrc(coverSources[currentIndex]);
   }
 
