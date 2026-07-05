@@ -49,6 +49,16 @@ for (const file of files) {
   }
 }
 
+
+for (const file of files) {
+  if (!fs.existsSync(file)) continue;
+  const text = fs.readFileSync(file, "utf8");
+
+  if (text.includes("look-app-global-view") && text.includes("Back to #chaoscore")) {
+    fail(`${file}: la vista globale non deve creare il tasto Back to #chaoscore`);
+  }
+}
+
 for (const htmlFile of ["chaoscore.html", "public/chaoscore.html"]) {
   const html = fs.readFileSync(htmlFile, "utf8");
 

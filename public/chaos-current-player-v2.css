@@ -343,3 +343,37 @@ body.chaos-current-player-v2-ready section.player {
     padding: 13px;
   }
 }
+
+/* === LOOK APP global view v1 === */
+/* Busta Files diventa una vista interna sotto lo stesso PIP player.
+   Nessun secondo player. Nessun tasto Back to #chaoscore creato dal player. */
+
+#look-app-global-view {
+  position: fixed;
+  inset: 0;
+  z-index: 900000;
+  display: none;
+  background: #050505;
+}
+
+body.look-app-global-view-open #look-app-global-view {
+  display: block;
+}
+
+#look-app-global-view iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #050505;
+}
+
+/* Quando sei nei Busta Files, il player PIP resta sopra la vista. */
+body.look-app-global-view-open section.player {
+  z-index: 1000005 !important;
+}
+
+/* Spazio per non coprire contenuti bassi della vista. */
+body.look-app-global-view-open {
+  padding-bottom: 126px;
+}

@@ -46,6 +46,142 @@
     return state.tracks[state.index] || null;
   }
 
+  function ensureLookAppGlobalView() {
+    if (document.getElementById("look-app-global-view")) return;
+
+    const view = document.createElement("div");
+    view.id = "look-app-global-view";
+    view.innerHTML = '<iframe id="look-app-global-frame" src="about:blank" title="Busta Files"></iframe>';
+
+    document.body.appendChild(view);
+
+    const frame = document.getElementById("look-app-global-frame");
+    frame.addEventListener("load", patchLookAppGlobalFrame);
+  }
+
+  function openLookAppGlobalView() {
+    ensureLookAppGlobalView();
+
+    const frame = document.getElementById("look-app-global-frame");
+    if (frame && frame.src === "about:blank") {
+      frame.src = "/exclusive";
+    }
+
+    document.body.classList.add("look-app-global-view-open");
+    setExpanded(false);
+
+    setTimeout(patchLookAppGlobalFrame, 350);
+    setTimeout(patchLookAppGlobalFrame, 1000);
+  }
+
+  function closeLookAppGlobalView() {
+    document.body.classList.remove("look-app-global-view-open");
+
+    const frame = document.getElementById("look-app-global-frame");
+    if (frame) {
+      frame.src = "about:blank";
+    }
+  }
+
+  function patchLookAppGlobalFrame() {
+    const frame = document.getElementById("look-app-global-frame");
+    if (!frame) return;
+
+    let doc;
+    let href = "";
+
+    try {
+      doc = frame.contentDocument;
+      href = frame.contentWindow.location.href.toLowerCase();
+    } catch (_) {
+      return;
+    }
+
+    if (!doc) return;
+
+    /*
+      Se dentro la vista provano ad aprire chaoscore, non carichiamo una seconda
+      pagina chaoscore dentro chaoscore: chiudiamo la vista e teniamo il PIP vivo.
+    */
+    if (href.includes("/chaoscore") || href.includes("chaoscore.html")) {
+      closeLookAppGlobalView();
+      return;
+    }
+
+    /*
+      Dentro Busta Files non deve vivere nessun player suo.
+      Il player vero è solo quello fuori, in section.player.
+    */
+    function removeFramePlayers() {
+      doc.querySelectorAll([
+        "audio",
+        "section.player",
+        ".player",
+        "[id*='player']",
+        "[class*='player']",
+        "[id*='mini']",
+        "[class*='mini']",
+        "[id*='persistent']",
+        "[class*='persistent']"
+      ].join(",")).forEach((el) => {
+        try {
+          el.remove();
+        } catch (_) {
+          el.style.setProperty("display", "none", "important");
+          el.style.setProperty("visibility", "hidden", "important");
+          el.style.setProperty("opacity", "0", "important");
+          el.style.setProperty("pointer-events", "none", "important");
+        }
+      });
+    }
+
+    removeFramePlayers();
+    setTimeout(removeFramePlayers, 350);
+    setTimeout(removeFramePlayers, 1000);
+
+    if (!doc.__lookAppNoFramePlayerObserver) {
+      doc.__lookAppNoFramePlayerObserver = true;
+
+      const observer = new MutationObserver(removeFramePlayers);
+      observer.observe(doc.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    }
+
+    /*
+      Se clicchi un link chaoscore dentro Busta Files, chiudiamo la vista.
+      Non creiamo nessun tasto Back to #chaoscore.
+    */
+    if (!doc.__lookAppChaosLinkInterceptor) {
+      doc.__lookAppChaosLinkInterceptor = true;
+
+      doc.addEventListener("click", function (event) {
+        const target = event.target.closest("a, button, [role='button']");
+        if (!target) return;
+
+        const text = (
+          target.textContent ||
+          target.getAttribute("aria-label") ||
+          target.getAttribute("title") ||
+          ""
+        ).toLowerCase();
+
+        const href = (target.getAttribute("href") || "").toLowerCase();
+
+        if (
+          text.includes("chaoscore") ||
+          href.includes("/chaoscore") ||
+          href.includes("chaoscore.html")
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeLookAppGlobalView();
+        }
+      }, true);
+    }
+  }
+
   function inferIndexFromAudio() {
     if (!audio || !audio.src || !state.tracks.length) return state.index;
 
@@ -354,7 +490,30 @@
 
       setVolume(volume.value);
     });
-    /* Back to Busta Files overlay disattivato: il link torna a comportarsi normalmente. */
+    document.addEventListener("click", function (event) {
+      const target = event.target.closest("a, button, [role='button']");
+      if (!target || target.closest("section.player")) return;
+
+      const text = (
+        target.textContent ||
+        target.getAttribute("aria-label") ||
+        target.getAttribute("title") ||
+        ""
+      ).toLowerCase();
+
+      const href = (target.getAttribute("href") || "").toLowerCase();
+
+      if (
+        text.includes("back to busta files") ||
+        text.includes("busta files") ||
+        href.includes("/exclusive") ||
+        href.includes("exclusive.html")
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        openLookAppGlobalView();
+      }
+    }, true);
 
     if (audio) {
       audio.addEventListener("play", render);
@@ -371,6 +530,8 @@
   }
 
   function boot() {
+    ensureLookAppGlobalView();
+
     if (!window.CHAOSCORE_TRACKS || !window.CHAOSCORE_TRACKS.length) {
       console.warn("[chaos current player v2] missing CHAOSCORE_TRACKS");
     }
