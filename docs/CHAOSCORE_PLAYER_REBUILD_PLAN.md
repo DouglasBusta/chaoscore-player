@@ -110,3 +110,22 @@ Ora:
 ### Fase 2 - Shop NFC
 
 Dopo il player.
+
+## Step cover carousel / stelline
+
+Da fare prima del polish finale del mega player.
+
+Obiettivo:
+- le frecce/stelline per cambiare cover devono funzionare al primo click;
+- niente doppio click;
+- niente click multipli all’inizio;
+- animazione tipo scambio vinile/card stack;
+- click singolo = prossima cover;
+- swipe/drag = trascinamento naturale;
+- usare CSS transform e transition;
+- usare Pointer Events per mouse e touch;
+- non toccare audio engine;
+- non creare mai un secondo player.
+
+Regola:
+prima e dopo questa modifica eseguire il controllo anti-doppio-player.
