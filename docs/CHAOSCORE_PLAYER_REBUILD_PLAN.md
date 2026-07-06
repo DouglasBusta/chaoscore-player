@@ -129,3 +129,51 @@ Obiettivo:
 
 Regola:
 prima e dopo questa modifica eseguire il controllo anti-doppio-player.
+
+## Shop path / funzionamento prima, grafica dopo
+
+Stato attuale:
+- La pagina `/shop` esiste e funziona come preview.
+- La grafica è migliorata ma non è ancora abbastanza vicina al riferimento MyDrugs / e-commerce fittizio moderno.
+- Per ora non continuare a rifinire la grafica: prima completare il funzionamento reale.
+
+Priorità prossime:
+1. Carrello stabile:
+   - aggiungi prodotto;
+   - aumenta quantità;
+   - diminuisci quantità;
+   - rimuovi prodotto;
+   - totale prodotti;
+   - spedizione separata.
+
+2. Checkout dati cliente:
+   - nome;
+   - cognome;
+   - email;
+   - telefono;
+   - indirizzo spedizione;
+   - indirizzo fatturazione;
+   - note ordine;
+   - riepilogo ordine.
+
+3. Email ordine:
+   - email a Douglas con dati cliente, prodotti, quantità, totale e indirizzi;
+   - email di conferma al cliente.
+
+4. Pagamento:
+   - prima PayPal sandbox;
+   - poi PayPal live solo quando il flusso ordine è stabile.
+
+5. Spedizioni:
+   - prima gestione manuale ordinata;
+   - poi valutare Sendcloud / Packlink / ShippyPro per etichette e tracking.
+
+Shop graphic polish da fare dopo:
+- rivedere completamente la grafica di `/shop`;
+- mantenere palette LOOK APP / #chaoscore: nero, bordeaux, rosso, verde neon leggero;
+- avvicinarsi di più al feel MyDrugs: e-commerce pulito, credibile, moderno, non solo terminal/dashboard;
+- product cards più professionali;
+- ricerca/categorie più belle;
+- carrello più fluido;
+- checkout più serio;
+- eventuali immagini prodotto o placeholder visuali più curati.
