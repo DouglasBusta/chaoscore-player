@@ -1077,7 +1077,7 @@
             </div>
 
             <div class="order-warning">
-              Pagamento non attivo: questo genera solo il riepilogo ordine. Nel prossimo step lo inviamo via email.
+              Pagamento in sandbox Stripe: genera il riepilogo ordine, poi procedi al checkout test.
             </div>
           </form>
 
@@ -1086,7 +1086,7 @@
             <div class="order-preview" id="order-preview">Nessun ordine generato.</div>
             <div class="order-send-actions">
               <button class="btn" type="button" id="copy-order">copy order</button>
-              <button class="btn primary" type="button" id="send-order-email">send order email</button>
+              <button class="btn primary" type="button" id="send-order-email">pay with Stripe</button>
             </div>
             <div class="order-email-status" id="order-email-status"></div>
           </section>
@@ -1365,20 +1365,25 @@ Checkout in modalità preview.`;
         return;
       }
 
+      if (!cart.length) {
+        status.textContent = "Aggiungi almeno un prodotto al carrello prima di pagare.";
+        return;
+      }
+
       const customerEmail = getFieldValue("customer-email");
       const customerName = [getFieldValue("customer-name"), getFieldValue("customer-surname")]
         .filter(Boolean)
         .join(" ");
 
       if (!customerEmail || !customerEmail.includes("@")) {
-        status.textContent = "Inserisci una email cliente valida prima di inviare.";
+        status.textContent = "Inserisci una email cliente valida prima di pagare.";
         return;
       }
 
-      status.textContent = "Invio ordine in corso...";
+      status.textContent = "Apro checkout Stripe in sandbox...";
 
       try {
-        const response = await fetch("/api/send-order", {
+        const response = await fetch("/api/create-checkout-session", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -1386,7 +1391,11 @@ Checkout in modalità preview.`;
           body: JSON.stringify({
             orderText: text,
             customerEmail,
-            customerName
+            customerName,
+            cart: cart.map((item) => ({
+              id: item.id,
+              qty: item.qty
+            }))
           })
         });
 
@@ -1402,14 +1411,14 @@ Checkout in modalità preview.`;
           };
         }
 
-        if (!response.ok || !result.ok) {
-          status.textContent = "Errore invio ordine (" + response.status + "): " + (result.error || "errore non specificato");
+        if (!response.ok || !result.ok || !result.url) {
+          status.textContent = "Errore checkout Stripe (" + response.status + "): " + (result.error || "errore non specificato");
           return;
         }
 
-        status.textContent = "Ordine inviato: email a LOOK APP SHOP + conferma cliente mandate dal server.";
+        window.location.href = result.url;
       } catch (error) {
-        status.textContent = "Errore rete/server durante l’invio ordine: " + (error && error.message ? error.message : "errore non specificato");
+        status.textContent = "Errore rete/server durante il checkout Stripe: " + (error && error.message ? error.message : "errore non specificato");
       }
     }
 
