@@ -726,6 +726,118 @@
         min-height: 310px;
       }
     }
+  
+    .checkout-form-section {
+      padding: 0 14px 14px;
+    }
+
+    .checkout-form-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 12px;
+    }
+
+    .checkout-form-card,
+    .order-preview-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(0,0,0,.24);
+      padding: 14px;
+    }
+
+    .checkout-form-card h3,
+    .order-preview-card h3 {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: -.04em;
+      font-size: .98rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: rgba(242,234,223,.56);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .58rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid rgba(242,234,223,.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      color: var(--paper);
+      outline: none;
+      padding: 11px 12px;
+      font-size: .82rem;
+    }
+
+    .field textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(242,234,223,.34);
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: rgba(91,255,189,.32);
+      box-shadow: 0 0 0 3px rgba(91,255,189,.055);
+    }
+
+    .checkout-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .order-preview {
+      min-height: 260px;
+      border: 1px dashed rgba(242,234,223,.16);
+      border-radius: 16px;
+      padding: 12px;
+      color: rgba(242,234,223,.66);
+      font-size: .72rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      overflow: auto;
+      background: rgba(255,255,255,.026);
+    }
+
+    .order-warning {
+      margin-top: 10px;
+      color: rgba(255,228,138,.82);
+      font-size: .70rem;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 980px) {
+      .checkout-form-grid,
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -871,7 +983,77 @@
         </div>
       </section>
 
-      <section class="info-row">
+      
+      <section class="checkout-form-section" id="checkout">
+        <div class="catalog-head">
+          <h2>Checkout</h2>
+          <div class="tabs">
+            <span class="tab active">customer</span>
+            <span class="tab">shipping</span>
+            <span class="tab">billing</span>
+          </div>
+        </div>
+
+        <div class="checkout-form-grid">
+          <form class="checkout-form-card" id="checkout-form">
+            <h3>Customer data</h3>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="customer-name">Nome</label>
+                <input id="customer-name" name="name" autocomplete="given-name" placeholder="Douglas" required>
+              </div>
+
+              <div class="field">
+                <label for="customer-surname">Cognome</label>
+                <input id="customer-surname" name="surname" autocomplete="family-name" placeholder="Busta" required>
+              </div>
+
+              <div class="field">
+                <label for="customer-email">Email</label>
+                <input id="customer-email" name="email" type="email" autocomplete="email" placeholder="email@esempio.com" required>
+              </div>
+
+              <div class="field">
+                <label for="customer-phone">Telefono</label>
+                <input id="customer-phone" name="phone" autocomplete="tel" placeholder="+39 ..." required>
+              </div>
+
+              <div class="field full">
+                <label for="shipping-address">Indirizzo spedizione</label>
+                <textarea id="shipping-address" name="shipping" autocomplete="shipping street-address" placeholder="Via, numero civico, CAP, città, provincia, paese" required></textarea>
+              </div>
+
+              <div class="field full">
+                <label for="billing-address">Indirizzo fatturazione</label>
+                <textarea id="billing-address" name="billing" autocomplete="billing street-address" placeholder="Lascia uguale alla spedizione oppure inserisci un indirizzo diverso"></textarea>
+              </div>
+
+              <div class="field full">
+                <label for="order-notes">Note ordine</label>
+                <textarea id="order-notes" name="notes" placeholder="Taglia, colore, istruzioni consegna, note varie..."></textarea>
+              </div>
+            </div>
+
+            <div class="checkout-actions">
+              <button class="btn primary" type="button" id="generate-order">generate order preview</button>
+              <button class="btn" type="reset" id="clear-checkout">clear form</button>
+            </div>
+
+            <div class="order-warning">
+              Pagamento non attivo: questo genera solo il riepilogo ordine. Nel prossimo step lo inviamo via email.
+            </div>
+          </form>
+
+          <section class="order-preview-card">
+            <h3>Order preview</h3>
+            <div class="order-preview" id="order-preview">Nessun ordine generato.</div>
+          </section>
+        </div>
+      </section>
+
+
+<section class="info-row">
         <div class="info">
           <h3>Next checkout step</h3>
           <p>Aggiungeremo nome, cognome, email, telefono, indirizzo spedizione, indirizzo fatturazione, note ordine e riepilogo automatico.</p>
@@ -1022,7 +1204,89 @@
       });
     });
 
+
+    function cartSummaryText() {
+      if (!cart.length) return "Carrello vuoto";
+
+      return cart.map((item) => {
+        const lineTotal = item.price * item.qty;
+        return `- ${item.name} × ${item.qty} = ${euro(lineTotal)}`;
+      }).join("\n");
+    }
+
+    function cartTotalValue() {
+      return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    }
+
+    function getFieldValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function generateOrderPreview() {
+      const preview = document.getElementById("order-preview");
+
+      if (!cart.length) {
+        preview.textContent = "ERRORE: aggiungi almeno un prodotto al carrello prima di generare l’ordine.";
+        return;
+      }
+
+      const name = getFieldValue("customer-name");
+      const surname = getFieldValue("customer-surname");
+      const email = getFieldValue("customer-email");
+      const phone = getFieldValue("customer-phone");
+      const shipping = getFieldValue("shipping-address");
+      const billing = getFieldValue("billing-address") || "Uguale a spedizione";
+      const notes = getFieldValue("order-notes") || "Nessuna nota";
+
+      if (!name || !surname || !email || !phone || !shipping) {
+        preview.textContent = "ERRORE: compila nome, cognome, email, telefono e indirizzo spedizione.";
+        return;
+      }
+
+      const orderCode = "LOOK-" + Date.now().toString().slice(-8);
+      const total = euro(cartTotalValue());
+
+      preview.textContent =
+`ORDINE ${orderCode}
+
+CLIENTE
+Nome: ${name} ${surname}
+Email: ${email}
+Telefono: ${phone}
+
+PRODOTTI
+${cartSummaryText()}
+
+Totale prodotti: ${total}
+Spedizione: da calcolare
+
+INDIRIZZO SPEDIZIONE
+${shipping}
+
+INDIRIZZO FATTURAZIONE
+${billing}
+
+NOTE
+${notes}
+
+STATO
+Pagamento non ancora effettuato.
+Checkout in modalità preview.`;
+
+      preview.dataset.orderCode = orderCode;
+    }
+
+    document.getElementById("generate-order").addEventListener("click", generateOrderPreview);
+
+    document.getElementById("clear-checkout").addEventListener("click", () => {
+      setTimeout(() => {
+        document.getElementById("order-preview").textContent = "Nessun ordine generato.";
+      }, 0);
+    });
+
     renderCart();
+
   </script>
 </body>
 </html>
