@@ -1379,53 +1379,37 @@
   </style>
   <link rel="stylesheet" href="/busta-mobile-desktopish.css?v=1">
 
-
 <style id="busta-chaos-shop-clean-card-style">
-  [data-chaoscore-card],
-  [data-shop-card] {
+  [data-chaoscore-card].busta-chaoscore-cover-card,
+  [data-shop-card].busta-chaoscore-cover-card {
     position: relative !important;
     overflow: hidden !important;
     isolation: isolate !important;
     text-decoration: none !important;
   }
 
-  [data-chaoscore-card]::before,
-  [data-shop-card]::before {
+  [data-chaoscore-card].busta-chaoscore-cover-card::before,
+  [data-shop-card].busta-chaoscore-cover-card::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: var(--busta-card-bg);
+    background: var(--chaos-cover);
     background-size: cover;
     background-position: center;
-    opacity: 0.88;
+    opacity: 0.78;
   }
 
-  [data-chaoscore-card]::after,
-  [data-shop-card]::after {
+  [data-shop-card].busta-chaoscore-cover-card::after {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.48));
-  }
-
-  [data-shop-card]::before {
     background:
-      radial-gradient(circle at 78% 18%, rgba(255, 44, 84, 0.36), transparent 8.5rem),
-      radial-gradient(circle at 18% 72%, rgba(35, 255, 172, 0.10), transparent 7rem),
-      linear-gradient(135deg, rgba(82, 5, 18, 0.96), rgba(4, 8, 9, 0.98));
-    opacity: 1;
-  }
-
-  [data-shop-card]::after {
-    background:
-      linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(255,255,255,0.035) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.46));
-    background-size: 18px 18px, 18px 18px, auto;
+      radial-gradient(circle at 78% 18%, rgba(190, 28, 48, 0.42), transparent 9rem),
+      linear-gradient(135deg, rgba(70, 8, 16, 0.62), rgba(8, 7, 7, 0.50));
   }
 
   .busta-special-card-inner {
@@ -1436,48 +1420,26 @@
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-end !important;
-    align-items: flex-start !important;
-    text-align: left !important;
-    gap: 7px !important;
   }
 
   .busta-special-card-kicker {
-    display: inline-flex !important;
-    width: max-content !important;
-    max-width: 100% !important;
     color: rgba(216,247,207,0.86) !important;
     text-transform: uppercase !important;
     letter-spacing: 0.16em !important;
-    font-size: 0.62rem !important;
-    line-height: 1 !important;
-    margin: 0 !important;
-  }
-
-  [data-shop-card] .busta-special-card-kicker {
-    color: rgba(99,255,193,0.88) !important;
+    font-size: 0.7rem !important;
+    margin-bottom: 10px !important;
   }
 
   .busta-special-card-title {
     margin: 0 !important;
-    padding: 0 !important;
-    color: rgba(245,238,224,0.98) !important;
-    line-height: 0.88 !important;
-    letter-spacing: -0.075em !important;
-    text-transform: uppercase !important;
-    max-width: 12ch !important;
   }
 
   .busta-special-card-copy {
     color: rgba(231,224,210,0.78) !important;
-    line-height: 1.28 !important;
-    font-size: 0.68rem !important;
-    margin: 0 !important;
+    line-height: 1.45 !important;
+    font-size: 0.72rem !important;
+    margin-top: 8px !important;
     max-width: 92% !important;
-  }
-
-  [data-shop-card] .busta-special-card-copy {
-    color: rgba(231,224,210,0.82) !important;
-    letter-spacing: 0.02em !important;
   }
 </style>
 
@@ -2398,6 +2360,100 @@
     });
   </script>
 
+  <script id="busta-chaoscore-card-safe">
+    window.addEventListener("DOMContentLoaded", () => {
+      const containers = [
+        document.querySelector(".folder-grid"),
+        document.querySelector(".files-grid"),
+        document.querySelector(".archive-grid"),
+        document.querySelector(".evidence-grid"),
+        document.querySelector("main")
+      ].filter(Boolean);
+
+      const container = containers[0];
+      if (!container) return;
+
+      const firstRealCard = Array.from(container.children).find(el => {
+        return (
+          el instanceof HTMLElement &&
+          !el.hasAttribute("data-chaoscore-card") &&
+          !el.hasAttribute("data-shop-card")
+        );
+      });
+
+      function baseClassName() {
+        return firstRealCard ? firstRealCard.className : "";
+      }
+
+      function makeCard({ href, dataAttr, extraClass, kicker, title, copy, cover }) {
+        const card = document.createElement("a");
+
+        card.href = href;
+        card.className = baseClassName();
+        card.classList.add("busta-chaoscore-cover-card");
+        card.classList.add(extraClass);
+        card.setAttribute(dataAttr, "true");
+        card.style.setProperty("--chaos-cover", cover);
+
+        card.innerHTML = `
+          <div class="busta-special-card-inner">
+            <div class="busta-special-card-kicker">${kicker}</div>
+            <h2 class="busta-special-card-title">${title}</h2>
+            <div class="busta-special-card-copy">${copy}</div>
+          </div>
+        `;
+
+        return card;
+      }
+
+      function makeChaosCard() {
+        return makeCard({
+          href: "/chaoscore",
+          dataAttr: "data-chaoscore-card",
+          extraClass: "busta-chaoscore-entry-card",
+          kicker: "Private Album File",
+          title: "Listen to<br>#chaoscore",
+          copy: "NFC-only access. Scan your #Chaoscore tag to unlock.",
+          cover: "url('/chaoscore-cover.png')"
+        });
+      }
+
+      function makeShopCard() {
+        return makeCard({
+          href: "/shop",
+          dataAttr: "data-shop-card",
+          extraClass: "busta-shop-cover-card",
+          kicker: "Supply Drop",
+          title: "Enter the<br>shop",
+          copy: "NFC tags / merch / stickers.",
+          cover: "linear-gradient(135deg, rgba(70,8,16,0.95), rgba(9,8,8,0.96))"
+        });
+      }
+
+      let chaosCard = document.querySelector("[data-chaoscore-card]");
+      let shopCard = document.querySelector("[data-shop-card]");
+
+      if (!chaosCard) {
+        chaosCard = makeChaosCard();
+        container.prepend(chaosCard);
+      } else {
+        const freshChaos = makeChaosCard();
+        chaosCard.replaceWith(freshChaos);
+        chaosCard = freshChaos;
+      }
+
+      if (!shopCard) {
+        shopCard = makeShopCard();
+        chaosCard.insertAdjacentElement("afterend", shopCard);
+      } else {
+        const freshShop = makeShopCard();
+        shopCard.replaceWith(freshShop);
+        shopCard = freshShop;
+        chaosCard.insertAdjacentElement("afterend", shopCard);
+      }
+    });
+  </script>
+
 
 
 
@@ -2819,80 +2875,5 @@
 
   <script src="/other-busta-files-reset.js"></script>
   <script src="/busta-actions-reset.js?v=2"></script>
-
-  <script id="busta-chaoscore-card-safe">
-    window.addEventListener("DOMContentLoaded", () => {
-      const containers = [
-        document.querySelector(".folder-grid"),
-        document.querySelector(".files-grid"),
-        document.querySelector(".archive-grid"),
-        document.querySelector(".evidence-grid"),
-        document.querySelector("main")
-      ].filter(Boolean);
-
-      const container = containers[0];
-      if (!container) return;
-
-      document.querySelectorAll("[data-chaoscore-card], [data-shop-card]").forEach((el) => el.remove());
-
-      const firstRealCard = Array.from(container.children).find((el) => {
-        return el instanceof HTMLElement;
-      });
-
-      const baseClass = firstRealCard ? firstRealCard.className : "";
-
-      function makeCard({ href, dataAttr, extraClass, bg, kicker, title, copy }) {
-        const card = document.createElement("a");
-
-        card.href = href;
-        card.className = baseClass;
-        card.classList.add("busta-chaoscore-cover-card");
-        card.classList.add(extraClass);
-        card.setAttribute(dataAttr, "true");
-        card.style.setProperty("--busta-card-bg", bg);
-
-        card.innerHTML = `
-          <div class="busta-special-card-inner">
-            <div class="busta-special-card-kicker">${kicker}</div>
-            <h2 class="busta-special-card-title">${title}</h2>
-            <div class="busta-special-card-copy">${copy}</div>
-          </div>
-        `;
-
-        return card;
-      }
-
-      const chaosCard = makeCard({
-        href: "/chaoscore",
-        dataAttr: "data-chaoscore-card",
-        extraClass: "busta-chaoscore-entry-card",
-        bg: "url('/chaoscore-cover.png')",
-        kicker: "Private Album File",
-        title: "Listen to<br>#chaoscore",
-        copy: "NFC-only access. Scan your #Chaoscore tag to unlock."
-      });
-
-      const shopCard = makeCard({
-        href: "/shop",
-        dataAttr: "data-shop-card",
-        extraClass: "busta-shop-entry-card",
-        bg: "linear-gradient(135deg, rgba(82,5,18,0.96), rgba(4,8,9,0.98))",
-        kicker: "Encrypted Shop",
-        title: "Enter the<br>shop",
-        copy: "NFC tags / merch / stickers."
-      });
-
-      const anchor = firstRealCard || container.firstChild;
-
-      if (anchor) {
-        container.insertBefore(shopCard, anchor);
-        container.insertBefore(chaosCard, shopCard);
-      } else {
-        container.appendChild(chaosCard);
-        container.appendChild(shopCard);
-      }
-    });
-  </script>
-
 </body>
 </html>
