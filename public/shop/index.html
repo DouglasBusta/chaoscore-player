@@ -838,6 +838,22 @@
       }
     }
 
+  
+    .order-send-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .order-email-status {
+      margin-top: 10px;
+      color: rgba(91,255,189,.76);
+      font-size: .70rem;
+      line-height: 1.4;
+      min-height: 1em;
+    }
+
   </style>
 </head>
 <body>
@@ -1048,6 +1064,11 @@
           <section class="order-preview-card">
             <h3>Order preview</h3>
             <div class="order-preview" id="order-preview">Nessun ordine generato.</div>
+            <div class="order-send-actions">
+              <button class="btn" type="button" id="copy-order">copy order</button>
+              <button class="btn primary" type="button" id="send-order-email">send order email beta</button>
+            </div>
+            <div class="order-email-status" id="order-email-status"></div>
           </section>
         </div>
       </section>
@@ -1278,6 +1299,54 @@ Checkout in modalità preview.`;
     }
 
     document.getElementById("generate-order").addEventListener("click", generateOrderPreview);
+
+    function getOrderPreviewText() {
+      const preview = document.getElementById("order-preview");
+      const text = preview ? preview.textContent.trim() : "";
+
+      if (!text || text === "Nessun ordine generato." || text.startsWith("ERRORE:")) {
+        return "";
+      }
+
+      return text;
+    }
+
+    async function copyOrderPreview() {
+      const status = document.getElementById("order-email-status");
+      const text = getOrderPreviewText();
+
+      if (!text) {
+        status.textContent = "Genera prima un ordine valido.";
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = "Ordine copiato negli appunti.";
+      } catch (_) {
+        status.textContent = "Non riesco a copiare automaticamente: seleziona il riepilogo e copialo manualmente.";
+      }
+    }
+
+    function sendOrderEmailBeta() {
+      const status = document.getElementById("order-email-status");
+      const text = getOrderPreviewText();
+
+      if (!text) {
+        status.textContent = "Genera prima un ordine valido.";
+        return;
+      }
+
+      const subject = encodeURIComponent("Nuovo ordine LOOK SHOP / #chaoscore");
+      const body = encodeURIComponent(text);
+
+      window.location.href = "mailto:prod.douglasbusta@gmail.com?subject=" + subject + "&body=" + body;
+      status.textContent = "Email beta aperta nel client di posta.";
+    }
+
+    document.getElementById("copy-order").addEventListener("click", copyOrderPreview);
+    document.getElementById("send-order-email").addEventListener("click", sendOrderEmailBeta);
+
 
     document.getElementById("clear-checkout").addEventListener("click", () => {
       setTimeout(() => {
