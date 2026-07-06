@@ -1378,6 +1378,24 @@
     /* END USER SUBMISSIONS INSIDE OTHER */
   </style>
   <link rel="stylesheet" href="/busta-mobile-desktopish.css?v=1">
+
+<style id="busta-chaoscore-card-text-safety">
+  [data-chaoscore-card] .busta-special-card-kicker:has(+ .busta-special-card-title),
+  [data-chaoscore-card] [data-shop-title],
+  [data-chaoscore-card] .look-shop-busta-card,
+  [data-chaoscore-card] [data-shop-card] {
+    display: none !important;
+  }
+
+  [data-chaoscore-card] .busta-special-card-copy {
+    color: rgba(231,224,210,0.78) !important;
+  }
+
+  [data-shop-card] .busta-special-card-copy::after {
+    content: " / and more";
+  }
+</style>
+
 </head>
 <body>
   <main class="page">
