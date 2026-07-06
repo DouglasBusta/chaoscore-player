@@ -1379,6 +1379,71 @@
   </style>
   <link rel="stylesheet" href="/busta-mobile-desktopish.css?v=1">
   <link rel="stylesheet" href="/look-shop-busta-card.css?v=7">
+
+<style id="busta-chaos-shop-clean-card-style">
+  [data-chaoscore-card].busta-chaoscore-cover-card,
+  [data-shop-card].busta-chaoscore-cover-card {
+    position: relative !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+    text-decoration: none !important;
+  }
+
+  [data-chaoscore-card].busta-chaoscore-cover-card::before,
+  [data-shop-card].busta-chaoscore-cover-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: var(--chaos-cover);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.78;
+  }
+
+  [data-shop-card].busta-chaoscore-cover-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(190, 28, 48, 0.42), transparent 9rem),
+      linear-gradient(135deg, rgba(70, 8, 16, 0.62), rgba(8, 7, 7, 0.50));
+  }
+
+  .busta-special-card-inner {
+    position: relative !important;
+    z-index: 3 !important;
+    height: 100% !important;
+    min-height: inherit !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+  }
+
+  .busta-special-card-kicker {
+    color: rgba(216,247,207,0.86) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.16em !important;
+    font-size: 0.7rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .busta-special-card-title {
+    margin: 0 !important;
+  }
+
+  .busta-special-card-copy {
+    color: rgba(231,224,210,0.78) !important;
+    line-height: 1.45 !important;
+    font-size: 0.72rem !important;
+    margin-top: 8px !important;
+    max-width: 92% !important;
+  }
+</style>
+
 </head>
 <body>
   <main class="page">
@@ -2317,74 +2382,53 @@
         );
       });
 
-      function makeBaseCard() {
-        if (firstRealCard) {
-          return firstRealCard.cloneNode(true);
-        }
-
-        return document.createElement("a");
+      function baseClassName() {
+        return firstRealCard ? firstRealCard.className : "";
       }
 
-      function ensureAnchor(card, href, dataName) {
-        card.href = href;
+      function makeCard({ href, dataAttr, extraClass, kicker, title, copy, cover }) {
+        const card = document.createElement("a");
 
-        if (card.tagName.toLowerCase() !== "a") {
-          const wrapper = document.createElement("a");
-          wrapper.href = href;
-          wrapper.className = card.className;
-          wrapper.setAttribute(dataName, "true");
-          wrapper.style.cssText = card.style.cssText;
-          return wrapper;
-        }
+        card.href = href;
+        card.className = baseClassName();
+        card.classList.add("busta-chaoscore-cover-card");
+        card.classList.add(extraClass);
+        card.setAttribute(dataAttr, "true");
+        card.style.setProperty("--chaos-cover", cover);
+
+        card.innerHTML = `
+          <div class="busta-special-card-inner">
+            <div class="busta-special-card-kicker">${kicker}</div>
+            <h2 class="busta-special-card-title">${title}</h2>
+            <div class="busta-special-card-copy">${copy}</div>
+          </div>
+        `;
 
         return card;
       }
 
       function makeChaosCard() {
-        let card = makeBaseCard();
-
-        card.setAttribute("data-chaoscore-card", "true");
-        card.classList.add("busta-chaoscore-cover-card");
-        card.style.setProperty("--chaos-cover", "url('/chaoscore-cover.png')");
-        card = ensureAnchor(card, "/chaoscore", "data-chaoscore-card");
-
-        card.innerHTML = `
-          <div style="position:relative;z-index:1;">
-            <div style="color:rgba(216,247,207,0.86);text-transform:uppercase;letter-spacing:0.16em;font-size:0.7rem;margin-bottom:10px;">
-              Private Album File
-            </div>
-            <h2 data-chaos-title>Listen to<br>#chaoscore</h2>
-            <div class="chaos-card-copy" style="color:rgba(231,224,210,0.78);line-height:1.45;font-size:0.72rem;margin-top:8px;max-width:92%;">
-              NFC-only access. Scan your #Chaoscore tag to unlock.
-            </div>
-          </div>
-        `;
-
-        return card;
+        return makeCard({
+          href: "/chaoscore",
+          dataAttr: "data-chaoscore-card",
+          extraClass: "busta-chaoscore-entry-card",
+          kicker: "Private Album File",
+          title: "Listen to<br>#chaoscore",
+          copy: "NFC-only access. Scan your #Chaoscore tag to unlock.",
+          cover: "url('/chaoscore-cover.png')"
+        });
       }
 
       function makeShopCard() {
-        let card = makeBaseCard();
-
-        card.setAttribute("data-shop-card", "true");
-        card.classList.add("busta-chaoscore-cover-card");
-        card.classList.add("busta-shop-cover-card");
-        card.style.setProperty("--chaos-cover", "linear-gradient(135deg, rgba(70,8,16,0.95), rgba(9,8,8,0.96))");
-        card = ensureAnchor(card, "/shop", "data-shop-card");
-
-        card.innerHTML = `
-          <div style="position:relative;z-index:1;">
-            <div style="color:rgba(216,247,207,0.86);text-transform:uppercase;letter-spacing:0.16em;font-size:0.7rem;margin-bottom:10px;">
-              Supply Drop
-            </div>
-            <h2 data-shop-title>Enter the<br>shop</h2>
-            <div class="chaos-card-copy" style="color:rgba(231,224,210,0.78);line-height:1.45;font-size:0.72rem;margin-top:8px;max-width:92%;">
-              NFC tags / merch / stickers.
-            </div>
-          </div>
-        `;
-
-        return card;
+        return makeCard({
+          href: "/shop",
+          dataAttr: "data-shop-card",
+          extraClass: "busta-shop-cover-card",
+          kicker: "Supply Drop",
+          title: "Enter the<br>shop",
+          copy: "NFC tags / merch / stickers.",
+          cover: "linear-gradient(135deg, rgba(70,8,16,0.95), rgba(9,8,8,0.96))"
+        });
       }
 
       let chaosCard = document.querySelector("[data-chaoscore-card]");
@@ -2393,16 +2437,25 @@
       if (!chaosCard) {
         chaosCard = makeChaosCard();
         container.prepend(chaosCard);
+      } else {
+        const freshChaos = makeChaosCard();
+        chaosCard.replaceWith(freshChaos);
+        chaosCard = freshChaos;
       }
 
       if (!shopCard) {
         shopCard = makeShopCard();
         chaosCard.insertAdjacentElement("afterend", shopCard);
-      } else if (shopCard.previousElementSibling !== chaosCard) {
+      } else {
+        const freshShop = makeShopCard();
+        shopCard.replaceWith(freshShop);
+        shopCard = freshShop;
         chaosCard.insertAdjacentElement("afterend", shopCard);
       }
     });
   </script>
+
+
 
 
 
