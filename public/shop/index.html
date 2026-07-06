@@ -1086,7 +1086,7 @@
             <div class="order-preview" id="order-preview">Nessun ordine generato.</div>
             <div class="order-send-actions">
               <button class="btn" type="button" id="copy-order">copy order</button>
-              <button class="btn primary" type="button" id="send-order-email">send order email beta</button>
+              <button class="btn primary" type="button" id="send-order-email">send order email</button>
             </div>
             <div class="order-email-status" id="order-email-status"></div>
           </section>
@@ -1356,7 +1356,7 @@ Checkout in modalità preview.`;
       }
     }
 
-    function sendOrderEmailBeta() {
+    async function sendOrderEmailBeta() {
       const status = document.getElementById("order-email-status");
       const text = getOrderPreviewText();
 
@@ -1365,11 +1365,42 @@ Checkout in modalità preview.`;
         return;
       }
 
-      const subject = encodeURIComponent("Nuovo ordine LOOK SHOP / #chaoscore");
-      const body = encodeURIComponent(text);
+      const customerEmail = getFieldValue("customer-email");
+      const customerName = [getFieldValue("customer-name"), getFieldValue("customer-surname")]
+        .filter(Boolean)
+        .join(" ");
 
-      window.location.href = "mailto:prod.douglasbusta@gmail.com?subject=" + subject + "&body=" + body;
-      status.textContent = "Email beta aperta nel client di posta.";
+      if (!customerEmail || !customerEmail.includes("@")) {
+        status.textContent = "Inserisci una email cliente valida prima di inviare.";
+        return;
+      }
+
+      status.textContent = "Invio ordine in corso...";
+
+      try {
+        const response = await fetch("/api/send-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            orderText: text,
+            customerEmail,
+            customerName
+          })
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || !result.ok) {
+          status.textContent = "Errore invio ordine: " + (result.error || "errore sconosciuto");
+          return;
+        }
+
+        status.textContent = "Ordine inviato: email a LOOK SHOP + conferma cliente mandate dal server.";
+      } catch (error) {
+        status.textContent = "Errore rete/server durante l’invio ordine.";
+      }
     }
 
     document.getElementById("copy-order").addEventListener("click", copyOrderPreview);

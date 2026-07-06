@@ -177,3 +177,26 @@ Shop graphic polish da fare dopo:
 - carrello più fluido;
 - checkout più serio;
 - eventuali immagini prodotto o placeholder visuali più curati.
+
+## Shop account + email dominio
+
+Obiettivo:
+- Prima del pagamento vero, l’utente dovrà accedere o creare un account.
+- Non usare un finto login localStorage per il checkout reale.
+- Implementare auth reale nello step successivo, dopo email backend.
+
+Email ordine:
+- Eliminare mailto.
+- Usare backend Vercel `/api/send-order`.
+- Inviare email da `shop@lookapp.org`.
+- Email admin a `shop@lookapp.org`.
+- Email conferma al cliente.
+- Variabili Vercel richieste:
+  - `RESEND_API_KEY`
+  - `SHOP_FROM_EMAIL=LOOK SHOP <shop@lookapp.org>`
+  - `SHOP_ADMIN_EMAIL=shop@lookapp.org`
+
+Setup dominio:
+- Verificare `lookapp.org` o subdomain dedicato in Resend.
+- Aggiungere record DNS richiesti da Resend per SPF/DKIM.
+- Creare inbox o forwarding per ricevere davvero le email a `shop@lookapp.org`.
