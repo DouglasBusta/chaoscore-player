@@ -6,42 +6,43 @@
 
   const SHOP_STYLE_ID = "look-shop-busta-card-runtime-style";
 
-  function getShopStyle() {
+  function getShopStyleText() {
     return `
       .look-shop-busta-card {
         position: relative !important;
+        min-height: 118px !important;
+        max-height: 150px !important;
+        width: 100% !important;
+        border-radius: 18px !important;
         overflow: hidden !important;
+        display: block !important;
         text-decoration: none !important;
         color: inherit !important;
+        border: 1px solid rgba(231,224,210,0.14) !important;
+        background:
+          radial-gradient(circle at 76% 18%, rgba(180,24,45,0.34), transparent 9rem),
+          linear-gradient(135deg, rgba(62,8,15,0.94), rgba(9,8,8,0.94)) !important;
+        box-shadow: 0 18px 44px rgba(0,0,0,0.28) !important;
         isolation: isolate !important;
-      }
-
-      .look-shop-busta-card,
-      .look-shop-busta-card * {
-        box-sizing: border-box !important;
       }
 
       .look-shop-busta-card-bg {
         position: absolute !important;
         inset: 0 !important;
         z-index: 0 !important;
-        opacity: 0.82 !important;
+        opacity: 0.72 !important;
         background:
-          radial-gradient(circle at 74% 18%, rgba(180,24,45,0.34), transparent 9rem),
-          linear-gradient(135deg, rgba(62,8,15,0.92), rgba(9,8,8,0.92)),
           linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
           linear-gradient(180deg, rgba(255,255,255,0.03) 1px, transparent 1px) !important;
-        background-size: auto, auto, 18px 18px, 18px 18px !important;
+        background-size: 18px 18px !important;
         pointer-events: none !important;
       }
 
       .look-shop-busta-card-copy {
         position: relative !important;
         z-index: 2 !important;
-        width: 100% !important;
-        height: 100% !important;
-        min-height: inherit !important;
-        padding: 18px !important;
+        min-height: 118px !important;
+        padding: 16px !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: flex-end !important;
@@ -52,7 +53,7 @@
 
       .look-shop-busta-card-copy span {
         display: block !important;
-        font-size: 0.62rem !important;
+        font-size: 0.58rem !important;
         letter-spacing: 0.18em !important;
         text-transform: uppercase !important;
         color: rgba(231,224,210,0.58) !important;
@@ -61,7 +62,7 @@
       .look-shop-busta-card-copy strong {
         display: block !important;
         max-width: 13ch !important;
-        font-size: clamp(1.12rem, 2vw, 1.72rem) !important;
+        font-size: clamp(1.05rem, 1.8vw, 1.55rem) !important;
         line-height: 0.92 !important;
         letter-spacing: -0.06em !important;
         text-transform: uppercase !important;
@@ -70,8 +71,8 @@
 
       .look-shop-busta-card-copy small {
         display: block !important;
-        max-width: 26ch !important;
-        font-size: 0.62rem !important;
+        max-width: 24ch !important;
+        font-size: 0.58rem !important;
         line-height: 1.15 !important;
         letter-spacing: 0.08em !important;
         text-transform: uppercase !important;
@@ -91,52 +92,41 @@
       root.head.appendChild(style);
     }
 
-    style.textContent = getShopStyle();
+    style.textContent = getShopStyleText();
   }
 
-  function textOf(el) {
+  function cleanText(el) {
     return (el && el.textContent ? el.textContent : "").replace(/\s+/g, " ").trim().toLowerCase();
   }
 
-  function findChaosCard(root) {
-    const nodes = Array.from(root.querySelectorAll("a, article, section, div, button"));
+  function findListenCard(root) {
+    const all = Array.from(root.querySelectorAll("a, article, div, section, button"));
 
-    return nodes.find(function (el) {
-      const text = textOf(el);
-      return text.includes("listen to") && text.includes("chaoscore");
+    const hits = all.filter(function (el) {
+      const text = cleanText(el);
+      if (!text.includes("listen to") || !text.includes("chaoscore")) return false;
+
+      const rect = el.getBoundingClientRect();
+      return rect.width >= 150 && rect.width <= 360 && rect.height >= 70 && rect.height <= 170;
     });
-  }
 
-  function findRealCard(el) {
-    if (!el) return null;
+    hits.sort(function (a, b) {
+      const ar = a.getBoundingClientRect();
+      const br = b.getBoundingClientRect();
+      return (ar.width * ar.height) - (br.width * br.height);
+    });
 
-    let current = el;
-
-    for (let i = 0; i < 9 && current; i++) {
-      const rect = current.getBoundingClientRect();
-
-      if (
-        rect.width >= 170 &&
-        rect.width <= 560 &&
-        rect.height >= 70 &&
-        rect.height <= 300
-      ) {
-        return current;
-      }
-
-      current = current.parentElement;
-    }
-
-    return el;
+    return hits[0] || null;
   }
 
   function makeShopCard(root) {
-    const shopCard = root.createElement("a");
+    const card = root.createElement("a");
 
-    shopCard.href = "/shop";
-    shopCard.setAttribute("aria-label", "Enter the LOOK SHOP");
+    card.className = "look-shop-busta-card";
+    card.href = "/shop";
+    card.setAttribute("aria-label", "Enter the LOOK SHOP");
 
-    shopCard.innerHTML = `
+    card.innerHTML = `
       <div class="look-shop-busta-card-bg"></div>
       <div class="look-shop-busta-card-copy">
         <span>SUPPLY DROP</span>
@@ -145,29 +135,7 @@
       </div>
     `;
 
-    return shopCard;
-  }
-
-  function syncShopCardShape(shopCard, chaosCard) {
-    if (!shopCard || !chaosCard) return;
-
-    /*
-      Punto chiave:
-      la card shop eredita le classi della card LISTEN TO #CHAOSCORE,
-      quindi prende la stessa forma, larghezza e comportamento nella griglia.
-    */
-    shopCard.className = chaosCard.className || "";
-    shopCard.classList.add("look-shop-busta-card");
-
-    const rect = chaosCard.getBoundingClientRect();
-
-    if (rect.height > 60) {
-      shopCard.style.minHeight = Math.round(rect.height) + "px";
-    }
-
-    shopCard.style.width = "";
-    shopCard.style.maxWidth = "";
-    shopCard.style.gridColumn = "";
+    return card;
   }
 
   function mountShopCardIn(root) {
@@ -175,10 +143,8 @@
 
     ensureShopStyle(root);
 
-    const chaosHit = findChaosCard(root);
-    const chaosCard = findRealCard(chaosHit);
-
-    if (!chaosCard || !chaosCard.parentElement) return false;
+    const listenCard = findListenCard(root);
+    if (!listenCard || !listenCard.parentElement) return false;
 
     let shopCard = root.querySelector(".look-shop-busta-card");
 
@@ -186,16 +152,21 @@
       shopCard = makeShopCard(root);
     }
 
-    syncShopCardShape(shopCard, chaosCard);
-
     /*
-      Punto chiave:
-      la shop card viene messa subito DOPO listen to #chaoscore.
-      Se la griglia ha spazio, sta di fianco.
-      Se non ha spazio, va a capo come una normale card.
+      Copiamo solo le classi della card giusta.
+      Non copiamo dimensioni da contenitori grandi.
     */
-    if (shopCard.previousElementSibling !== chaosCard) {
-      chaosCard.insertAdjacentElement("afterend", shopCard);
+    shopCard.className = listenCard.className || "";
+    shopCard.classList.add("look-shop-busta-card");
+
+    shopCard.style.gridColumn = "auto";
+    shopCard.style.width = "";
+    shopCard.style.maxWidth = "";
+    shopCard.style.minHeight = "118px";
+    shopCard.style.maxHeight = "150px";
+
+    if (shopCard.previousElementSibling !== listenCard) {
+      listenCard.insertAdjacentElement("afterend", shopCard);
     }
 
     return true;
@@ -227,14 +198,6 @@
 
     window.addEventListener("resize", function () {
       setTimeout(mountEverywhere, 100);
-    });
-
-    document.querySelectorAll("iframe").forEach(function (frame) {
-      frame.addEventListener("load", function () {
-        setTimeout(mountEverywhere, 100);
-        setTimeout(mountEverywhere, 500);
-        setTimeout(mountEverywhere, 1200);
-      });
     });
 
     window.__lookShopMountEverywhere = mountEverywhere;
