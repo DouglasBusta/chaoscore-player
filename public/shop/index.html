@@ -1036,8 +1036,28 @@
               </div>
 
               <div class="field full">
-                <label for="shipping-address">Indirizzo spedizione</label>
-                <textarea id="shipping-address" name="shipping" autocomplete="shipping street-address" placeholder="Via, numero civico, CAP, città, provincia, paese" required></textarea>
+                <label for="shipping-address">Via / indirizzo spedizione</label>
+                <textarea id="shipping-address" name="shipping" autocomplete="shipping street-address" placeholder="Via Toscana 63, interno, scala, note citofono..." required></textarea>
+              </div>
+
+              <div class="field">
+                <label for="shipping-city">Città</label>
+                <input id="shipping-city" name="shipping_city" autocomplete="shipping address-level2" placeholder="Bologna" required>
+              </div>
+
+              <div class="field">
+                <label for="shipping-province">Provincia / Stato</label>
+                <input id="shipping-province" name="shipping_province" autocomplete="shipping address-level1" placeholder="BO" required>
+              </div>
+
+              <div class="field">
+                <label for="shipping-zip">CAP / ZIP code</label>
+                <input id="shipping-zip" name="shipping_zip" autocomplete="shipping postal-code" placeholder="40139" required>
+              </div>
+
+              <div class="field">
+                <label for="shipping-country">Paese</label>
+                <input id="shipping-country" name="shipping_country" autocomplete="shipping country-name" placeholder="Italia" required>
               </div>
 
               <div class="field full">
@@ -1257,11 +1277,15 @@
       const email = getFieldValue("customer-email");
       const phone = getFieldValue("customer-phone");
       const shipping = getFieldValue("shipping-address");
+      const city = getFieldValue("shipping-city");
+      const province = getFieldValue("shipping-province");
+      const zip = getFieldValue("shipping-zip");
+      const country = getFieldValue("shipping-country");
       const billing = getFieldValue("billing-address") || "Uguale a spedizione";
       const notes = getFieldValue("order-notes") || "Nessuna nota";
 
-      if (!name || !surname || !email || !phone || !shipping) {
-        preview.textContent = "ERRORE: compila nome, cognome, email, telefono e indirizzo spedizione.";
+      if (!name || !surname || !email || !phone || !shipping || !city || !province || !zip || !country) {
+        preview.textContent = "ERRORE: compila nome, cognome, email, telefono, via, città, provincia/stato, CAP/ZIP e paese.";
         return;
       }
 
@@ -1283,7 +1307,11 @@ Totale prodotti: ${total}
 Spedizione: da calcolare
 
 INDIRIZZO SPEDIZIONE
-${shipping}
+Via: ${shipping}
+Città: ${city}
+Provincia/Stato: ${province}
+CAP/ZIP: ${zip}
+Paese: ${country}
 
 INDIRIZZO FATTURAZIONE
 ${billing}
