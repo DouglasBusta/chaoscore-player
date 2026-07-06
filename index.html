@@ -2296,11 +2296,8 @@
     });
   </script>
 
-
   <script id="busta-chaoscore-card-safe">
     window.addEventListener("DOMContentLoaded", () => {
-      if (document.querySelector("[data-chaoscore-card]")) return;
-
       const containers = [
         document.querySelector(".folder-grid"),
         document.querySelector(".files-grid"),
@@ -2313,46 +2310,101 @@
       if (!container) return;
 
       const firstRealCard = Array.from(container.children).find(el => {
-        return el instanceof HTMLElement && !el.hasAttribute("data-chaoscore-card");
+        return (
+          el instanceof HTMLElement &&
+          !el.hasAttribute("data-chaoscore-card") &&
+          !el.hasAttribute("data-shop-card")
+        );
       });
 
-      let card;
+      function makeBaseCard() {
+        if (firstRealCard) {
+          return firstRealCard.cloneNode(true);
+        }
 
-      if (firstRealCard) {
-        card = firstRealCard.cloneNode(true);
-      } else {
-        card = document.createElement("a");
+        return document.createElement("a");
       }
 
-      card.setAttribute("data-chaoscore-card", "true");
-      card.classList.add("busta-chaoscore-cover-card");
-      card.style.setProperty("--chaos-cover", "url('/chaoscore-cover.png')");
-      card.href = "/chaoscore";
+      function ensureAnchor(card, href, dataName) {
+        card.href = href;
 
-      if (card.tagName.toLowerCase() !== "a") {
-        const wrapper = document.createElement("a");
-        wrapper.href = "/chaoscore";
-        wrapper.className = card.className;
-        wrapper.setAttribute("data-chaoscore-card", "true");
-        wrapper.style.cssText = card.style.cssText;
-        card = wrapper;
+        if (card.tagName.toLowerCase() !== "a") {
+          const wrapper = document.createElement("a");
+          wrapper.href = href;
+          wrapper.className = card.className;
+          wrapper.setAttribute(dataName, "true");
+          wrapper.style.cssText = card.style.cssText;
+          return wrapper;
+        }
+
+        return card;
       }
 
-      card.innerHTML = `
-        <div style="position:relative;z-index:1;">
-          <div style="color:rgba(216,247,207,0.86);text-transform:uppercase;letter-spacing:0.16em;font-size:0.7rem;margin-bottom:10px;">
-            Private Album File
-          </div>
-          <h2 data-chaos-title>Listen to<br>#chaoscore</h2>
-          <div class="chaos-card-copy" style="color:rgba(231,224,210,0.78);line-height:1.45;font-size:0.72rem;margin-top:8px;max-width:92%;">
-            NFC-only access. Scan your #Chaoscore tag to unlock.
-          </div>
-        </div>
-      `;
+      function makeChaosCard() {
+        let card = makeBaseCard();
 
-      container.prepend(card);
+        card.setAttribute("data-chaoscore-card", "true");
+        card.classList.add("busta-chaoscore-cover-card");
+        card.style.setProperty("--chaos-cover", "url('/chaoscore-cover.png')");
+        card = ensureAnchor(card, "/chaoscore", "data-chaoscore-card");
+
+        card.innerHTML = `
+          <div style="position:relative;z-index:1;">
+            <div style="color:rgba(216,247,207,0.86);text-transform:uppercase;letter-spacing:0.16em;font-size:0.7rem;margin-bottom:10px;">
+              Private Album File
+            </div>
+            <h2 data-chaos-title>Listen to<br>#chaoscore</h2>
+            <div class="chaos-card-copy" style="color:rgba(231,224,210,0.78);line-height:1.45;font-size:0.72rem;margin-top:8px;max-width:92%;">
+              NFC-only access. Scan your #Chaoscore tag to unlock.
+            </div>
+          </div>
+        `;
+
+        return card;
+      }
+
+      function makeShopCard() {
+        let card = makeBaseCard();
+
+        card.setAttribute("data-shop-card", "true");
+        card.classList.add("busta-chaoscore-cover-card");
+        card.classList.add("busta-shop-cover-card");
+        card.style.setProperty("--chaos-cover", "linear-gradient(135deg, rgba(70,8,16,0.95), rgba(9,8,8,0.96))");
+        card = ensureAnchor(card, "/shop", "data-shop-card");
+
+        card.innerHTML = `
+          <div style="position:relative;z-index:1;">
+            <div style="color:rgba(216,247,207,0.86);text-transform:uppercase;letter-spacing:0.16em;font-size:0.7rem;margin-bottom:10px;">
+              Supply Drop
+            </div>
+            <h2 data-shop-title>Enter the<br>shop</h2>
+            <div class="chaos-card-copy" style="color:rgba(231,224,210,0.78);line-height:1.45;font-size:0.72rem;margin-top:8px;max-width:92%;">
+              NFC tags / merch / stickers.
+            </div>
+          </div>
+        `;
+
+        return card;
+      }
+
+      let chaosCard = document.querySelector("[data-chaoscore-card]");
+      let shopCard = document.querySelector("[data-shop-card]");
+
+      if (!chaosCard) {
+        chaosCard = makeChaosCard();
+        container.prepend(chaosCard);
+      }
+
+      if (!shopCard) {
+        shopCard = makeShopCard();
+        chaosCard.insertAdjacentElement("afterend", shopCard);
+      } else if (shopCard.previousElementSibling !== chaosCard) {
+        chaosCard.insertAdjacentElement("afterend", shopCard);
+      }
     });
   </script>
+
+
 
 
   <script id="busta-app-download-buttons">
