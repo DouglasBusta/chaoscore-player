@@ -56,7 +56,7 @@ async function sendResendEmail({ apiKey, from, to, replyTo, subject, html }) {
   return data;
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return json(res, 405, {
       ok: false,
