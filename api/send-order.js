@@ -1,8 +1,6 @@
-const { Resend } = require("resend");
-
 function json(res, status, body) {
   res.statusCode = status;
-  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.end(JSON.stringify(body));
 }
 
@@ -19,9 +17,51 @@ function textToHtml(text) {
   return escapeHtml(text).replace(/\n/g, "<br>");
 }
 
+async function sendResendEmail({ apiKey, from, to, replyTo, subject, html }) {
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + apiKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from,
+      to: Array.isArray(to) ? to : [to],
+      reply_to: replyTo,
+      subject,
+      html
+    })
+  });
+
+  const text = await response.text();
+
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (_) {
+    data = { raw: text };
+  }
+
+  if (!response.ok) {
+    const message =
+      data.message ||
+      data.error ||
+      data.name ||
+      text ||
+      "Errore Resend non specificato";
+
+    throw new Error(message);
+  }
+
+  return data;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
-    return json(res, 405, { ok: false, error: "Method not allowed" });
+    return json(res, 405, {
+      ok: false,
+      error: "Method not allowed"
+    });
   }
 
   try {
@@ -43,14 +83,18 @@ module.exports = async function handler(req, res) {
     const customerName = String(body.customerName || "").trim();
 
     if (!orderText) {
-      return json(res, 400, { ok: false, error: "Order text mancante." });
+      return json(res, 400, {
+        ok: false,
+        error: "Order text mancante."
+      });
     }
 
     if (!customerEmail || !customerEmail.includes("@")) {
-      return json(res, 400, { ok: false, error: "Email cliente non valida." });
+      return json(res, 400, {
+        ok: false,
+        error: "Email cliente non valida."
+      });
     }
-
-    const resend = new Resend(apiKey);
 
     const subject = "Nuovo ordine LOOK SHOP / #chaoscore";
 
@@ -74,45 +118,33 @@ module.exports = async function handler(req, res) {
       </div>
     `;
 
-    const adminResult = await resend.emails.send({
+    const adminResult = await sendResendEmail({
+      apiKey,
       from: fromEmail,
-      to: [adminEmail],
+      to: adminEmail,
       replyTo: customerEmail,
       subject,
       html: adminHtml
     });
 
-    if (adminResult.error) {
-      return json(res, 500, {
-        ok: false,
-        error: adminResult.error.message || JSON.stringify(adminResult.error) || "Errore invio email admin. Controlla dominio mittente e API key Resend."
-      });
-    }
-
-    const customerResult = await resend.emails.send({
+    const customerResult = await sendResendEmail({
+      apiKey,
       from: fromEmail,
-      to: [customerEmail],
+      to: customerEmail,
       replyTo: adminEmail,
       subject: "Conferma ordine LOOK SHOP / #chaoscore",
       html: customerHtml
     });
 
-    if (customerResult.error) {
-      return json(res, 500, {
-        ok: false,
-        error: customerResult.error.message || JSON.stringify(customerResult.error) || "Errore invio email cliente. Controlla dominio mittente e API key Resend."
-      });
-    }
-
     return json(res, 200, {
       ok: true,
-      adminEmailId: adminResult.data && adminResult.data.id,
-      customerEmailId: customerResult.data && customerResult.data.id
+      adminEmailId: adminResult.id || null,
+      customerEmailId: customerResult.id || null
     });
   } catch (error) {
     return json(res, 500, {
       ok: false,
-      error: error && error.message ? error.message : "Errore server."
+      error: error && error.message ? error.message : "Errore server non specificato."
     });
   }
 };
