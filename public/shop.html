@@ -3,167 +3,267 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>LOOK SHOP — #chaoscore</title>
+  <title>LOOK SHOP — #chaoscore supply</title>
   <style>
     :root {
-      --bg: #050304;
-      --panel: rgba(255,255,255,.055);
-      --panel2: rgba(255,255,255,.085);
+      --bg: #030405;
+      --panel: rgba(10, 13, 14, 0.82);
+      --panel-soft: rgba(255, 255, 255, 0.045);
+      --panel-strong: rgba(255, 255, 255, 0.078);
       --text: #f2eadf;
-      --muted: rgba(242,234,223,.62);
-      --line: rgba(242,234,223,.14);
-      --red: #8b1422;
-      --red2: #d83a4f;
-      --shadow: 0 28px 80px rgba(0,0,0,.55);
+      --muted: rgba(242, 234, 223, 0.58);
+      --line: rgba(242, 234, 223, 0.13);
+      --red: #9b1325;
+      --red-hot: #ff3159;
+      --green: #5bffbd;
+      --yellow: #ffe48a;
+      --shadow: 0 30px 90px rgba(0, 0, 0, 0.62);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       min-height: 100%;
       background:
-        radial-gradient(circle at 50% 0%, rgba(185,24,48,.22), transparent 34rem),
-        radial-gradient(circle at 12% 20%, rgba(255,255,255,.055), transparent 18rem),
-        linear-gradient(180deg, #0a0506, var(--bg) 55%, #020202);
+        radial-gradient(circle at 18% 10%, rgba(165, 18, 40, 0.20), transparent 28rem),
+        radial-gradient(circle at 84% 4%, rgba(91, 255, 189, 0.08), transparent 18rem),
+        linear-gradient(180deg, #090506 0%, #030405 58%, #010101 100%);
       color: var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
 
-    body { padding: 22px; }
-    a { color: inherit; text-decoration: none; }
+    body {
+      padding: 22px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.28;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.032) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.026) 1px, transparent 1px);
+      background-size: 22px 22px;
+      mask-image: radial-gradient(circle at 50% 0%, black, transparent 76%);
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+    }
 
     .shop-shell {
-      width: min(1120px, 100%);
+      width: min(1180px, 100%);
       margin: 0 auto;
     }
 
     .topbar {
+      height: 52px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(91, 255, 189, 0.25);
+      background: rgba(91, 255, 189, 0.055);
+      color: var(--green);
+      font-weight: 900;
+      box-shadow: 0 0 24px rgba(91, 255, 189, 0.12);
+    }
+
+    .brand-text {
       display: grid;
       gap: 2px;
     }
 
-    .brand small {
+    .brand-text small {
       color: var(--muted);
-      letter-spacing: .18em;
       text-transform: uppercase;
-      font-size: .68rem;
+      letter-spacing: 0.16em;
+      font-size: 0.62rem;
     }
 
-    .brand strong {
-      font-size: clamp(1.4rem, 4vw, 3.1rem);
-      line-height: .92;
-      letter-spacing: -.08em;
-      text-transform: lowercase;
+    .brand-text strong {
+      text-transform: uppercase;
+      letter-spacing: -0.06em;
+      font-size: 1.15rem;
+      line-height: 1;
     }
 
     .back {
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.045);
+      background: rgba(255,255,255,0.04);
       color: var(--text);
       border-radius: 999px;
       padding: 10px 14px;
-      font-size: .78rem;
-      letter-spacing: .08em;
       text-transform: uppercase;
-      transition: transform .18s ease, background .18s ease;
+      letter-spacing: 0.11em;
+      font-size: 0.68rem;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
     }
 
     .back:hover {
       transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
+      background: rgba(255,255,255,0.075);
+      border-color: rgba(242, 234, 223, 0.24);
+    }
+
+    .market-frame {
+      border: 1px solid rgba(242, 234, 223, 0.13);
+      border-radius: 32px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.022)),
+        rgba(0,0,0,0.26);
+      box-shadow: var(--shadow);
+    }
+
+    .market-status {
+      min-height: 44px;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 8px;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0,0,0,0.28);
+    }
+
+    .status-pill {
+      border: 1px solid rgba(242, 234, 223, 0.12);
+      background: rgba(255,255,255,0.035);
+      color: rgba(242, 234, 223, 0.68);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status-pill.green {
+      color: var(--green);
+      border-color: rgba(91,255,189,0.22);
+      background: rgba(91,255,189,0.052);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.55fr 0.9fr;
+      gap: 18px;
+      padding: 18px;
     }
 
     .hero {
-      border: 1px solid var(--line);
-      border-radius: 34px;
-      padding: clamp(20px, 4vw, 38px);
-      min-height: 330px;
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 28px;
-      align-items: center;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)),
-        radial-gradient(circle at 80% 20%, rgba(216,58,79,.20), transparent 22rem);
-      box-shadow: var(--shadow);
-      overflow: hidden;
       position: relative;
+      min-height: 370px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      overflow: hidden;
+      padding: clamp(18px, 4vw, 34px);
+      background:
+        radial-gradient(circle at 78% 22%, rgba(255, 49, 89, 0.28), transparent 18rem),
+        radial-gradient(circle at 18% 76%, rgba(91, 255, 189, 0.08), transparent 14rem),
+        linear-gradient(135deg, rgba(82, 5, 18, 0.92), rgba(4, 7, 8, 0.94));
     }
 
     .hero::before {
-      content: "supply drop";
+      content: "";
       position: absolute;
-      right: -38px;
-      bottom: 24px;
-      font-size: clamp(3.2rem, 10vw, 8rem);
-      font-weight: 900;
-      letter-spacing: -.12em;
-      color: rgba(255,255,255,.035);
-      transform: rotate(-6deg);
+      inset: 0;
+      opacity: 0.42;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+      background-size: 18px 18px;
       pointer-events: none;
     }
 
+    .hero::after {
+      content: "SUPPLY\\A DROP";
+      white-space: pre;
+      position: absolute;
+      right: -18px;
+      top: 18px;
+      color: rgba(255,255,255,0.045);
+      font-size: clamp(4rem, 11vw, 9rem);
+      line-height: 0.78;
+      font-weight: 900;
+      letter-spacing: -0.14em;
+      transform: rotate(-5deg);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      align-content: end;
+      min-height: 300px;
+    }
+
     .eyebrow {
-      color: var(--red2);
-      font-size: .75rem;
-      letter-spacing: .2em;
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      color: var(--green);
       text-transform: uppercase;
-      margin-bottom: 12px;
+      letter-spacing: 0.18em;
+      font-size: 0.68rem;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 18px rgba(91,255,189,0.8);
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(2.8rem, 8vw, 6.4rem);
-      line-height: .82;
-      letter-spacing: -.12em;
-      text-transform: lowercase;
+      font-family: Georgia, "Times New Roman", serif;
+      text-transform: uppercase;
+      font-size: clamp(3rem, 7.5vw, 6.9rem);
+      line-height: 0.76;
+      letter-spacing: -0.11em;
     }
 
-    .hero p {
-      max-width: 540px;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.6;
-      margin: 20px 0 0;
-    }
-
-    .hero-card {
-      position: relative;
-      z-index: 1;
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      padding: 18px;
-      background: rgba(0,0,0,.26);
-      backdrop-filter: blur(18px);
-    }
-
-    .shop-cover {
-      aspect-ratio: 1;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at 45% 28%, rgba(255,255,255,.22), transparent 16rem),
-        linear-gradient(135deg, rgba(139,20,34,.95), rgba(12,4,7,.95));
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255,255,255,.12);
-      overflow: hidden;
-    }
-
-    .shop-cover span {
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 900;
-      letter-spacing: -.14em;
-      transform: rotate(-7deg);
-      text-shadow: 0 18px 42px rgba(0,0,0,.5);
+    .hero-copy {
+      max-width: 600px;
+      margin: 18px 0 0;
+      color: rgba(242, 234, 223, 0.72);
+      line-height: 1.58;
+      font-size: 0.92rem;
     }
 
     .hero-actions {
@@ -173,356 +273,556 @@
       margin-top: 24px;
     }
 
-    .primary, .secondary, .add, .remove, .qty-btn {
+    .btn {
       appearance: none;
       border: 1px solid var(--line);
-      color: var(--text);
-      cursor: pointer;
-      font-weight: 800;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
-    }
-
-    .primary, .secondary {
       border-radius: 999px;
-      padding: 13px 18px;
-      letter-spacing: .08em;
+      padding: 12px 15px;
+      color: var(--text);
+      background: rgba(255,255,255,0.045);
+      cursor: pointer;
       text-transform: uppercase;
-      font-size: .76rem;
+      letter-spacing: 0.11em;
+      font-weight: 900;
+      font-size: 0.68rem;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
     }
 
-    .primary {
-      background: linear-gradient(135deg, var(--red), #3d0810);
-      border-color: rgba(216,58,79,.42);
-    }
-
-    .secondary {
-      background: rgba(255,255,255,.045);
-    }
-
-    .primary:hover, .secondary:hover, .add:hover, .remove:hover, .qty-btn:hover {
+    .btn:hover {
       transform: translateY(-1px);
-      background-color: rgba(255,255,255,.09);
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(242, 234, 223, 0.24);
     }
 
-    .grid {
+    .btn.primary {
+      border-color: rgba(255,49,89,0.36);
+      background: linear-gradient(135deg, rgba(155,19,37,0.84), rgba(45,5,11,0.88));
+    }
+
+    .side-panel {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .terminal-card,
+    .cart-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+
+    .terminal-head,
+    .cart-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0,0,0,0.24);
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      font-size: 0.63rem;
+      color: rgba(242,234,223,0.66);
+    }
+
+    .terminal-body {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid rgba(255,255,255,0.075);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(255,255,255,0.028);
+      color: rgba(242,234,223,0.7);
+      font-size: 0.72rem;
+    }
+
+    .metric strong {
+      color: var(--text);
+      text-align: right;
+    }
+
+    .products {
+      padding: 0 18px 18px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 8px 0 12px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      text-transform: uppercase;
+      letter-spacing: -0.075em;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 0.86;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      font-size: 0.65rem;
+    }
+
+    .product-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
-      margin-top: 18px;
     }
 
     .product {
       border: 1px solid var(--line);
-      border-radius: 26px;
-      padding: 16px;
-      background: var(--panel);
-      min-height: 250px;
+      border-radius: 24px;
+      padding: 14px;
+      min-height: 265px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: 0 18px 42px rgba(0,0,0,.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.062), rgba(255,255,255,0.024)),
+        rgba(0,0,0,0.24);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.22;
+      background:
+        radial-gradient(circle at 76% 10%, rgba(255,49,89,0.28), transparent 9rem),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: auto, 18px 18px, 18px 18px;
+      pointer-events: none;
+    }
+
+    .product > * {
+      position: relative;
+      z-index: 1;
     }
 
     .product-art {
-      height: 116px;
-      border-radius: 20px;
+      height: 110px;
+      border-radius: 18px;
       display: grid;
       place-items: center;
-      background:
-        radial-gradient(circle at 50% 25%, rgba(216,58,79,.26), transparent 9rem),
-        rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.08);
-      font-size: 2.4rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.042);
+      font-size: 2.6rem;
+      color: var(--green);
     }
 
-    .product h2 {
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: rgba(242,234,223,0.48);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.58rem;
+    }
+
+    .product h3 {
       margin: 0;
       font-size: 1rem;
-      letter-spacing: -.03em;
-    }
-
-    .product p {
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: .86rem;
-      margin: 0;
-      flex: 1;
-    }
-
-    .status {
-      color: rgba(242,234,223,.50);
-      font-size: .68rem;
-      letter-spacing: .12em;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
       text-transform: uppercase;
     }
 
+    .product p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.78rem;
+      flex: 1;
+    }
+
     .buy-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
     }
 
     .price {
       font-weight: 900;
-      letter-spacing: -.04em;
+      color: var(--text);
+      letter-spacing: -0.04em;
+    }
+
+    .quick-remove,
+    .add {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255,255,255,0.045);
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .quick-remove {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      color: rgba(255,210,220,0.94);
+      border-color: rgba(255,49,89,0.28);
+      font-size: 1rem;
     }
 
     .add {
-      border-radius: 999px;
-      padding: 10px 12px;
-      background: rgba(139,20,34,.55);
-      border-color: rgba(216,58,79,.35);
+      min-height: 32px;
+      padding: 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      font-size: 0.62rem;
+      border-color: rgba(91,255,189,0.22);
+      color: var(--green);
     }
 
-    .checkout-panel {
-      margin-top: 18px;
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      padding: 20px;
-      background: rgba(0,0,0,.22);
+    .quick-remove:hover,
+    .add:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .cart-body {
+      padding: 12px;
       display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 16px;
+      gap: 10px;
     }
 
-    .checkout-panel h2 {
-      margin: 0 0 10px;
-      letter-spacing: -.05em;
-    }
-
-    .cart-box, .note-box {
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: 22px;
-      padding: 16px;
-      background: rgba(255,255,255,.04);
+    .cart-empty {
+      color: rgba(242,234,223,0.48);
+      border: 1px dashed rgba(242,234,223,0.14);
+      border-radius: 16px;
+      padding: 14px;
+      line-height: 1.45;
+      font-size: 0.78rem;
     }
 
     .cart-line {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 12px;
-      color: var(--muted);
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      padding: 11px 0;
-      font-size: .9rem;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.075);
+      background: rgba(255,255,255,0.03);
     }
-
-    .cart-line:last-child { border-bottom: 0; }
 
     .cart-title {
       display: grid;
-      gap: 3px;
+      gap: 4px;
     }
 
     .cart-title strong {
       color: var(--text);
-      font-size: .92rem;
+      font-size: 0.78rem;
+      line-height: 1.15;
+      text-transform: uppercase;
     }
 
     .cart-title small {
-      color: rgba(242,234,223,.48);
+      color: rgba(242,234,223,0.5);
+      font-size: 0.68rem;
     }
 
     .cart-actions {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 7px;
+      gap: 6px;
     }
 
-    .qty-btn, .remove {
-      width: 28px;
+    .qty-btn,
+    .remove {
+      appearance: none;
       height: 28px;
       border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.045);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .qty-btn {
+      width: 28px;
       display: grid;
       place-items: center;
-      background: rgba(255,255,255,.045);
-      padding: 0;
     }
 
     .remove {
-      width: auto;
       padding: 0 9px;
-      color: rgba(255,210,210,.92);
-      border-color: rgba(216,58,79,.28);
+      color: rgba(255,210,220,0.94);
+      border-color: rgba(255,49,89,0.25);
     }
 
     .qty {
-      min-width: 20px;
+      min-width: 18px;
       text-align: center;
+      font-weight: 900;
+      color: var(--green);
+    }
+
+    .cart-total,
+    .cart-shipping {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(242,234,223,0.68);
+      font-size: 0.76rem;
+      padding-top: 6px;
+    }
+
+    .cart-total strong {
       color: var(--text);
-      font-weight: 900;
-    }
-
-    .total {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: 12px;
-      font-weight: 900;
-      font-size: 1.1rem;
-    }
-
-    .shipping {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      color: rgba(242,234,223,.56);
-      margin-top: 8px;
-      font-size: .86rem;
+      font-size: 1rem;
     }
 
     .disabled-pay {
-      width: 100%;
-      margin-top: 14px;
-      border: 1px dashed rgba(242,234,223,.22);
-      border-radius: 18px;
-      padding: 14px;
-      color: rgba(242,234,223,.58);
-      background: rgba(255,255,255,.025);
-      text-align: center;
-      font-size: .82rem;
+      margin-top: 4px;
+      border: 1px dashed rgba(91,255,189,0.20);
+      border-radius: 16px;
+      padding: 12px;
+      color: rgba(242,234,223,0.58);
+      background: rgba(91,255,189,0.035);
+      font-size: 0.74rem;
       line-height: 1.45;
     }
 
-    .note-box p {
+    .checkout-preview {
+      padding: 0 18px 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .checkout-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 16px;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .checkout-card h3 {
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+      font-size: 1.05rem;
+    }
+
+    .checkout-card p {
       margin: 0;
       color: var(--muted);
-      line-height: 1.55;
-      font-size: .9rem;
+      line-height: 1.52;
+      font-size: 0.78rem;
     }
 
-    @media (max-width: 820px) {
-      body { padding: 14px; }
-      .hero, .checkout-panel { grid-template-columns: 1fr; }
-      .grid { grid-template-columns: 1fr; }
-      .topbar { align-items: flex-start; }
-    }
-  
-    .quick-remove {
-      appearance: none;
-      width: 30px;
-      height: 30px;
-      border-radius: 999px;
-      border: 1px solid rgba(216,58,79,.30);
-      background: rgba(255,255,255,.045);
-      color: rgba(255,220,220,.94);
-      cursor: pointer;
-      font-weight: 900;
-      line-height: 1;
-      display: grid;
-      place-items: center;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
-    }
+    @media (max-width: 930px) {
+      body {
+        padding: 14px;
+      }
 
-    .quick-remove:hover {
-      transform: translateY(-1px);
-      background: rgba(139,20,34,.45);
-      border-color: rgba(216,58,79,.48);
-    }
+      .market-status,
+      .main-grid,
+      .checkout-preview {
+        grid-template-columns: 1fr;
+      }
 
-    .buy-row {
-      grid-template-columns: 1fr auto auto !important;
-      display: grid !important;
-      align-items: center !important;
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 310px;
+      }
     }
-</style>
+  </style>
 </head>
 <body>
   <main class="shop-shell">
     <nav class="topbar">
-      <div class="brand">
-        <small>LOOK APP</small>
-        <strong>shop</strong>
-      </div>
+      <a class="brand" href="/shop" aria-label="LOOK SHOP">
+        <span class="brand-dot">DB</span>
+        <span class="brand-text">
+          <small>encrypted supply</small>
+          <strong>LOOK SHOP</strong>
+        </span>
+      </a>
+
       <a class="back" href="/">back to Busta Files</a>
     </nav>
 
-    <section class="hero">
-      <div class="hero-copy">
-        <div class="eyebrow">limited drop / NFC / merch</div>
-        <h1>enter the shop</h1>
-        <p>
-          NFC tag, sticker e bundle collegati all’esperienza #chaoscore.
-          Pagamento reale non ancora attivo: prima completiamo checkout, email ordine e sandbox PayPal.
-        </p>
-        <div class="hero-actions">
-          <button class="primary" type="button" data-scroll-products>see products</button>
-          <button class="secondary" type="button" data-scroll-checkout>cart preview</button>
-        </div>
+    <section class="market-frame">
+      <div class="market-status">
+        <span class="status-pill green">status: online</span>
+        <span class="status-pill">drop: #chaoscore</span>
+        <span class="status-pill">payment: sandbox soon</span>
+        <span class="status-pill">shipping: manual beta</span>
       </div>
 
-      <div class="hero-card">
-        <div class="shop-cover">
-          <span>SHOP</span>
-        </div>
+      <div class="main-grid">
+        <section class="hero">
+          <div class="hero-content">
+            <div class="eyebrow">private marketplace beta</div>
+            <h1>Enter<br>the shop</h1>
+            <p class="hero-copy">
+              NFC tag, sticker e bundle fisici collegati all’esperienza #chaoscore.
+              Questa è la vetrina grafica: pagamento reale, email ordine e spedizioni arrivano nello step successivo.
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn primary" type="button" data-scroll-products>browse products</button>
+              <button class="btn" type="button" data-scroll-cart>open cart</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <section class="terminal-card">
+            <div class="terminal-head">
+              <span>session</span>
+              <span>guest</span>
+            </div>
+            <div class="terminal-body">
+              <div class="metric">
+                <span>access layer</span>
+                <strong>NFC / WEB</strong>
+              </div>
+              <div class="metric">
+                <span>available items</span>
+                <strong>3</strong>
+              </div>
+              <div class="metric">
+                <span>delivery mode</span>
+                <strong>Italy beta</strong>
+              </div>
+              <div class="metric">
+                <span>order mail</span>
+                <strong>next step</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="cart-card" id="cart">
+            <div class="cart-head">
+              <span>cart</span>
+              <span id="cart-count">0 items</span>
+            </div>
+            <div class="cart-body">
+              <div id="cart-lines"></div>
+
+              <div class="cart-shipping">
+                <span>Shipping</span>
+                <span>calcolata dopo</span>
+              </div>
+
+              <div class="cart-total">
+                <span>Total prodotti</span>
+                <strong id="cart-total">€0,00</strong>
+              </div>
+
+              <div class="disabled-pay">
+                PayPal non è ancora attivo. Prima colleghiamo checkout, email ordine, sandbox e spedizioni.
+              </div>
+            </div>
+          </section>
+        </aside>
       </div>
-    </section>
 
-    <section class="grid" id="products">
-      <article class="product" data-id="nfc-chaoscore-tag" data-product="NFC #chaoscore tag" data-price="4.99">
-        <div class="product-art">◎</div>
-        <h2>NFC #chaoscore tag</h2>
-        <p>Tag fisico da avvicinare al telefono per aprire l’esperienza #chaoscore.</p>
-        <div class="status">€4,99 + spedizione</div>
-        <div class="buy-row">
-          <span class="price">€4,99</span>
-          <button class="quick-remove" type="button" aria-label="Rimuovi prodotto dal carrello">×</button><button class="add" type="button">add</button>
-        </div>
-      </article>
-
-      <article class="product" data-id="chaoscore-sticker-pack" data-product="#chaoscore sticker pack" data-price="4.99">
-        <div class="product-art">★</div>
-        <h2>#chaoscore sticker pack</h2>
-        <p>Sticker pack fisico in stile LOOK APP / chaoscore. Non ancora definitivo.</p>
-        <div class="status">coming soon / prezzo placeholder</div>
-        <div class="buy-row">
-          <span class="price">€4,99</span>
-          <button class="quick-remove" type="button" aria-label="Rimuovi prodotto dal carrello">×</button><button class="add" type="button">add</button>
-        </div>
-      </article>
-
-      <article class="product" data-id="chaoscore-bundle" data-product="#chaoscore bundle" data-price="24.99">
-        <div class="product-art">▣</div>
-        <h2>#chaoscore bundle</h2>
-        <p>Bundle fisico #chaoscore. La maglietta sarà parte del bundle, non prodotto singolo isolato.</p>
-        <div class="status">bundle / merch drop</div>
-        <div class="buy-row">
-          <span class="price">€24,99</span>
-          <button class="quick-remove" type="button" aria-label="Rimuovi prodotto dal carrello">×</button><button class="add" type="button">add</button>
-        </div>
-      </article>
-    </section>
-
-    <section class="checkout-panel" id="checkout">
-      <div class="cart-box">
-        <h2>Cart preview</h2>
-        <div id="cart-lines"></div>
-
-        <div class="shipping">
-          <span>Shipping</span>
-          <span>calcolata dopo</span>
+      <section class="products" id="products">
+        <div class="section-title">
+          <h2>Supply list</h2>
+          <span>legal merch / physical drops</span>
         </div>
 
-        <div class="total">
-          <span>Total prodotti</span>
-          <span id="cart-total">€0,00</span>
+        <div class="product-grid">
+          <article class="product" data-id="nfc-chaoscore-tag" data-product="NFC #chaoscore tag" data-price="4.99">
+            <div class="product-meta">
+              <span>nfc access</span>
+              <span>in stock soon</span>
+            </div>
+            <div class="product-art">◎</div>
+            <h3>NFC #chaoscore tag</h3>
+            <p>Tag fisico da avvicinare al telefono per aprire l’esperienza #chaoscore.</p>
+            <div class="buy-row">
+              <span class="price">€4,99 + sped.</span>
+              <button class="quick-remove" type="button" aria-label="Rimuovi NFC #chaoscore tag">×</button>
+              <button class="add" type="button">add</button>
+            </div>
+          </article>
+
+          <article class="product" data-id="chaoscore-sticker-pack" data-product="#chaoscore sticker pack" data-price="4.99">
+            <div class="product-meta">
+              <span>sticker</span>
+              <span>coming soon</span>
+            </div>
+            <div class="product-art">★</div>
+            <h3>#chaoscore sticker pack</h3>
+            <p>Sticker pack fisico in stile LOOK APP / chaoscore. Ancora non definitivo.</p>
+            <div class="buy-row">
+              <span class="price">€4,99</span>
+              <button class="quick-remove" type="button" aria-label="Rimuovi sticker pack">×</button>
+              <button class="add" type="button">add</button>
+            </div>
+          </article>
+
+          <article class="product" data-id="chaoscore-bundle" data-product="#chaoscore bundle" data-price="24.99">
+            <div class="product-meta">
+              <span>bundle</span>
+              <span>drop beta</span>
+            </div>
+            <div class="product-art">▣</div>
+            <h3>#chaoscore bundle</h3>
+            <p>Bundle fisico #chaoscore. La maglietta sarà parte del bundle, non prodotto singolo isolato.</p>
+            <div class="buy-row">
+              <span class="price">€24,99</span>
+              <button class="quick-remove" type="button" aria-label="Rimuovi bundle">×</button>
+              <button class="add" type="button">add</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="checkout-preview">
+        <div class="checkout-card">
+          <h3>Next checkout step</h3>
+          <p>
+            Aggiungeremo nome, cognome, email, telefono, indirizzo spedizione,
+            indirizzo fatturazione, note ordine e riepilogo automatico.
+          </p>
         </div>
 
-        <div class="disabled-pay">
-          PayPal non è ancora attivo qui.<br>
-          Prossimo step: dati cliente, spedizione/fatturazione, email ordine e sandbox.
+        <div class="checkout-card">
+          <h3>Order ops</h3>
+          <p>
+            Dopo il form: email ordine a Douglas, conferma cliente,
+            sandbox PayPal e sistema etichette/spedizioni in beta.
+          </p>
         </div>
-      </div>
-
-      <div class="note-box">
-        <h2>Checkout system</h2>
-        <p>
-          Il carrello ora è modificabile: puoi aggiungere, aumentare, diminuire o rimuovere prodotti.
-          Dopo colleghiamo un vero form ordine con indirizzo spedizione, fatturazione, riepilogo email e PayPal sandbox.
-        </p>
-      </div>
+      </section>
     </section>
   </main>
 
@@ -536,12 +836,12 @@
       }).format(value);
     }
 
-    function findCartItem(id) {
+    function getCartItem(id) {
       return cart.find((item) => item.id === id);
     }
 
     function addToCart(product) {
-      const existing = findCartItem(product.id);
+      const existing = getCartItem(product.id);
 
       if (existing) {
         existing.qty += 1;
@@ -564,7 +864,7 @@
     }
 
     function changeQty(id, delta) {
-      const item = findCartItem(id);
+      const item = getCartItem(id);
       if (!item) return;
 
       item.qty += delta;
@@ -580,10 +880,16 @@
     function renderCart() {
       const lines = document.getElementById("cart-lines");
       const total = document.getElementById("cart-total");
+      const count = document.getElementById("cart-count");
+
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalValue = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+      count.textContent = totalQty === 1 ? "1 item" : `${totalQty} items`;
+      total.textContent = euro(totalValue);
 
       if (!cart.length) {
-        lines.innerHTML = '<div class="cart-line"><div class="cart-title"><strong>Nessun prodotto ancora</strong><small>Aggiungi un prodotto per iniziare.</small></div><span>€0,00</span></div>';
-        total.textContent = "€0,00";
+        lines.innerHTML = '<div class="cart-empty">Nessun prodotto ancora. Aggiungi un item dalla supply list.</div>';
         return;
       }
 
@@ -600,14 +906,11 @@
               <button class="qty-btn" type="button" data-cart-action="minus" aria-label="Diminuisci quantità">−</button>
               <span class="qty">${item.qty}</span>
               <button class="qty-btn" type="button" data-cart-action="plus" aria-label="Aumenta quantità">+</button>
-              <button class="remove" type="button" data-cart-action="remove">remove</button>
+              <button class="remove" type="button" data-cart-action="remove">×</button>
             </div>
           </div>
         `;
       }).join("");
-
-      const totalValue = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-      total.textContent = euro(totalValue);
     }
 
     document.querySelectorAll(".add").forEach((button) => {
@@ -649,8 +952,8 @@
       document.getElementById("products").scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
-    document.querySelector("[data-scroll-checkout]").addEventListener("click", () => {
-      document.getElementById("checkout").scrollIntoView({ behavior: "smooth", block: "start" });
+    document.querySelector("[data-scroll-cart]").addEventListener("click", () => {
+      document.getElementById("cart").scrollIntoView({ behavior: "smooth", block: "center" });
     });
 
     renderCart();
