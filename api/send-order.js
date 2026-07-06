@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
     if (!apiKey) {
       return json(res, 500, {
         ok: false,
-        error: "RESEND_API_KEY mancante nelle variabili ambiente Vercel."
+        error: "RESEND_API_KEY mancante su Vercel. Aggiungila in Project Settings > Environment Variables e fai redeploy."
       });
     }
 
@@ -85,7 +85,7 @@ module.exports = async function handler(req, res) {
     if (adminResult.error) {
       return json(res, 500, {
         ok: false,
-        error: adminResult.error.message || "Errore invio email admin."
+        error: adminResult.error.message || JSON.stringify(adminResult.error) || "Errore invio email admin. Controlla dominio mittente e API key Resend."
       });
     }
 
@@ -100,7 +100,7 @@ module.exports = async function handler(req, res) {
     if (customerResult.error) {
       return json(res, 500, {
         ok: false,
-        error: customerResult.error.message || "Errore invio email cliente."
+        error: customerResult.error.message || JSON.stringify(customerResult.error) || "Errore invio email cliente. Controlla dominio mittente e API key Resend."
       });
     }
 

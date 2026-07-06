@@ -1037,27 +1037,27 @@
 
               <div class="field full">
                 <label for="shipping-address">Via / indirizzo spedizione</label>
-                <textarea id="shipping-address" name="shipping" autocomplete="shipping street-address" placeholder="Via Toscana 63, interno, scala, note citofono..." required></textarea>
+                <textarea id="shipping-address" name="shipping" autocomplete="shipping street-address" placeholder="Via esempio 1, interno, scala, note citofono..." required></textarea>
               </div>
 
               <div class="field">
                 <label for="shipping-city">Città</label>
-                <input id="shipping-city" name="shipping_city" autocomplete="shipping address-level2" placeholder="Bologna" required>
+                <input id="shipping-city" name="shipping_city" autocomplete="shipping address-level2" placeholder="Città" required>
               </div>
 
               <div class="field">
                 <label for="shipping-province">Provincia / Stato</label>
-                <input id="shipping-province" name="shipping_province" autocomplete="shipping address-level1" placeholder="BO" required>
+                <input id="shipping-province" name="shipping_province" autocomplete="shipping address-level1" placeholder="Provincia" required>
               </div>
 
               <div class="field">
                 <label for="shipping-zip">CAP / ZIP code</label>
-                <input id="shipping-zip" name="shipping_zip" autocomplete="shipping postal-code" placeholder="40139" required>
+                <input id="shipping-zip" name="shipping_zip" autocomplete="shipping postal-code" placeholder="00000" required>
               </div>
 
               <div class="field">
                 <label for="shipping-country">Paese</label>
-                <input id="shipping-country" name="shipping_country" autocomplete="shipping country-name" placeholder="Italia" required>
+                <input id="shipping-country" name="shipping_country" autocomplete="shipping country-name" placeholder="Il tuo paese" required>
               </div>
 
               <div class="field full">
@@ -1390,16 +1390,26 @@ Checkout in modalità preview.`;
           })
         });
 
-        const result = await response.json().catch(() => ({}));
+        const rawText = await response.text();
+        let result = {};
+
+        try {
+          result = rawText ? JSON.parse(rawText) : {};
+        } catch (_) {
+          result = {
+            ok: false,
+            error: rawText ? rawText.slice(0, 240) : "Risposta server vuota"
+          };
+        }
 
         if (!response.ok || !result.ok) {
-          status.textContent = "Errore invio ordine: " + (result.error || "errore sconosciuto");
+          status.textContent = "Errore invio ordine (" + response.status + "): " + (result.error || "errore non specificato");
           return;
         }
 
         status.textContent = "Ordine inviato: email a LOOK SHOP + conferma cliente mandate dal server.";
       } catch (error) {
-        status.textContent = "Errore rete/server durante l’invio ordine.";
+        status.textContent = "Errore rete/server durante l’invio ordine: " + (error && error.message ? error.message : "errore non specificato");
       }
     }
 
