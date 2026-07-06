@@ -1077,7 +1077,7 @@
             </div>
 
             <div class="order-warning">
-              Pagamento in sandbox Stripe: genera il riepilogo ordine, poi procedi al checkout test.
+              Pagamento sicuro: genera il riepilogo ordine, poi procedi al checkout.
             </div>
           </form>
 
@@ -1086,7 +1086,7 @@
             <div class="order-preview" id="order-preview">Nessun ordine generato.</div>
             <div class="order-send-actions">
               <button class="btn" type="button" id="copy-order">copy order</button>
-              <button class="btn primary" type="button" id="send-order-email">pay with Stripe</button>
+              <button class="btn primary" type="button" id="send-order-email">PAY</button>
             </div>
             <div class="order-email-status" id="order-email-status"></div>
           </section>
@@ -1320,8 +1320,8 @@ NOTE
 ${notes}
 
 STATO
-Pagamento non ancora effettuato.
-Checkout in modalità preview.`;
+Pagamento in attesa di conferma Stripe.
+Checkout in modalità sandbox Stripe.`;
 
       preview.dataset.orderCode = orderCode;
     }

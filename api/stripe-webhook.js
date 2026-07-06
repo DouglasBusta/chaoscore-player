@@ -81,7 +81,13 @@ export default async function handler(req, res) {
     ? (session.amount_total / 100).toFixed(2).replace(".", ",") + " €"
     : "Importo non disponibile";
 
-  const orderPreview = session.metadata?.orderPreview || "Dettagli ordine non disponibili in questa prima versione webhook.";
+  const orderPreview = (
+    session.metadata?.orderPreview || "Dettagli ordine non disponibili in questa prima versione webhook."
+  )
+    .replaceAll("Pagamento non ancora effettuato.", "Pagamento ricevuto tramite Stripe.")
+    .replaceAll("Pagamento in attesa di conferma Stripe.", "Pagamento ricevuto tramite Stripe.")
+    .replaceAll("Checkout in modalità preview.", "Checkout completato in modalità sandbox Stripe.")
+    .replaceAll("Checkout in modalità sandbox Stripe.", "Checkout completato in modalità sandbox Stripe.");
 
   const subjectAdmin = `Pagamento ricevuto LOOK APP SHOP — ${amountTotal}`;
   const subjectCustomer = `Pagamento confermato LOOK APP SHOP`;
