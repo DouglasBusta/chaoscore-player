@@ -66,8 +66,8 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = process.env.RESEND_API_KEY;
-    const adminEmail = process.env.SHOP_ADMIN_EMAIL || "shop@lookapp.org";
-    const fromEmail = process.env.SHOP_FROM_EMAIL || "LOOK APP SHOP <shop@lookapp.org>";
+    const adminEmail = process.env.ORDER_ADMIN_EMAIL || process.env.SHOP_ADMIN_EMAIL || "shop@lookapp.org";
+    const fromEmail = process.env.ORDER_FROM_EMAIL || process.env.SHOP_FROM_EMAIL || "LOOK APP SHOP <shop@lookapp.org>";
 
     if (!apiKey) {
       return json(res, 500, {
