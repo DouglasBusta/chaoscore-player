@@ -10,37 +10,42 @@
     return `
       .look-shop-busta-card {
         position: relative !important;
+        min-height: 120px !important;
+        border-radius: 18px !important;
         overflow: hidden !important;
+        display: block !important;
         text-decoration: none !important;
         color: inherit !important;
+        border: 1px solid rgba(231,224,210,0.14) !important;
+        background:
+          radial-gradient(circle at 76% 20%, rgba(180,24,45,0.34), transparent 9rem),
+          linear-gradient(135deg, rgba(62,8,15,0.94), rgba(9,8,8,0.94)) !important;
+        box-shadow: 0 18px 44px rgba(0,0,0,0.28) !important;
         isolation: isolate !important;
+        transition: transform 160ms ease, border-color 160ms ease, background 160ms ease !important;
       }
 
-      .look-shop-busta-card,
-      .look-shop-busta-card * {
-        box-sizing: border-box !important;
+      .look-shop-busta-card:hover {
+        transform: translateY(-2px) !important;
+        border-color: rgba(231,224,210,0.28) !important;
       }
 
       .look-shop-busta-card-bg {
         position: absolute !important;
         inset: 0 !important;
         z-index: 0 !important;
-        opacity: 0.82 !important;
+        opacity: 0.72 !important;
         background:
-          radial-gradient(circle at 74% 18%, rgba(180,24,45,0.34), transparent 9rem),
-          linear-gradient(135deg, rgba(62,8,15,0.92), rgba(9,8,8,0.92)),
           linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
           linear-gradient(180deg, rgba(255,255,255,0.03) 1px, transparent 1px) !important;
-        background-size: auto, auto, 18px 18px, 18px 18px !important;
+        background-size: 18px 18px !important;
         pointer-events: none !important;
       }
 
       .look-shop-busta-card-copy {
         position: relative !important;
         z-index: 2 !important;
-        width: 100% !important;
-        height: 100% !important;
-        min-height: inherit !important;
+        min-height: 120px !important;
         padding: 18px !important;
         display: flex !important;
         flex-direction: column !important;
@@ -112,14 +117,14 @@
 
     let current = el;
 
-    for (let i = 0; i < 9 && current; i++) {
+    for (let i = 0; i < 8 && current; i++) {
       const rect = current.getBoundingClientRect();
 
       if (
-        rect.width >= 170 &&
+        rect.width >= 180 &&
         rect.width <= 560 &&
         rect.height >= 70 &&
-        rect.height <= 300
+        rect.height <= 280
       ) {
         return current;
       }
@@ -133,6 +138,7 @@
   function makeShopCard(root) {
     const shopCard = root.createElement("a");
 
+    shopCard.className = "look-shop-busta-card";
     shopCard.href = "/shop";
     shopCard.setAttribute("aria-label", "Enter the LOOK SHOP");
 
@@ -148,28 +154,6 @@
     return shopCard;
   }
 
-  function syncShopCardShape(shopCard, chaosCard) {
-    if (!shopCard || !chaosCard) return;
-
-    /*
-      Punto chiave:
-      la card shop eredita le classi della card LISTEN TO #CHAOSCORE,
-      quindi prende la stessa forma, larghezza e comportamento nella griglia.
-    */
-    shopCard.className = chaosCard.className || "";
-    shopCard.classList.add("look-shop-busta-card");
-
-    const rect = chaosCard.getBoundingClientRect();
-
-    if (rect.height > 60) {
-      shopCard.style.minHeight = Math.round(rect.height) + "px";
-    }
-
-    shopCard.style.width = "";
-    shopCard.style.maxWidth = "";
-    shopCard.style.gridColumn = "";
-  }
-
   function mountShopCardIn(root) {
     if (!root || !root.body) return false;
 
@@ -180,22 +164,16 @@
 
     if (!chaosCard || !chaosCard.parentElement) return false;
 
-    let shopCard = root.querySelector(".look-shop-busta-card");
+    let existing = root.querySelector(".look-shop-busta-card");
 
-    if (!shopCard) {
-      shopCard = makeShopCard(root);
+    if (!existing) {
+      existing = makeShopCard(root);
     }
 
-    syncShopCardShape(shopCard, chaosCard);
+    existing.className = "look-shop-busta-card";
 
-    /*
-      Punto chiave:
-      la shop card viene messa subito DOPO listen to #chaoscore.
-      Se la griglia ha spazio, sta di fianco.
-      Se non ha spazio, va a capo come una normale card.
-    */
-    if (shopCard.previousElementSibling !== chaosCard) {
-      chaosCard.insertAdjacentElement("afterend", shopCard);
+    if (existing.previousElementSibling !== chaosCard) {
+      chaosCard.insertAdjacentElement("afterend", existing);
     }
 
     return true;
@@ -223,10 +201,6 @@
     observer.observe(document.body, {
       childList: true,
       subtree: true
-    });
-
-    window.addEventListener("resize", function () {
-      setTimeout(mountEverywhere, 100);
     });
 
     document.querySelectorAll("iframe").forEach(function (frame) {
