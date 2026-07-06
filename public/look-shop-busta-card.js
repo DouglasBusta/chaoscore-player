@@ -1,12 +1,15 @@
 (function () {
   "use strict";
 
+  if (window.__lookShopBustaCardBooted) return;
+  window.__lookShopBustaCardBooted = true;
+
   function textOf(el) {
     return (el && el.textContent ? el.textContent : "").replace(/\s+/g, " ").trim().toLowerCase();
   }
 
-  function findChaosCard() {
-    const nodes = Array.from(document.querySelectorAll("a, article, section, div, button"));
+  function findChaosCard(root) {
+    const nodes = Array.from(root.querySelectorAll("a, article, section, div, button"));
 
     return nodes.find(function (el) {
       const text = textOf(el);
@@ -19,14 +22,14 @@
 
     let current = el;
 
-    for (let i = 0; i < 7 && current; i++) {
+    for (let i = 0; i < 8 && current; i++) {
       const rect = current.getBoundingClientRect();
 
       if (
         rect.width >= 180 &&
-        rect.width <= 520 &&
-        rect.height >= 80 &&
-        rect.height <= 260
+        rect.width <= 540 &&
+        rect.height >= 70 &&
+        rect.height <= 270
       ) {
         return current;
       }
@@ -37,9 +40,8 @@
     return el;
   }
 
-  function makeShopCardLike(chaosCard) {
-    const tag = chaosCard.tagName && chaosCard.tagName.toLowerCase() === "a" ? "a" : "a";
-    const shopCard = document.createElement(tag);
+  function makeShopCard(root, chaosCard) {
+    const shopCard = root.createElement("a");
 
     shopCard.className = chaosCard.className || "";
     shopCard.classList.add("look-shop-busta-card");
@@ -58,29 +60,45 @@
     return shopCard;
   }
 
-  function mountShopCard() {
-    const existing = document.querySelector(".look-shop-busta-card");
-    const chaosHit = findChaosCard();
+  function mountShopCardIn(root) {
+    if (!root || !root.body) return false;
+
+    const chaosHit = findChaosCard(root);
     const chaosCard = findRealCard(chaosHit);
 
-    if (!chaosCard || !chaosCard.parentElement) return;
+    if (!chaosCard || !chaosCard.parentElement) return false;
+
+    const existing = root.querySelector(".look-shop-busta-card");
 
     if (existing) {
       if (existing.previousElementSibling !== chaosCard) {
         chaosCard.insertAdjacentElement("afterend", existing);
       }
-      return;
+      return true;
     }
 
-    const shopCard = makeShopCardLike(chaosCard);
+    const shopCard = makeShopCard(root, chaosCard);
     chaosCard.insertAdjacentElement("afterend", shopCard);
+    return true;
+  }
+
+  function mountEverywhere() {
+    mountShopCardIn(document);
+
+    document.querySelectorAll("iframe").forEach(function (frame) {
+      try {
+        if (frame.contentDocument) {
+          mountShopCardIn(frame.contentDocument);
+        }
+      } catch (_) {}
+    });
   }
 
   function boot() {
-    mountShopCard();
+    mountEverywhere();
 
     const observer = new MutationObserver(function () {
-      mountShopCard();
+      mountEverywhere();
     });
 
     observer.observe(document.body, {
@@ -88,9 +106,21 @@
       subtree: true
     });
 
-    setTimeout(mountShopCard, 250);
-    setTimeout(mountShopCard, 900);
-    setTimeout(mountShopCard, 1800);
+    document.querySelectorAll("iframe").forEach(function (frame) {
+      frame.addEventListener("load", function () {
+        setTimeout(mountEverywhere, 100);
+        setTimeout(mountEverywhere, 500);
+        setTimeout(mountEverywhere, 1200);
+      });
+    });
+
+    window.__lookShopMountEverywhere = mountEverywhere;
+
+    setInterval(mountEverywhere, 1500);
+
+    setTimeout(mountEverywhere, 250);
+    setTimeout(mountEverywhere, 900);
+    setTimeout(mountEverywhere, 1800);
   }
 
   if (document.readyState === "loading") {
