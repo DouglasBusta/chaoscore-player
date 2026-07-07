@@ -190,7 +190,7 @@
     event.preventDefault();
     event.stopPropagation();
 
-    openFiles();
+    window.location.href = "/";
   }, true);
 
   /*
