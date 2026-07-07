@@ -511,7 +511,7 @@
       ) {
         event.preventDefault();
         event.stopPropagation();
-        window.location.href = "/";
+        openLookAppGlobalView();
       }
     }, true);
 
