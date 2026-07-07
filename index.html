@@ -1376,7 +1376,59 @@
       padding: 14px;
     }
     /* END USER SUBMISSIONS INSIDE OTHER */
-  </style>
+  
+  .busta-download-sheet-fallback {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, .58);
+    backdrop-filter: blur(16px);
+  }
+
+  .busta-download-sheet-card {
+    width: min(420px, calc(100vw - 36px));
+    border: 1px solid rgba(242, 234, 223, .22);
+    border-radius: 24px;
+    padding: 22px;
+    background:
+      radial-gradient(circle at top left, rgba(91, 255, 189, .14), transparent 32%),
+      linear-gradient(145deg, rgba(26, 8, 12, .98), rgba(5, 5, 5, .98));
+    color: #f2eadf;
+    box-shadow: 0 24px 90px rgba(0, 0, 0, .55);
+    font-family: inherit;
+  }
+
+  .busta-download-sheet-card strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: .78rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  .busta-download-sheet-card p {
+    margin: 0;
+    color: rgba(242, 234, 223, .76);
+    line-height: 1.45;
+  }
+
+  .busta-download-sheet-card button {
+    margin-top: 18px;
+    border: 1px solid rgba(91, 255, 189, .38);
+    border-radius: 999px;
+    padding: 10px 16px;
+    background: rgba(91, 255, 189, .12);
+    color: #5bffbd;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+</style>
   <link rel="stylesheet" href="/busta-mobile-desktopish.css?v=1">
   <link rel="stylesheet" href="/look-shop-busta-card.css?v=7">
 
@@ -2438,6 +2490,30 @@
         <button class="busta-app-download-button" type="button" data-download-android>Download Android</button>
       `;
 
+      function openDownloadSheet(title, copy) {
+        if (typeof window.showSheet === "function") {
+          window.showSheet(title, copy);
+          return;
+        }
+
+        const sheet = document.createElement("div");
+        sheet.className = "busta-download-sheet-fallback";
+        sheet.innerHTML = `
+          <div class="busta-download-sheet-card">
+            <strong>${title}</strong>
+            <p>${copy}</p>
+            <button type="button">OK</button>
+          </div>
+        `;
+
+        sheet.querySelector("button").addEventListener("click", () => sheet.remove());
+        sheet.addEventListener("click", (event) => {
+          if (event.target === sheet) sheet.remove();
+        });
+
+        document.body.appendChild(sheet);
+      }
+
       downloads.addEventListener("click", (event) => {
         const iosButton = event.target.closest("[data-download-ios]");
         const androidButton = event.target.closest("[data-download-android]");
@@ -2447,14 +2523,16 @@
         event.preventDefault();
 
         if (iosButton) {
-          window.alert(
-            "Download iOS\n\nApri lookapp.org in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”."
+          openDownloadSheet(
+            "Download iOS",
+            "Apri lookapp.org in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”."
           );
           return;
         }
 
-        window.alert(
-          "Download Android\n\nApri lookapp.org in Chrome, apri il menu e scegli “Installa app” oppure “Aggiungi a schermata Home”."
+        openDownloadSheet(
+          "Download Android",
+          "Apri lookapp.org in Chrome, apri il menu e scegli “Installa app” oppure “Aggiungi a schermata Home”."
         );
       });
 
