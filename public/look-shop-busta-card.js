@@ -138,8 +138,34 @@
     return shopCard;
   }
 
+  function hasNativeShopLink(root) {
+    const links = Array.from(root.querySelectorAll("a[href]"));
+
+    return links.some(function (link) {
+      if (link.closest(".look-shop-busta-card")) return false;
+
+      const href = link.getAttribute("href") || "";
+      const text = cleanText(link);
+
+      return (
+        href === "/shop" ||
+        href === "/shop/" ||
+        href.endsWith("/shop") ||
+        href.endsWith("/shop/") ||
+        text.includes("enter the shop") ||
+        text.includes("look app shop")
+      );
+    });
+  }
+
   function mountShopCardIn(root) {
     if (!root || !root.body) return false;
+
+    /*
+      Se la pagina ha già uno shop vero, non creiamo un doppione automatico.
+      Questo evita su mobile l'effetto "due shop diversi" che portano allo stesso link.
+    */
+    if (hasNativeShopLink(root)) return false;
 
     const listenCard = findListenCard(root);
     if (!listenCard || !listenCard.parentElement) return false;
