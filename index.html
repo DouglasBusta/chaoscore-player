@@ -1384,47 +1384,70 @@
     display: grid;
     place-items: center;
     padding: 24px;
-    background: rgba(0, 0, 0, .58);
-    backdrop-filter: blur(16px);
+    background: rgba(0, 0, 0, .72);
+    backdrop-filter: blur(18px);
   }
 
   .busta-download-sheet-card {
-    width: min(420px, calc(100vw - 36px));
-    border: 1px solid rgba(242, 234, 223, .22);
-    border-radius: 24px;
-    padding: 22px;
+    position: relative;
+    width: min(430px, calc(100vw - 36px));
+    border: 1px solid rgba(242, 234, 223, .14);
+    border-radius: 18px;
+    padding: 24px 22px 18px;
     background:
-      radial-gradient(circle at top left, rgba(91, 255, 189, .14), transparent 32%),
-      linear-gradient(145deg, rgba(26, 8, 12, .98), rgba(5, 5, 5, .98));
+      radial-gradient(circle at top left, rgba(255, 255, 255, .055), transparent 34%),
+      linear-gradient(145deg, rgba(18, 14, 17, .98), rgba(8, 7, 8, .98));
     color: #f2eadf;
-    box-shadow: 0 24px 90px rgba(0, 0, 0, .55);
+    box-shadow: 0 28px 110px rgba(0, 0, 0, .7);
     font-family: inherit;
   }
 
-  .busta-download-sheet-card strong {
-    display: block;
-    margin-bottom: 10px;
-    font-size: .78rem;
-    letter-spacing: .16em;
-    text-transform: uppercase;
+  .busta-download-sheet-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    border: 1px solid rgba(242, 234, 223, .18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .055);
+    color: rgba(242, 234, 223, .78);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: .72rem;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .busta-download-sheet-card h2 {
+    margin: 0 32px 12px 0;
+    color: #f2eadf;
+    font-size: .92rem;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    text-transform: none;
   }
 
   .busta-download-sheet-card p {
     margin: 0;
-    color: rgba(242, 234, 223, .76);
+    color: rgba(242, 234, 223, .78);
+    font-size: .78rem;
     line-height: 1.45;
   }
 
-  .busta-download-sheet-card button {
+  .busta-download-sheet-card .busta-download-sheet-action {
+    width: 100%;
     margin-top: 18px;
-    border: 1px solid rgba(91, 255, 189, .38);
-    border-radius: 999px;
-    padding: 10px 16px;
-    background: rgba(91, 255, 189, .12);
-    color: #5bffbd;
+    border: 1px solid rgba(242, 234, 223, .14);
+    border-radius: 10px;
+    padding: 11px 16px;
+    background: rgba(255, 255, 255, .035);
+    color: #f2eadf;
     font-weight: 800;
-    letter-spacing: .14em;
-    text-transform: uppercase;
+    font-size: .74rem;
+    letter-spacing: 0;
+    text-transform: lowercase;
     cursor: pointer;
   }
 
@@ -2499,14 +2522,16 @@
         const sheet = document.createElement("div");
         sheet.className = "busta-download-sheet-fallback";
         sheet.innerHTML = `
-          <div class="busta-download-sheet-card">
-            <strong>${title}</strong>
+          <div class="busta-download-sheet-card" role="dialog" aria-modal="true">
+            <button class="busta-download-sheet-close" type="button" aria-label="chiudi">×</button>
+            <h2>${title}</h2>
             <p>${copy}</p>
-            <button type="button">OK</button>
+            <button class="busta-download-sheet-action" type="button">chiudi</button>
           </div>
         `;
 
-        sheet.querySelector("button").addEventListener("click", () => sheet.remove());
+        sheet.querySelector(".busta-download-sheet-close").addEventListener("click", () => sheet.remove());
+        sheet.querySelector(".busta-download-sheet-action").addEventListener("click", () => sheet.remove());
         sheet.addEventListener("click", (event) => {
           if (event.target === sheet) sheet.remove();
         });
