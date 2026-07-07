@@ -2434,9 +2434,29 @@
       downloads.className = "busta-app-downloads";
       downloads.innerHTML = `
         <div class="busta-app-downloads-label">Download Look App</div>
-        <a class="busta-app-download-button" href="#" aria-disabled="true">Download iOS</a>
-        <a class="busta-app-download-button" href="#" aria-disabled="true">Download Android</a>
+        <button class="busta-app-download-button" type="button" data-download-ios>Download iOS</button>
+        <button class="busta-app-download-button" type="button" data-download-android>Download Android</button>
       `;
+
+      downloads.addEventListener("click", (event) => {
+        const iosButton = event.target.closest("[data-download-ios]");
+        const androidButton = event.target.closest("[data-download-android]");
+
+        if (!iosButton && !androidButton) return;
+
+        event.preventDefault();
+
+        if (iosButton) {
+          window.alert(
+            "Download iOS\n\nApri lookapp.org in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”."
+          );
+          return;
+        }
+
+        window.alert(
+          "Download Android\n\nApri lookapp.org in Chrome, apri il menu e scegli “Installa app” oppure “Aggiungi a schermata Home”."
+        );
+      });
 
       const hero =
         document.querySelector(".hero") ||
