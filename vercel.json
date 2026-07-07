@@ -1,16 +1,76 @@
 {
   "rewrites": [
-    { "source": "/exclusive", "destination": "/exclusive.html" },
-    { "source": "/exclusive/", "destination": "/exclusive.html" },
-    { "source": "/user-submissions", "destination": "/user-submissions.html" },
-    { "source": "/user-submissions/", "destination": "/user-submissions.html" },
-    { "source": "/auth", "destination": "/auth.html" },
-    { "source": "/auth/", "destination": "/auth.html" },
-    { "source": "/account", "destination": "/account.html" },
-    { "source": "/account/", "destination": "/account.html" },
-    { "source": "/claim", "destination": "/claim.html" },
-    { "source": "/claim/", "destination": "/claim.html" },
-    { "source": "/chaoscore", "destination": "/chaoscore.html" },
-    { "source": "/chaoscore/", "destination": "/chaoscore.html" }
+    {
+      "source": "/shop",
+      "destination": "/shop/index.html"
+    },
+    {
+      "source": "/shop/",
+      "destination": "/shop/index.html"
+    },
+    {
+      "source": "/shop/success",
+      "destination": "/shop/success.html"
+    },
+    {
+      "source": "/shop/success/",
+      "destination": "/shop/success.html"
+    },
+    {
+      "source": "/shop/cancel",
+      "destination": "/shop/cancel.html"
+    },
+    {
+      "source": "/shop/cancel/",
+      "destination": "/shop/cancel.html"
+    },
+    {
+      "source": "/exclusive",
+      "destination": "/exclusive.html"
+    },
+    {
+      "source": "/exclusive/",
+      "destination": "/exclusive.html"
+    },
+    {
+      "source": "/user-submissions",
+      "destination": "/user-submissions.html"
+    },
+    {
+      "source": "/user-submissions/",
+      "destination": "/user-submissions.html"
+    },
+    {
+      "source": "/auth",
+      "destination": "/auth.html"
+    },
+    {
+      "source": "/auth/",
+      "destination": "/auth.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/account.html"
+    },
+    {
+      "source": "/account/",
+      "destination": "/account.html"
+    },
+    {
+      "source": "/claim",
+      "destination": "/claim.html"
+    },
+    {
+      "source": "/claim/",
+      "destination": "/claim.html"
+    },
+    {
+      "source": "/chaoscore",
+      "destination": "/chaoscore.html"
+    },
+    {
+      "source": "/chaoscore/",
+      "destination": "/chaoscore.html"
+    }
   ]
 }
