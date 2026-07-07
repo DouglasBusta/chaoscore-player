@@ -726,6 +726,117 @@
         min-height: 310px;
       }
     }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 10px;
+      }
+
+      .catalog {
+        padding: 10px;
+      }
+
+      .catalog-head {
+        gap: 10px;
+      }
+
+      .catalog-head h2 {
+        font-size: 1.05rem;
+      }
+
+      .tabs {
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .tab {
+        white-space: nowrap;
+        padding: 7px 9px;
+        font-size: .58rem;
+      }
+
+      .product-grid {
+        gap: 10px;
+      }
+
+      .product {
+        border-radius: 20px;
+      }
+
+      .product-top {
+        padding: 10px;
+        grid-template-columns: 58px 1fr;
+        grid-template-areas:
+          "art meta"
+          "art title"
+          "art desc"
+          "art rating";
+        gap: 5px 10px;
+        align-items: center;
+      }
+
+      .product-meta {
+        grid-area: meta;
+        font-size: .48rem;
+        gap: 6px;
+      }
+
+      .product-art {
+        grid-area: art;
+        width: 58px;
+        height: 58px;
+        border-radius: 14px;
+        font-size: 1.65rem;
+      }
+
+      .product h3 {
+        grid-area: title;
+        font-size: .86rem;
+        line-height: 1;
+      }
+
+      .product p {
+        grid-area: desc;
+        font-size: .66rem;
+        line-height: 1.28;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .rating {
+        grid-area: rating;
+        font-size: .56rem;
+      }
+
+      .buy-row {
+        padding: 0 10px 10px;
+        gap: 7px;
+      }
+
+      .price {
+        font-size: .9rem;
+      }
+
+      .subprice {
+        display: block;
+        font-size: .52rem;
+      }
+
+      .quick-remove {
+        width: 32px;
+        min-width: 32px;
+        height: 32px;
+      }
+
+      .add {
+        min-width: 64px;
+        height: 34px;
+        padding: 0 12px;
+      }
+    }
   
     .checkout-form-section {
       padding: 0 14px 14px;
