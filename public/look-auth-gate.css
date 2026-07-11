@@ -37,14 +37,17 @@
   min-height: 190px;
   display: grid;
   place-items: center;
+  overflow: visible;
 }
 
 .look-auth-logo img {
-  width: 100%;
-  max-height: 285px;
+  width: 118%;
+  max-width: none;
+  max-height: 300px;
   object-fit: contain;
   display: block;
-  transform: scale(1.18);
+  transform: scale(1.22);
+  transform-origin: center center;
   filter: drop-shadow(0 22px 42px rgba(255, 0, 90, .26));
 }
 
