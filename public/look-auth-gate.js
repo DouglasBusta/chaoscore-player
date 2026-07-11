@@ -43,25 +43,8 @@
 
     gate.innerHTML = `
       <div class="look-auth-card look-auth-appscreen" role="document">
-        <div class="look-auth-topline">BUSTA FILES</div>
-
-        <div class="look-auth-hero" aria-hidden="true">
+        <div class="look-auth-brand-wrap" aria-hidden="true">
           <img class="look-auth-main-logo" src="/brand/look-app-logo-chaos-red.png" alt="" loading="eager" decoding="async">
-
-          <div class="look-auth-fake-app">
-            <div class="look-auth-fake-bar">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-
-            <div class="look-auth-fake-grid">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div>
         </div>
 
         <div class="look-auth-panel">
@@ -79,6 +62,7 @@
           <p class="look-auth-note">Accesso obbligatorio</p>
           <p class="look-auth-loading" id="look-auth-loading">Effettua l’accesso per continuare.</p>
         </div>
+      </div>
       </div>
     `;
 
