@@ -225,11 +225,16 @@
       transition: min-height .22s ease;
     }
 
-    .paypal-card.paypal-expanded .paypal-button-window,
+    .paypal-card.paypal-expanded .paypal-button-window {
+      height: 1120px;
+      min-height: 1120px;
+      max-height: 1120px;
+    }
+
     .paypal-card.paypal-expanded #paypal-buttons {
-      height: 920px;
-      min-height: 920px;
-      max-height: 920px;
+      height: auto;
+      min-height: 1120px;
+      max-height: none;
     }
 
     .paypal-card.paypal-expanded {
@@ -237,7 +242,7 @@
     }
 
     .paypal-card.paypal-expanded .paypal-mask-bottom {
-      top: 916px;
+      top: 1116px;
     }
 
     .paypal-checkout-box {
@@ -254,9 +259,9 @@
     .paypal-button-window {
       position: relative;
       width: 100%;
-      height: 178px;
-      min-height: 178px;
-      max-height: 178px;
+      height: 186px;
+      min-height: 186px;
+      max-height: 186px;
       overflow: hidden;
       border-radius: 14px;
       background: rgba(255,255,255,.04);
@@ -268,9 +273,9 @@
       inset: 0;
       z-index: 1;
       width: 100%;
-      height: 178px;
-      min-height: 178px;
-      max-height: 178px;
+      height: 186px;
+      min-height: 186px;
+      max-height: 186px;
       overflow: hidden;
       border-radius: 14px;
       background: transparent;
@@ -316,7 +321,7 @@
     }
 
     .paypal-mask-bottom {
-      top: 174px;
+      top: 182px;
       bottom: 0;
     }
 
@@ -328,26 +333,6 @@
       letter-spacing: .02em;
     }
 
-    .paypal-collapse-btn {
-      display: none;
-      width: 100%;
-      margin-top: 10px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 14px;
-      padding: 10px 12px;
-      background: rgba(255,255,255,.075);
-      color: rgba(255,255,255,.82);
-      font-weight: 900;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    .paypal-card.paypal-expanded .paypal-collapse-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
 
     .manual-fallback-note {
       display: none;
@@ -378,26 +363,6 @@
       letter-spacing: .02em;
     }
 
-    .paypal-collapse-btn {
-      display: none;
-      width: 100%;
-      margin-top: 10px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 14px;
-      padding: 10px 12px;
-      background: rgba(255,255,255,.075);
-      color: rgba(255,255,255,.82);
-      font-weight: 900;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    .paypal-card.paypal-expanded .paypal-collapse-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
 
   </style>
 </head>
@@ -449,9 +414,7 @@
             </div>
           </div>
           <div class="paypal-powered">Pagamento sicuro con tecnologia PayPal.</div>
-          <button class="paypal-collapse-btn" type="button" id="paypal-collapse-btn">
-            Riduci metodi PayPal
-          </button>
+
         </div>
 
         <p id="paypal-status" style="margin-top:10px;font-size:12px;text-align:center;"></p>
@@ -620,23 +583,23 @@
           if (paypalCard) paypalCard.classList.remove("paypal-expanded");
         };
 
-        const collapseButton = document.getElementById("paypal-collapse-btn");
-        if (collapseButton) {
-          collapseButton.addEventListener("click", collapsePayPalCard);
-        }
+
 
         function watchPayPalFrameSize() {
           const check = () => {
             const frame = document.querySelector("#paypal-buttons iframe");
             if (!frame || !paypalCard) return;
 
-            const frameHeight = frame.getBoundingClientRect().height || Number(frame.getAttribute("height")) || 0;
+            const frameRectHeight = frame.getBoundingClientRect().height || 0;
+            const attrHeight = Number(frame.getAttribute("height")) || 0;
+            const styleHeight = parseFloat(frame.style.height || "0") || 0;
+            const frameHeight = Math.max(frameRectHeight, attrHeight, styleHeight);
 
-            if (frameHeight > 210) {
+            if (frameHeight > 260) {
               expandPayPalCard();
             }
 
-            if (frameHeight > 0 && frameHeight <= 190) {
+            if (frameHeight > 0 && frameHeight <= 210) {
               collapsePayPalCard();
             }
           };
@@ -660,6 +623,8 @@
           onClick() {
             expandPayPalCard();
             setTimeout(watchPayPalFrameSize, 250);
+            setTimeout(watchPayPalFrameSize, 900);
+            setTimeout(watchPayPalFrameSize, 1800);
           },
 
           style: {
