@@ -1806,15 +1806,20 @@ Checkout in modalità sandbox Stripe.`;
 
     async function sendOrderEmailBeta() {
       const status = document.getElementById("order-email-status");
-      const text = getOrderPreviewText();
-
-      if (!text) {
-        status.textContent = "Genera prima un ordine valido.";
-        return;
-      }
+      let text = getOrderPreviewText();
 
       if (!cart.length) {
         status.textContent = "Aggiungi almeno un prodotto al carrello prima di pagare.";
+        return;
+      }
+
+      if (!text) {
+        generateOrderPreview();
+        text = getOrderPreviewText();
+      }
+
+      if (!text) {
+        status.textContent = "Compila i dati richiesti prima di pagare.";
         return;
       }
 
