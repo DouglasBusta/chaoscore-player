@@ -222,23 +222,90 @@
     .paypal-checkout-box {
       width: 100%;
       margin-top: auto;
-      padding: 8px;
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 18px;
-      background: rgba(255,255,255,.92);
-      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+      padding: 0;
+      border: 0;
+      border-radius: 16px;
+      background: transparent;
+      box-shadow: none;
       color-scheme: light;
     }
 
-    #paypal-buttons {
+    .paypal-button-window {
+      position: relative;
       width: 100%;
+      height: 118px;
       min-height: 118px;
+      max-height: 118px;
       overflow: hidden;
       border-radius: 14px;
+      background: rgba(255,255,255,.04);
+    }
+
+    #paypal-buttons {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 118px;
+      min-height: 118px;
+      max-height: 118px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: transparent;
+      color-scheme: light;
     }
 
     #paypal-buttons iframe {
       border-radius: 14px !important;
+      background: transparent !important;
+      transform: translateY(0);
+      color-scheme: light;
+    }
+
+    .paypal-hole-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .paypal-mask-strip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background:
+        linear-gradient(180deg, rgba(22,13,19,.98), rgba(22,13,19,.94));
+      pointer-events: none;
+    }
+
+    .paypal-mask-top {
+      top: 0;
+      height: 5px;
+    }
+
+    .paypal-mask-gap-1 {
+      top: 37px;
+      height: 8px;
+    }
+
+    .paypal-mask-gap-2 {
+      top: 77px;
+      height: 8px;
+    }
+
+    .paypal-mask-bottom {
+      top: 116px;
+      bottom: 0;
+    }
+
+    .paypal-powered {
+      margin-top: 8px;
+      text-align: center;
+      color: rgba(255,255,255,.45);
+      font-size: 10px;
+      letter-spacing: .02em;
     }
 
     .manual-fallback-note {
@@ -310,7 +377,15 @@
           automaticamente al codice ordine e riceverai l’email di conferma.
         </p>
         <div class="paypal-checkout-box">
-          <div id="paypal-buttons"></div>
+          <div class="paypal-button-window">
+            <div id="paypal-buttons"></div>
+            <div class="paypal-hole-mask" aria-hidden="true">
+              <span class="paypal-mask-strip paypal-mask-top"></span>
+              <span class="paypal-mask-strip paypal-mask-gap-1"></span>
+              <span class="paypal-mask-strip paypal-mask-gap-2"></span>
+              <span class="paypal-mask-strip paypal-mask-bottom"></span>
+            </div>
+          </div>
           <div class="paypal-powered">Pagamento sicuro con tecnologia PayPal.</div>
         </div>
 
