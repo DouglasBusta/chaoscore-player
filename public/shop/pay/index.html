@@ -257,9 +257,11 @@
           Paga tramite PayPal.me con importo precompilato. Inserisci l’Order ID nelle note del pagamento,
           se PayPal ti permette di aggiungerle.
         </p>
-        <a class="btn" id="paypal-link" href="https://paypal.me/grevrellegr" target="_blank" rel="noopener">
-          Pay with PayPal
+        <div id="paypal-buttons"></div>
+        <a class="btn secondary" id="paypal-link" href="https://paypal.me/grevrellegr" target="_blank" rel="noopener" style="margin-top:10px;">
+          Manual PayPal.me fallback
         </a>
+        <p id="paypal-status" style="margin-top:10px;font-size:12px;"></p>
       </article>
 
       <article class="card">
@@ -359,5 +361,126 @@
       }
     });
   </script>
+
+  <script id="paypal-checkout-live-v1">
+    (async function () {
+      const statusEl = document.getElementById("paypal-status");
+      const buttonsEl = document.getElementById("paypal-buttons");
+
+      function setStatus(message) {
+        if (statusEl) statusEl.textContent = message || "";
+      }
+
+      function getCustomerEmail() {
+        const preview = document.getElementById("copybox")?.value || "";
+        const match = preview.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+        return match ? match[0] : "";
+      }
+
+      function loadPayPalSdk(clientId) {
+        return new Promise((resolve, reject) => {
+          if (window.paypal) return resolve();
+
+          const script = document.createElement("script");
+          script.src = "https://www.paypal.com/sdk/js?client-id=" + encodeURIComponent(clientId) + "&currency=EUR&intent=capture";
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("Impossibile caricare PayPal SDK"));
+          document.head.appendChild(script);
+        });
+      }
+
+      try {
+        if (!buttonsEl) return;
+
+        setStatus("Caricamento PayPal Checkout...");
+
+        const configResponse = await fetch("/api/paypal-config");
+        const config = await configResponse.json();
+
+        if (!configResponse.ok || !config.clientId) {
+          throw new Error(config.error || "Configurazione PayPal mancante");
+        }
+
+        await loadPayPalSdk(config.clientId);
+
+        const preview = document.getElementById("copybox")?.value || "";
+        const customerEmail = getCustomerEmail();
+
+        window.paypal.Buttons({
+          style: {
+            layout: "vertical",
+            color: "gold",
+            shape: "pill",
+            label: "paypal"
+          },
+
+          async createOrder() {
+            setStatus("Creazione ordine PayPal...");
+
+            const response = await fetch("/api/paypal-create-order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId,
+                total: totalNumber,
+                preview
+              })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.id) {
+              throw new Error(data.error || "Errore creazione ordine PayPal");
+            }
+
+            return data.id;
+          },
+
+          async onApprove(data) {
+            setStatus("Pagamento approvato. Conferma in corso...");
+
+            const response = await fetch("/api/paypal-capture-order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                paypalOrderId: data.orderID,
+                lookOrderId: orderId,
+                total: totalNumber,
+                preview,
+                customerEmail
+              })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.ok) {
+              throw new Error(result.error || "Errore conferma pagamento PayPal");
+            }
+
+            setStatus("Pagamento confermato. Email inviata.");
+            window.location.href =
+              "/shop/success?order=" +
+              encodeURIComponent(orderId) +
+              "&provider=paypal";
+          },
+
+          onCancel() {
+            setStatus("Pagamento PayPal annullato.");
+          },
+
+          onError(err) {
+            console.error(err);
+            setStatus("Errore PayPal: " + (err.message || "riprova tra poco."));
+          }
+        }).render("#paypal-buttons");
+
+        setStatus("");
+      } catch (err) {
+        console.error(err);
+        setStatus("PayPal Checkout non disponibile: " + (err.message || "usa il fallback PayPal.me."));
+      }
+    })();
+  </script>
+
 </body>
 </html>
