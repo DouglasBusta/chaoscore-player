@@ -1365,7 +1365,7 @@
               </div>
 
               <div class="disabled-pay">
-                Checkout reale disattivato. Prossimo step: form cliente, email ordine, sandbox PayPal e spedizione.
+                Checkout sicuro attivo. Compila i dati, controlla il carrello e procedi al pagamento.
               </div>
             </div>
           </section>
@@ -1533,7 +1533,7 @@
         </div>
         <div class="info">
           <h3>Order ops</h3>
-          <p>Dopo il form: email ordine a Douglas, conferma cliente, sandbox PayPal e sistema etichette/spedizioni in beta.</p>
+          <p>Dopo il pagamento riceverai la conferma ordine via email. LOOK APP SHOP riceverà automaticamente i dettagli.</p>
         </div>
       </section>
     </section>
@@ -1769,7 +1769,7 @@ ${notes}
 
 STATO
 Pagamento in attesa di conferma Stripe.
-Checkout in modalità sandbox Stripe.`;
+Checkout sicuro tramite Stripe.`;
 
       preview.dataset.orderCode = orderCode;
     }
@@ -1833,7 +1833,7 @@ Checkout in modalità sandbox Stripe.`;
         return;
       }
 
-      status.textContent = "Apro checkout Stripe in sandbox...";
+      status.textContent = "Apro il checkout sicuro...";
 
       try {
         const response = await fetch("/api/create-checkout-session", {

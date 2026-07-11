@@ -86,8 +86,8 @@ export default async function handler(req, res) {
   )
     .replaceAll("Pagamento non ancora effettuato.", "Pagamento ricevuto tramite Stripe.")
     .replaceAll("Pagamento in attesa di conferma Stripe.", "Pagamento ricevuto tramite Stripe.")
-    .replaceAll("Checkout in modalità preview.", "Checkout completato in modalità sandbox Stripe.")
-    .replaceAll("Checkout in modalità sandbox Stripe.", "Checkout completato in modalità sandbox Stripe.");
+    .replaceAll("Checkout in modalità preview.", "Checkout completato tramite Stripe.")
+    .replaceAll("Checkout in modalità sandbox Stripe.", "Checkout completato tramite Stripe.");
 
   const subjectAdmin = `Pagamento ricevuto LOOK APP SHOP — ${amountTotal}`;
   const subjectCustomer = `Pagamento confermato LOOK APP SHOP`;
@@ -107,7 +107,7 @@ export default async function handler(req, res) {
     <p>Ciao ${escapeHtml(customerName)},</p>
     <p>abbiamo ricevuto il pagamento per il tuo ordine LOOK APP SHOP.</p>
     <p><strong>Importo:</strong> ${escapeHtml(amountTotal)}</p>
-    <p>Questa è una conferma automatica in modalità sandbox/test.</p>
+    <p>Questa è una conferma automatica del tuo ordine.</p>
   `;
 
   try {
