@@ -1,0 +1,123 @@
+/* LOOK APP global auth gate */
+.look-auth-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  padding: max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 0, 88, .30), transparent 38%),
+    radial-gradient(circle at 86% 16%, rgba(255, 160, 40, .18), transparent 36%),
+    linear-gradient(180deg, rgba(8, 0, 8, .975), rgba(12, 0, 8, .992));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.look-auth-gate[hidden] {
+  display: none !important;
+}
+
+.look-auth-card {
+  width: min(430px, 100%);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 28px;
+  padding: 32px 24px 24px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035)),
+    rgba(12, 8, 12, .90);
+  box-shadow: 0 28px 90px rgba(0,0,0,.62);
+  text-align: center;
+  color: #fff;
+}
+
+.look-auth-logo {
+  margin: 0 auto 14px;
+  width: 94px;
+  height: 94px;
+  border-radius: 28px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.24), transparent 35%),
+    linear-gradient(135deg, rgba(255,0,90,.92), rgba(60,0,30,.95));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16), 0 18px 42px rgba(255,0,90,.22);
+  overflow: hidden;
+}
+
+.look-auth-logo-text {
+  font: 950 22px/1 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: -1.5px;
+}
+
+.look-auth-title {
+  margin: 0;
+  font: 950 clamp(38px, 9vw, 58px)/.82 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: -3.5px;
+  text-transform: uppercase;
+}
+
+.look-auth-subtitle {
+  margin: 14px auto 24px;
+  max-width: 310px;
+  color: rgba(255,255,255,.72);
+  font: 650 13px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+}
+
+.look-auth-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.look-auth-btn {
+  width: 100%;
+  min-height: 50px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font: 950 13px/1 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+}
+
+.look-auth-btn:active {
+  transform: scale(.985);
+}
+
+.look-auth-btn-primary {
+  color: #170009;
+  background: linear-gradient(90deg, #fff, #ffb6cb);
+  box-shadow: 0 12px 34px rgba(255, 86, 140, .22);
+}
+
+.look-auth-btn-secondary {
+  color: #fff;
+  background: rgba(255,255,255,.075);
+  border: 1px solid rgba(255,255,255,.16);
+}
+
+.look-auth-note {
+  margin: 16px 0 0;
+  color: rgba(255,255,255,.45);
+  font: 800 10px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+
+.look-auth-loading {
+  margin-top: 14px;
+  color: rgba(255,255,255,.48);
+  font: 800 10px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: .25px;
+  text-transform: uppercase;
+}
+
+html.look-auth-locked,
+body.look-auth-locked {
+  overflow: hidden !important;
+}
