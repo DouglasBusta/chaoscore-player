@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/shop/pay",
+      "destination": "/shop/pay/index.html"
+    },
+    {
+      "source": "/shop/pay/",
+      "destination": "/shop/pay/index.html"
+    },
+    {
       "source": "/shop",
       "destination": "/shop/index.html"
     },
