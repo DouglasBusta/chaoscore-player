@@ -19,7 +19,7 @@
 }
 
 .look-auth-card {
-  width: min(520px, 92vw);
+  width: min(620px, 94vw);
   border: 1px solid rgba(255,255,255,.16);
   border-radius: 28px;
   padding: 30px 26px 24px;
@@ -32,19 +32,20 @@
 }
 
 .look-auth-logo {
-  margin: 0 auto 22px;
-  width: min(430px, 86vw);
-  min-height: 150px;
+  margin: 0 auto 18px;
+  width: min(580px, 88vw);
+  min-height: 190px;
   display: grid;
   place-items: center;
 }
 
 .look-auth-logo img {
   width: 100%;
-  max-height: 210px;
+  max-height: 285px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 20px 38px rgba(255, 0, 90, .24));
+  transform: scale(1.18);
+  filter: drop-shadow(0 22px 42px rgba(255, 0, 90, .26));
 }
 
 .look-auth-logo-text {
