@@ -176,6 +176,11 @@
       border-radius: 14px !important;
     }
 
+    .paypal-bank-zone {
+      min-height: 44px;
+      overflow: visible;
+    }
+
     .paypal-card-zone {
       min-height: 54px;
       overflow: visible;
@@ -303,6 +308,9 @@
           <div class="method-label">PayPal</div>
           <div id="paypal-wallet-buttons" class="paypal-buttons"></div>
 
+          <div class="method-label paypal-bank-label" hidden>MyBank</div>
+          <div id="paypal-bank-buttons" class="paypal-buttons paypal-bank-zone" hidden></div>
+
           <div class="method-label">Carta di debito o credito</div>
           <div id="paypal-card-buttons" class="paypal-buttons paypal-card-zone"></div>
 
@@ -408,6 +416,8 @@
     (async function () {
       const statusEl = document.getElementById("paypal-status");
       const walletTarget = document.getElementById("paypal-wallet-buttons");
+      const bankTarget = document.getElementById("paypal-bank-buttons");
+      const bankLabel = document.querySelector(".paypal-bank-label");
       const cardTarget = document.getElementById("paypal-card-buttons");
 
       if (!walletTarget || !cardTarget) return;
@@ -561,6 +571,44 @@
               setStatus("Errore PayPal: " + (err.message || "riprova tra poco."));
             }
           }).render("#paypal-wallet-buttons");
+
+          try {
+            const fundingSources = window.paypal.getFundingSources ? window.paypal.getFundingSources() : [];
+            const myBankSource = fundingSources.find((source) =>
+              String(source || "").toLowerCase().includes("mybank")
+            );
+
+            if (myBankSource && bankTarget) {
+              const myBankButton = window.paypal.Buttons({
+                fundingSource: myBankSource,
+                style: {
+                  layout: "vertical",
+                  color: "blue",
+                  shape: "pill",
+                  height: 38
+                },
+                createOrder: createPayPalOrder,
+                onApprove: capturePayPalOrder,
+                onCancel() {
+                  resetPayPalOrderCache();
+                  setStatus("Pagamento MyBank annullato.");
+                },
+                onError(err) {
+                  resetPayPalOrderCache();
+                  console.error(err);
+                  setStatus("Errore MyBank PayPal: " + (err.message || "riprova tra poco."));
+                }
+              });
+
+              if (myBankButton.isEligible()) {
+                bankTarget.hidden = false;
+                if (bankLabel) bankLabel.hidden = false;
+                await myBankButton.render("#paypal-bank-buttons");
+              }
+            }
+          } catch (err) {
+            console.warn("MyBank non disponibile in questa sessione PayPal:", err);
+          }
 
           window.paypal.Buttons({
             fundingSource: window.paypal.FUNDING.CARD,
