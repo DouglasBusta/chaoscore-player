@@ -446,14 +446,25 @@
         });
       }
 
+      let cachedPayPalOrderId = "";
+      let cachedPayPalOrderPromise = null;
+
       async function createPayPalOrder() {
+        if (cachedPayPalOrderId) {
+          return cachedPayPalOrderId;
+        }
+
+        if (cachedPayPalOrderPromise) {
+          return cachedPayPalOrderPromise;
+        }
+
         if (!totalNumber) {
           throw new Error("Totale ordine non valido.");
         }
 
-        setStatus("Creazione ordine PayPal...");
+        setStatus("Preparazione pagamento PayPal...");
 
-        const response = await fetch("/api/paypal-create-order", {
+        cachedPayPalOrderPromise = fetch("/api/paypal-create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -461,15 +472,29 @@
             total: totalNumber,
             preview: details
           })
-        });
+        })
+          .then(async (response) => {
+            const data = await response.json();
 
-        const data = await response.json();
+            if (!response.ok || !data.id) {
+              throw new Error(data.error || "Errore creazione ordine PayPal");
+            }
 
-        if (!response.ok || !data.id) {
-          throw new Error(data.error || "Errore creazione ordine PayPal");
-        }
+            cachedPayPalOrderId = data.id;
+            return data.id;
+          })
+          .catch((error) => {
+            cachedPayPalOrderPromise = null;
+            cachedPayPalOrderId = "";
+            throw error;
+          });
 
-        return data.id;
+        return cachedPayPalOrderPromise;
+      }
+
+      function resetPayPalOrderCache() {
+        cachedPayPalOrderId = "";
+        cachedPayPalOrderPromise = null;
       }
 
       async function capturePayPalOrder(data) {
@@ -493,6 +518,7 @@
           throw new Error(result.error || "Errore conferma pagamento PayPal");
         }
 
+        resetPayPalOrderCache();
         setStatus("Pagamento confermato. Email inviata.");
 
         window.location.href =
@@ -526,9 +552,11 @@
             createOrder: createPayPalOrder,
             onApprove: capturePayPalOrder,
             onCancel() {
+              resetPayPalOrderCache();
               setStatus("Pagamento PayPal annullato.");
             },
             onError(err) {
+              resetPayPalOrderCache();
               console.error(err);
               setStatus("Errore PayPal: " + (err.message || "riprova tra poco."));
             }
@@ -546,14 +574,22 @@
             createOrder: createPayPalOrder,
             onApprove: capturePayPalOrder,
             onCancel() {
+              resetPayPalOrderCache();
               setStatus("Pagamento carta annullato.");
             },
             onError(err) {
+              resetPayPalOrderCache();
               console.error(err);
               setStatus("Errore carta PayPal: " + (err.message || "riprova tra poco."));
             }
           }).render("#paypal-card-buttons");
         }
+
+        setTimeout(() => {
+          createPayPalOrder().catch((err) => {
+            console.warn("Pre-creazione ordine PayPal non riuscita:", err);
+          });
+        }, 700);
 
         setStatus("");
       } catch (err) {
