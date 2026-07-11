@@ -99,6 +99,14 @@
     `;
   }
 
+  function goToShop() {
+    try {
+      window.top.location.href = "/shop";
+    } catch (_) {
+      window.location.href = "/shop";
+    }
+  }
+
   function makeShopCard(root, listenCard) {
     /*
       Punto chiave:
@@ -114,22 +122,34 @@
 
     if (shopCard.tagName.toLowerCase() === "a") {
       shopCard.href = "/shop";
+      shopCard.target = "_top";
     } else {
       shopCard.setAttribute("role", "link");
       shopCard.tabIndex = 0;
-      shopCard.addEventListener("click", function () {
-        window.location.href = "/shop";
-      });
-      shopCard.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          window.location.href = "/shop";
-        }
-      });
     }
+
+    shopCard.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      goToShop();
+    });
+
+    shopCard.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        event.stopPropagation();
+        goToShop();
+      }
+    });
 
     shopCard.querySelectorAll("a").forEach(function (a) {
       a.href = "/shop";
+      a.target = "_top";
+      a.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        goToShop();
+      });
     });
 
     rewriteTextNodes(shopCard);
