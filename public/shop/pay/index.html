@@ -40,7 +40,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 14px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
 
     .back {
@@ -48,7 +48,7 @@
       text-decoration: none;
       border: 1px solid var(--line);
       border-radius: 999px;
-      padding: 10px 14px;
+      padding: 9px 13px;
       background: rgba(255,255,255,.06);
       font-size: 13px;
       letter-spacing: .04em;
@@ -65,9 +65,9 @@
       text-transform: uppercase;
     }
 
-    .hero, .card {
+    .hero, .card, .rules {
       border: 1px solid var(--line);
-      border-radius: 28px;
+      border-radius: 24px;
       background: var(--panel);
       box-shadow: 0 24px 70px rgba(0,0,0,.36);
       backdrop-filter: blur(18px);
@@ -80,7 +80,7 @@
 
     h1 {
       margin: 0 0 10px;
-      font-size: clamp(30px, 7vw, 64px);
+      font-size: clamp(30px, 7vw, 58px);
       line-height: .9;
       letter-spacing: -.06em;
       text-transform: uppercase;
@@ -89,28 +89,29 @@
     .lead {
       margin: 0;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.45;
       max-width: 760px;
+      font-size: 14px;
     }
 
     .summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
     .mini {
       border: 1px solid rgba(255,255,255,.10);
-      border-radius: 18px;
-      padding: 13px;
+      border-radius: 16px;
+      padding: 12px;
       background: rgba(255,255,255,.045);
     }
 
     .mini span {
       display: block;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: .10em;
       text-transform: uppercase;
       margin-bottom: 5px;
@@ -118,7 +119,7 @@
 
     .mini strong {
       display: block;
-      font-size: 15px;
+      font-size: 14px;
       overflow-wrap: anywhere;
     }
 
@@ -134,11 +135,12 @@
       padding: 16px;
       display: flex;
       flex-direction: column;
+      min-height: 0;
     }
 
     .card h2 {
       margin: 0 0 8px;
-      font-size: 18px;
+      font-size: 17px;
       letter-spacing: -.02em;
     }
 
@@ -149,193 +151,46 @@
       font-size: 13px;
     }
 
-    .card .btn,
-    .card > .btn {
-      margin-top: auto;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      border: 0;
-      border-radius: 16px;
-      padding: 14px 16px;
+    .method-label {
+      margin: 12px 0 7px;
+      color: rgba(255,255,255,.62);
+      font-size: 10px;
       font-weight: 900;
-      letter-spacing: .08em;
+      letter-spacing: .10em;
       text-transform: uppercase;
-      color: #14040a;
-      background: linear-gradient(135deg, #fff, #ffb4cf);
-      text-decoration: none;
-      cursor: pointer;
     }
 
-    .btn.secondary {
-      color: #fff;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.14);
-    }
-
-    .btn.disabled {
-      opacity: .55;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .rules {
-      margin-top: 16px;
-      padding: 18px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 13px;
-    }
-
-    .rules strong {
-      color: #fff;
-    }
-
-    .copybox {
+    .paypal-zone {
       width: 100%;
-      min-height: 120px;
-      resize: vertical;
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 18px;
-      padding: 14px;
-      background: rgba(0,0,0,.28);
-      color: #fff;
-      font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      outline: none;
-    }
-
-    @media (max-width: 760px) {
-      body { padding-left: 12px; padding-right: 12px; }
-      .top { align-items: stretch; flex-direction: column; }
-      .summary, .grid { grid-template-columns: 1fr; }
-      .hero { padding: 20px; border-radius: 24px; }
-      .card { padding: 17px; border-radius: 22px; }
-    }
-  
-    .paypal-card {
-      min-height: 0;
-      transition: min-height .22s ease;
-    }
-
-    .paypal-card.paypal-expanded .paypal-button-window {
-      height: 1120px;
-      min-height: 1120px;
-      max-height: 1120px;
-    }
-
-    .paypal-card.paypal-expanded #paypal-buttons {
-      height: auto;
-      min-height: 1120px;
-      max-height: none;
-    }
-
-    .paypal-card.paypal-expanded {
-      scroll-margin-top: 18px;
-    }
-
-    .paypal-card.paypal-expanded .paypal-mask-bottom {
-      top: 1116px;
-    }
-
-    .paypal-checkout-box {
-      width: 100%;
-      margin-top: auto;
-      padding: 0;
-      border: 0;
-      border-radius: 16px;
-      background: transparent;
-      box-shadow: none;
       color-scheme: light;
     }
 
-    .paypal-button-window {
-      position: relative;
+    .paypal-buttons {
       width: 100%;
-      height: 186px;
-      min-height: 186px;
-      max-height: 186px;
-      overflow: hidden;
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      transition: height .22s ease, min-height .22s ease, max-height .22s ease;
-    }
-
-    #paypal-buttons {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      width: 100%;
-      height: 186px;
-      min-height: 186px;
-      max-height: 186px;
-      overflow: hidden;
-      border-radius: 14px;
-      background: transparent;
+      min-height: 44px;
+      overflow: visible;
       color-scheme: light;
     }
 
-    #paypal-buttons iframe {
+    .paypal-buttons iframe {
       border-radius: 14px !important;
-      background: transparent !important;
-      transform: translateY(0);
-      color-scheme: light;
     }
 
-    .paypal-hole-mask {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      border-radius: 14px;
-      overflow: hidden;
+    .paypal-card-zone {
+      min-height: 54px;
+      overflow: visible;
     }
 
-    .paypal-mask-strip {
-      position: absolute;
-      left: 0;
-      right: 0;
-      background:
-        linear-gradient(180deg, rgba(22,13,19,.98), rgba(22,13,19,.94));
-      pointer-events: none;
-    }
-
-    .paypal-mask-top {
-      top: 0;
-      height: 5px;
-    }
-
-    .paypal-mask-gap-1 {
-      display: none;
-    }
-
-    .paypal-mask-gap-2 {
-      display: none;
-    }
-
-    .paypal-mask-bottom {
-      top: 182px;
-      bottom: 0;
+    .paypal-card-zone iframe {
+      min-height: 54px;
     }
 
     .paypal-powered {
-      margin-top: 8px;
+      margin-top: 10px;
       text-align: center;
       color: rgba(255,255,255,.45);
       font-size: 10px;
       letter-spacing: .02em;
-    }
-
-
-    .manual-fallback-note {
-      display: none;
     }
 
     .coming-soon-btn {
@@ -355,15 +210,55 @@
       opacity: .72;
     }
 
-    .paypal-powered {
-      margin-top: 8px;
-      text-align: center;
-      color: rgba(255,255,255,.45);
-      font-size: 10px;
-      letter-spacing: .02em;
+    .copybox {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 16px;
+      padding: 13px;
+      background: rgba(0,0,0,.28);
+      color: #fff;
+      font: 12px/1.42 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      outline: none;
     }
 
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      border: 0;
+      border-radius: 15px;
+      padding: 13px 15px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      text-decoration: none;
+      cursor: pointer;
+    }
 
+    .rules {
+      margin-top: 14px;
+      padding: 15px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 12px;
+    }
+
+    .rules strong { color: #fff; }
+
+    @media (max-width: 760px) {
+      body { padding-left: 12px; padding-right: 12px; }
+      .top { align-items: stretch; flex-direction: column; }
+      .summary, .grid { grid-template-columns: 1fr; }
+      .hero { padding: 18px; border-radius: 22px; }
+      .card { padding: 15px; border-radius: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -377,7 +272,7 @@
       <h1>Payment Options</h1>
       <p class="lead">
         Scegli un metodo di pagamento per completare l’ordine LOOK APP SHOP.
-        L’ordine viene preparato solo dopo verifica manuale del pagamento.
+        L’ordine viene preparato solo dopo verifica del pagamento.
       </p>
 
       <div class="summary">
@@ -403,18 +298,15 @@
           Completa il pagamento tramite PayPal Checkout. Dopo la conferma, l’ordine viene collegato
           automaticamente al codice ordine e riceverai l’email di conferma.
         </p>
-        <div class="paypal-checkout-box">
-          <div class="paypal-button-window">
-            <div id="paypal-buttons"></div>
-            <div class="paypal-hole-mask" aria-hidden="true">
-              <span class="paypal-mask-strip paypal-mask-top"></span>
-              <span class="paypal-mask-strip paypal-mask-gap-1"></span>
-              <span class="paypal-mask-strip paypal-mask-gap-2"></span>
-              <span class="paypal-mask-strip paypal-mask-bottom"></span>
-            </div>
-          </div>
-          <div class="paypal-powered">Pagamento sicuro con tecnologia PayPal.</div>
 
+        <div class="paypal-zone">
+          <div class="method-label">PayPal</div>
+          <div id="paypal-wallet-buttons" class="paypal-buttons"></div>
+
+          <div class="method-label">Carta di debito o credito</div>
+          <div id="paypal-card-buttons" class="paypal-buttons paypal-card-zone"></div>
+
+          <div class="paypal-powered">Pagamento sicuro con tecnologia PayPal.</div>
         </div>
 
         <p id="paypal-status" style="margin-top:10px;font-size:12px;text-align:center;"></p>
@@ -442,7 +334,7 @@
           Copia questi dati e usali come riferimento per email, PayPal o metodi manuali.
         </p>
         <textarea class="copybox" id="copybox" readonly></textarea>
-        <button class="btn secondary" id="copy-btn" type="button" style="margin-top:10px;">Copy Details</button>
+        <button class="btn" id="copy-btn" type="button" style="margin-top:10px;">Copy Details</button>
       </article>
     </section>
 
@@ -512,10 +404,13 @@
     });
   </script>
 
-  <script id="paypal-checkout-live-v1">
+  <script id="paypal-clean-checkout-v3">
     (async function () {
       const statusEl = document.getElementById("paypal-status");
-      const buttonsEl = document.getElementById("paypal-buttons");
+      const walletTarget = document.getElementById("paypal-wallet-buttons");
+      const cardTarget = document.getElementById("paypal-card-buttons");
+
+      if (!walletTarget || !cardTarget) return;
 
       function setStatus(message) {
         if (statusEl) statusEl.textContent = message || "";
@@ -531,25 +426,19 @@
         return new Promise((resolve, reject) => {
           if (window.paypal) return resolve();
 
-          const script = document.createElement("script");
           const paypalParams = new URLSearchParams({
-
             "client-id": clientId,
-
             currency: "EUR",
-
             intent: "capture",
-
-            locale: "it_IT"
-
+            locale: "it_IT",
+            components: "buttons"
           });
 
           if (env === "sandbox") {
-
             paypalParams.set("buyer-country", "IT");
-
           }
 
+          const script = document.createElement("script");
           script.src = "https://www.paypal.com/sdk/js?" + paypalParams.toString();
           script.onload = resolve;
           script.onerror = () => reject(new Error("Impossibile caricare PayPal SDK"));
@@ -557,9 +446,62 @@
         });
       }
 
-      try {
-        if (!buttonsEl) return;
+      async function createPayPalOrder() {
+        if (!totalNumber) {
+          throw new Error("Totale ordine non valido.");
+        }
 
+        setStatus("Creazione ordine PayPal...");
+
+        const response = await fetch("/api/paypal-create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId,
+            total: totalNumber,
+            preview: details
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.id) {
+          throw new Error(data.error || "Errore creazione ordine PayPal");
+        }
+
+        return data.id;
+      }
+
+      async function capturePayPalOrder(data) {
+        setStatus("Pagamento approvato. Conferma in corso...");
+
+        const response = await fetch("/api/paypal-capture-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            paypalOrderId: data.orderID,
+            lookOrderId: orderId,
+            total: totalNumber,
+            preview: details,
+            customerEmail: getCustomerEmail()
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || "Errore conferma pagamento PayPal");
+        }
+
+        setStatus("Pagamento confermato. Email inviata.");
+
+        window.location.href =
+          "/shop/success?order=" +
+          encodeURIComponent(orderId) +
+          "&provider=paypal";
+      }
+
+      try {
         setStatus("Caricamento checkout PayPal...");
 
         const configResponse = await fetch("/api/paypal-config");
@@ -571,137 +513,54 @@
 
         await loadPayPalSdk(config.clientId, config.env);
 
-        const preview = document.getElementById("copybox")?.value || "";
-        const customerEmail = getCustomerEmail();
-
-        const paypalCard = document.querySelector(".paypal-card");
-        const expandPayPalCard = () => {
-          if (paypalCard) paypalCard.classList.add("paypal-expanded");
-        };
-
-        const collapsePayPalCard = () => {
-          if (paypalCard) paypalCard.classList.remove("paypal-expanded");
-        };
-
-
-
-        function watchPayPalFrameSize() {
-          const check = () => {
-            const frame = document.querySelector("#paypal-buttons iframe");
-            if (!frame || !paypalCard) return;
-
-            const frameRectHeight = frame.getBoundingClientRect().height || 0;
-            const attrHeight = Number(frame.getAttribute("height")) || 0;
-            const styleHeight = parseFloat(frame.style.height || "0") || 0;
-            const frameHeight = Math.max(frameRectHeight, attrHeight, styleHeight);
-
-            if (frameHeight > 260) {
-              expandPayPalCard();
+        if (window.paypal?.Buttons) {
+          window.paypal.Buttons({
+            fundingSource: window.paypal.FUNDING.PAYPAL,
+            style: {
+              layout: "vertical",
+              color: "gold",
+              shape: "pill",
+              label: "paypal",
+              height: 38
+            },
+            createOrder: createPayPalOrder,
+            onApprove: capturePayPalOrder,
+            onCancel() {
+              setStatus("Pagamento PayPal annullato.");
+            },
+            onError(err) {
+              console.error(err);
+              setStatus("Errore PayPal: " + (err.message || "riprova tra poco."));
             }
+          }).render("#paypal-wallet-buttons");
 
-            if (frameHeight > 0 && frameHeight <= 210) {
-              collapsePayPalCard();
+          window.paypal.Buttons({
+            fundingSource: window.paypal.FUNDING.CARD,
+            style: {
+              layout: "vertical",
+              color: "black",
+              shape: "pill",
+              label: "pay",
+              height: 38
+            },
+            createOrder: createPayPalOrder,
+            onApprove: capturePayPalOrder,
+            onCancel() {
+              setStatus("Pagamento carta annullato.");
+            },
+            onError(err) {
+              console.error(err);
+              setStatus("Errore carta PayPal: " + (err.message || "riprova tra poco."));
             }
-          };
-
-          check();
-          setInterval(check, 350);
-
-          const target = document.getElementById("paypal-buttons");
-          if (target && "MutationObserver" in window) {
-            const observer = new MutationObserver(check);
-            observer.observe(target, {
-              childList: true,
-              subtree: true,
-              attributes: true,
-              attributeFilter: ["style", "height", "class"]
-            });
-          }
+          }).render("#paypal-card-buttons");
         }
 
-        window.paypal.Buttons({
-          onClick() {
-            expandPayPalCard();
-            setTimeout(watchPayPalFrameSize, 250);
-            setTimeout(watchPayPalFrameSize, 900);
-            setTimeout(watchPayPalFrameSize, 1800);
-          },
-
-          style: {
-            layout: "vertical",
-            color: "gold",
-            shape: "pill",
-            label: "paypal"
-          },
-
-          async createOrder() {
-            setStatus("Creazione ordine PayPal...");
-
-            const response = await fetch("/api/paypal-create-order", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                orderId,
-                total: totalNumber,
-                preview
-              })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.id) {
-              throw new Error(data.error || "Errore creazione ordine PayPal");
-            }
-
-            return data.id;
-          },
-
-          async onApprove(data) {
-            setStatus("Pagamento approvato. Conferma in corso...");
-
-            const response = await fetch("/api/paypal-capture-order", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                paypalOrderId: data.orderID,
-                lookOrderId: orderId,
-                total: totalNumber,
-                preview,
-                customerEmail
-              })
-            });
-
-            const result = await response.json();
-
-            if (!response.ok || !result.ok) {
-              throw new Error(result.error || "Errore conferma pagamento PayPal");
-            }
-
-            setStatus("Pagamento confermato. Email inviata.");
-            window.location.href =
-              "/shop/success?order=" +
-              encodeURIComponent(orderId) +
-              "&provider=paypal";
-          },
-
-          onCancel() {
-            setStatus("Pagamento PayPal annullato.");
-          },
-
-          onError(err) {
-            console.error(err);
-            setStatus("Errore PayPal: " + (err.message || "riprova tra poco."));
-          }
-        }).render("#paypal-buttons");
-
-        setTimeout(watchPayPalFrameSize, 500);
         setStatus("");
       } catch (err) {
         console.error(err);
-        setStatus("PayPal Checkout non disponibile: " + (err.message || "usa il fallback PayPal.me."));
+        setStatus("PayPal Checkout non disponibile: " + (err.message || "riprova tra poco."));
       }
     })();
   </script>
-
 </body>
 </html>
