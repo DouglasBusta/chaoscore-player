@@ -1997,5 +1997,146 @@ Checkout sicuro tramite Stripe.`;
       </div>
     </footer>
 
-  </body>
+  
+  <script id="manual-payment-bridge-v1">
+    (function () {
+      function clean(value) {
+        return (value || "").toString().trim();
+      }
+
+      function makeOrderId() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const d = String(now.getDate()).padStart(2, "0");
+        const code = Math.random().toString(36).slice(2, 6).toUpperCase();
+        return "LOOK-" + y + m + d + "-" + code;
+      }
+
+      function getPreviewText() {
+        try {
+          if (typeof window.getOrderPreviewText === "function") {
+            return clean(window.getOrderPreviewText());
+          }
+        } catch (err) {}
+
+        const possible = [
+          "#order-preview",
+          "#orderPreview",
+          "[data-order-preview]",
+          ".order-preview",
+          ".preview-box"
+        ];
+
+        for (const selector of possible) {
+          const el = document.querySelector(selector);
+          if (el && clean(el.innerText || el.textContent)) {
+            return clean(el.innerText || el.textContent);
+          }
+        }
+
+        return "";
+      }
+
+      function ensureOrderPreview() {
+        let text = getPreviewText();
+
+        if (!text && typeof window.generateOrderPreview === "function") {
+          try {
+            window.generateOrderPreview();
+          } catch (err) {}
+          text = getPreviewText();
+        }
+
+        return text;
+      }
+
+      function extractTotal(text) {
+        const matches = [];
+        const euroRegex = /€\s*([0-9]+(?:[.,][0-9]{1,2})?)/g;
+        let match;
+
+        while ((match = euroRegex.exec(text)) !== null) {
+          matches.push(match[1]);
+        }
+
+        if (matches.length) {
+          return matches[matches.length - 1].replace(",", ".");
+        }
+
+        const totalLine = text.match(/totale[^0-9]*([0-9]+(?:[.,][0-9]{1,2})?)/i);
+        if (totalLine) {
+          return totalLine[1].replace(",", ".");
+        }
+
+        return "";
+      }
+
+      function extractOrderId(text) {
+        const existing = text.match(/LOOK-[A-Z0-9-]+/i);
+        if (existing) return existing[0].toUpperCase();
+        return makeOrderId();
+      }
+
+      function goToManualPayment() {
+        const preview = ensureOrderPreview();
+
+        if (!preview) {
+          window.alert("Genera prima il riepilogo ordine compilando carrello e dati cliente.");
+          return;
+        }
+
+        const total = extractTotal(preview);
+        const orderId = extractOrderId(preview);
+
+        if (!total || Number(total) <= 0) {
+          window.alert("Non riesco a leggere il totale ordine. Genera il riepilogo ordine e riprova.");
+          return;
+        }
+
+        try {
+          sessionStorage.setItem("lookManualOrderPreview", preview);
+          sessionStorage.setItem("lookManualOrderId", orderId);
+          sessionStorage.setItem("lookManualOrderTotal", total);
+        } catch (err) {}
+
+        const url =
+          "/shop/pay?order=" +
+          encodeURIComponent(orderId) +
+          "&total=" +
+          encodeURIComponent(total);
+
+        window.location.href = url;
+      }
+
+      window.openLookManualPayment = goToManualPayment;
+
+      document.addEventListener(
+        "click",
+        function (event) {
+          const target = event.target.closest("button, a");
+          if (!target) return;
+
+          const label = clean(target.innerText || target.textContent).toLowerCase();
+          const aria = clean(target.getAttribute("aria-label")).toLowerCase();
+
+          const looksLikeMainPay =
+            label === "pay" ||
+            aria === "pay" ||
+            target.matches("[data-pay], [data-checkout], [data-stripe-checkout]");
+
+          if (!looksLikeMainPay) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
+          goToManualPayment();
+        },
+        true
+      );
+    })();
+  </script>
+
+</body>
 </html>
