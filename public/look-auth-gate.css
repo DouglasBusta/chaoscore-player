@@ -1,58 +1,133 @@
-/* LOOK APP global auth gate */
+:root {
+  --look-auth-bg: #070207;
+  --look-auth-card: rgba(14, 10, 14, .90);
+  --look-auth-border: rgba(255,255,255,.15);
+  --look-auth-text: #ffffff;
+  --look-auth-muted: rgba(255,255,255,.66);
+  --look-auth-pink: #ff9fbd;
+  --look-auth-red: #8b1435;
+}
+
 .look-auth-gate {
   position: fixed;
   inset: 0;
-  z-index: 2147483647;
+  z-index: 2147483000;
   display: grid;
   place-items: center;
   padding: max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
   background:
-    radial-gradient(circle at 18% 12%, rgba(255, 0, 88, .30), transparent 38%),
-    radial-gradient(circle at 86% 16%, rgba(255, 160, 40, .18), transparent 36%),
-    linear-gradient(180deg, rgba(8, 0, 8, .975), rgba(12, 0, 8, .992));
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+    radial-gradient(circle at 22% 28%, rgba(132, 0, 52, .58), transparent 42%),
+    radial-gradient(circle at 78% 24%, rgba(120, 54, 0, .30), transparent 48%),
+    linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72)),
+    rgba(5, 0, 8, .95);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
 }
 
-.look-auth-gate[hidden] {
-  display: none !important;
+.look-auth-gate,
+.look-auth-gate * {
+  box-sizing: border-box;
 }
 
 .look-auth-card {
-  width: min(620px, 94vw);
-  border: 1px solid rgba(255,255,255,.16);
-  border-radius: 28px;
-  padding: 30px 26px 24px;
+  width: min(760px, 94vw);
+  min-height: min(660px, 88vh);
+  border: 1px solid var(--look-auth-border);
+  border-radius: 34px;
+  padding: 28px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035)),
-    rgba(12, 8, 12, .90);
-  box-shadow: 0 28px 90px rgba(0,0,0,.62);
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+    var(--look-auth-card);
+  box-shadow:
+    0 34px 110px rgba(0,0,0,.66),
+    inset 0 1px 0 rgba(255,255,255,.09);
   text-align: center;
-  color: #fff;
+  color: var(--look-auth-text);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 18px;
+  overflow: hidden;
 }
 
-.look-auth-logo {
-  margin: 0 auto 18px;
-  width: min(580px, 88vw);
-  min-height: 190px;
+.look-auth-topline {
+  justify-self: start;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: rgba(255,255,255,.58);
+  font: 950 10px/1 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.look-auth-hero {
+  position: relative;
   display: grid;
   place-items: center;
-  overflow: visible;
+  min-height: 310px;
+  pointer-events: none;
 }
 
-.look-auth-logo img {
-  width: 118%;
-  max-width: none;
-  max-height: 300px;
+.look-auth-main-logo {
+  position: relative;
+  z-index: 2;
+  width: min(620px, 92%);
+  max-height: 230px;
   object-fit: contain;
   display: block;
-  transform: scale(1.22);
-  transform-origin: center center;
-  filter: drop-shadow(0 22px 42px rgba(255, 0, 90, .26));
+  filter:
+    drop-shadow(0 20px 42px rgba(255, 0, 90, .30))
+    drop-shadow(0 2px 0 rgba(255,255,255,.05));
 }
 
-.look-auth-logo-text {
-  display: none !important;
+.look-auth-fake-app {
+  position: absolute;
+  inset: 26px 22px 0;
+  z-index: 1;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.08), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+  opacity: .42;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.look-auth-fake-bar {
+  display: grid;
+  grid-template-columns: 1.5fr .8fr .55fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.look-auth-fake-bar span,
+.look-auth-fake-grid div {
+  border-radius: 999px;
+  background: rgba(255,255,255,.09);
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.look-auth-fake-bar span {
+  height: 12px;
+}
+
+.look-auth-fake-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.look-auth-fake-grid div {
+  height: 86px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 159, 189, .10), rgba(255,255,255,.035));
+}
+
+.look-auth-panel {
+  width: min(520px, 100%);
+  margin: 0 auto;
 }
 
 .look-auth-title {
@@ -72,10 +147,10 @@
 }
 
 .look-auth-subtitle {
-  margin: 14px auto 24px;
-  max-width: 310px;
-  color: rgba(255,255,255,.72);
-  font: 650 13px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  margin: 0 auto 18px;
+  max-width: 430px;
+  color: rgba(255,255,255,.76);
+  font: 750 13px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
 }
 
 .look-auth-actions {
@@ -85,7 +160,7 @@
 
 .look-auth-btn {
   width: 100%;
-  min-height: 50px;
+  min-height: 54px;
   border: 0;
   border-radius: 999px;
   cursor: pointer;
@@ -116,16 +191,16 @@
 }
 
 .look-auth-note {
-  margin: 16px 0 0;
+  margin: 14px 0 0;
   color: rgba(255,255,255,.45);
-  font: 800 10px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-  letter-spacing: .3px;
+  font: 850 10px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: .45px;
   text-transform: uppercase;
 }
 
 .look-auth-loading {
-  margin-top: 14px;
-  color: rgba(255,255,255,.48);
+  margin: 8px 0 0;
+  color: rgba(255,255,255,.42);
   font: 800 10px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
   letter-spacing: .25px;
   text-transform: uppercase;
@@ -134,4 +209,48 @@
 html.look-auth-locked,
 body.look-auth-locked {
   overflow: hidden !important;
+}
+
+@media (max-width: 720px) {
+  .look-auth-card {
+    width: min(430px, 94vw);
+    min-height: auto;
+    border-radius: 28px;
+    padding: 20px 16px 18px;
+    gap: 12px;
+  }
+
+  .look-auth-topline {
+    justify-self: center;
+  }
+
+  .look-auth-hero {
+    min-height: 230px;
+  }
+
+  .look-auth-main-logo {
+    width: min(390px, 104%);
+    max-height: 170px;
+  }
+
+  .look-auth-fake-app {
+    inset: 18px 6px 0;
+    border-radius: 24px;
+  }
+
+  .look-auth-fake-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .look-auth-fake-grid div {
+    height: 56px;
+  }
+
+  .look-auth-subtitle {
+    font-size: 12px;
+  }
+
+  .look-auth-btn {
+    min-height: 50px;
+  }
 }

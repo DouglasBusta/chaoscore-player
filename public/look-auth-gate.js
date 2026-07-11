@@ -42,20 +42,43 @@
     gate.setAttribute("aria-labelledby", "look-auth-title");
 
     gate.innerHTML = `
-      <div class="look-auth-card">
-        <div class="look-auth-logo" aria-hidden="true">
-          <img src="/brand/look-app-logo-chaos-red.png" alt="" loading="eager" decoding="async">
+      <div class="look-auth-card look-auth-appscreen" role="document">
+        <div class="look-auth-topline">BUSTA FILES</div>
+
+        <div class="look-auth-hero" aria-hidden="true">
+          <img class="look-auth-main-logo" src="/brand/look-app-logo-chaos-red.png" alt="" loading="eager" decoding="async">
+
+          <div class="look-auth-fake-app">
+            <div class="look-auth-fake-bar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="look-auth-fake-grid">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
         </div>
-        <h1 class="look-auth-title look-auth-title-hidden" id="look-auth-title">LOOK APP</h1>
-        <p class="look-auth-subtitle">
-          Accedi per entrare in LOOK APP e sbloccare musica, file, shop e contenuti esclusivi.
-        </p>
-        <div class="look-auth-actions">
-          <a class="look-auth-btn look-auth-btn-primary" href="/auth?mode=login">Log in</a>
-          <a class="look-auth-btn look-auth-btn-secondary" href="/auth?mode=signup">Sign up</a>
+
+        <div class="look-auth-panel">
+          <h1 class="look-auth-title look-auth-title-hidden" id="look-auth-title">LOOK APP</h1>
+
+          <p class="look-auth-subtitle">
+            Accedi per entrare in LOOK APP e sbloccare musica, file, shop e contenuti esclusivi.
+          </p>
+
+          <div class="look-auth-actions">
+            <button class="look-auth-btn look-auth-btn-primary" type="button" data-look-auth-login>LOG IN</button>
+            <button class="look-auth-btn look-auth-btn-secondary" type="button" data-look-auth-signup>SIGN UP</button>
+          </div>
+
+          <p class="look-auth-note">Accesso obbligatorio</p>
+          <p class="look-auth-loading" id="look-auth-loading">Effettua l’accesso per continuare.</p>
         </div>
-        <p class="look-auth-note">Accesso obbligatorio</p>
-        <p class="look-auth-loading" id="look-auth-loading">Controllo sessione...</p>
       </div>
     `;
 
