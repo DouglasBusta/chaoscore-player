@@ -218,6 +218,56 @@
       .hero { padding: 20px; border-radius: 24px; }
       .card { padding: 17px; border-radius: 22px; }
     }
+  
+    .paypal-checkout-box {
+      width: 100%;
+      margin-top: auto;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,.055);
+    }
+
+    #paypal-buttons {
+      width: 100%;
+      min-height: 118px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .manual-fallback-note {
+      margin: 12px 0 8px !important;
+      font-size: 11px !important;
+      text-align: center;
+      color: rgba(255,255,255,.52) !important;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .coming-soon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 44px;
+      margin-top: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(135deg, rgba(255,255,255,.78), rgba(255,180,207,.72));
+      color: rgba(20,4,10,.84);
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      opacity: .72;
+    }
+
+    .paypal-powered {
+      margin-top: 8px;
+      text-align: center;
+      color: rgba(255,255,255,.45);
+      font-size: 11px;
+    }
+
   </style>
 </head>
 <body>
@@ -257,11 +307,18 @@
           Paga tramite PayPal.me con importo precompilato. Inserisci l’Order ID nelle note del pagamento,
           se PayPal ti permette di aggiungerle.
         </p>
-        <div id="paypal-buttons"></div>
-        <a class="btn secondary" id="paypal-link" href="https://paypal.me/grevrellegr" target="_blank" rel="noopener" style="margin-top:10px;">
-          Manual PayPal.me fallback
+        <div class="paypal-checkout-box">
+          <div id="paypal-buttons"></div>
+          <div class="paypal-powered">Pagamento sicuro tramite PayPal Checkout.</div>
+        </div>
+
+        <p class="manual-fallback-note">Se il checkout non funziona</p>
+
+        <a class="btn secondary" id="paypal-link" href="https://paypal.me/grevrellegr" target="_blank" rel="noopener">
+          Fallback manuale PayPal.me
         </a>
-        <p id="paypal-status" style="margin-top:10px;font-size:12px;"></p>
+
+        <p id="paypal-status" style="margin-top:10px;font-size:12px;text-align:center;"></p>
       </article>
 
       <article class="card">
@@ -269,7 +326,7 @@
         <p>
           Metodo in setup. Verrà attivato appena il profilo Business sarà configurato correttamente.
         </p>
-        <span class="btn disabled">Coming Soon</span>
+        <span class="coming-soon-btn">Coming Soon</span>
       </article>
 
       <article class="card">
@@ -277,7 +334,7 @@
         <p>
           Pagamento carta in setup. Verrà attivato appena il provider sarà configurato correttamente.
         </p>
-        <span class="btn disabled">Coming Soon</span>
+        <span class="coming-soon-btn">Coming Soon</span>
       </article>
 
       <article class="card">
@@ -382,7 +439,7 @@
           if (window.paypal) return resolve();
 
           const script = document.createElement("script");
-          script.src = "https://www.paypal.com/sdk/js?client-id=" + encodeURIComponent(clientId) + "&currency=EUR&intent=capture";
+          script.src = "https://www.paypal.com/sdk/js?client-id=" + encodeURIComponent(clientId) + "&currency=EUR&intent=capture&locale=it_IT";
           script.onload = resolve;
           script.onerror = () => reject(new Error("Impossibile caricare PayPal SDK"));
           document.head.appendChild(script);
@@ -392,7 +449,7 @@
       try {
         if (!buttonsEl) return;
 
-        setStatus("Caricamento PayPal Checkout...");
+        setStatus("Caricamento checkout PayPal...");
 
         const configResponse = await fetch("/api/paypal-config");
         const config = await configResponse.json();
