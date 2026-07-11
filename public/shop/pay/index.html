@@ -131,6 +131,8 @@
 
     .card {
       padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
 
     .card h2 {
@@ -144,6 +146,11 @@
       color: var(--muted);
       line-height: 1.45;
       font-size: 14px;
+    }
+
+    .card .btn,
+    .card > .btn {
+      margin-top: auto;
     }
 
     .btn {
@@ -258,11 +265,9 @@
       <article class="card">
         <h2>Satispay</h2>
         <p>
-          Metodo in setup. Per ora puoi richiedere il link pagamento via email includendo Order ID e totale.
+          Metodo in setup. Verrà attivato appena il profilo Business sarà configurato correttamente.
         </p>
-        <a class="btn secondary" id="satispay-mail" href="mailto:orders@lookapp.org">
-          Request Satispay Link
-        </a>
+        <span class="btn disabled">Coming Soon</span>
       </article>
 
       <article class="card">
@@ -318,26 +323,28 @@
       ? "https://paypal.me/grevrellegr/" + encodeURIComponent(totalNumber)
       : "https://paypal.me/grevrellegr";
 
-    const mailSubject = encodeURIComponent("LOOK APP SHOP payment request " + orderId);
-    const mailBody = encodeURIComponent(
-      "Ciao LOOK APP SHOP,\\n\\n" +
-      "Vorrei completare il pagamento per questo ordine:\\n" +
-      "Order ID: " + orderId + "\\n" +
-      "Totale: " + totalLabel + "\\n\\n" +
-      "Metodo richiesto: Satispay\\n\\n" +
-      "Grazie."
-    );
+    let originalPreview = "";
 
-    document.getElementById("satispay-mail").href =
-      "mailto:orders@lookapp.org?subject=" + mailSubject + "&body=" + mailBody;
+    try {
+      originalPreview = sessionStorage.getItem("lookManualOrderPreview") || "";
+    } catch (err) {}
 
     const details =
-      "LOOK APP SHOP PAYMENT DETAILS\\n" +
+      (originalPreview ? originalPreview.trim() : (
+        "ORDINE " + orderId + "\\n\\n" +
+        "Totale ordine: " + totalLabel + "\\n" +
+        "Supporto: orders@lookapp.org"
+      )) +
+      "\\n\\n----------------------------------------\\n" +
+      "PAYMENT OPTIONS\\n" +
       "Order ID: " + orderId + "\\n" +
-      "Total: " + totalLabel + "\\n" +
-      "Support: orders@lookapp.org\\n\\n" +
-      "PayPal: " + paypal.href + "\\n\\n" +
-      "Important: payment must match the exact total and include the Order ID when possible.";
+      "Totale da pagare: " + totalLabel + "\\n" +
+      "PayPal: " + paypal.href + "\\n" +
+      "Supporto: orders@lookapp.org\\n\\n" +
+      "IMPORTANTE:\\n" +
+      "Il pagamento deve corrispondere esattamente al totale indicato e deve essere collegabile all’Order ID. " +
+      "Pagamenti incompleti, senza Order ID o non riconciliabili con un ordine non comportano spedizione automatica " +
+      "e richiedono verifica via email.";
 
     document.getElementById("copybox").value = details;
 
