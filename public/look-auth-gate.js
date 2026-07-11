@@ -44,9 +44,9 @@
     gate.innerHTML = `
       <div class="look-auth-card">
         <div class="look-auth-logo" aria-hidden="true">
-          <span class="look-auth-logo-text">LOOK</span>
+          <img src="/brand/look-app-logo-chaos-red.png" alt="" loading="eager" decoding="async">
         </div>
-        <h1 class="look-auth-title" id="look-auth-title">LOOK APP</h1>
+        <h1 class="look-auth-title look-auth-title-hidden" id="look-auth-title">LOOK APP</h1>
         <p class="look-auth-subtitle">
           Accedi per entrare in LOOK APP e sbloccare musica, file, shop e contenuti esclusivi.
         </p>

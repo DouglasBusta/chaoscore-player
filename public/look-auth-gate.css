@@ -32,22 +32,23 @@
 }
 
 .look-auth-logo {
-  margin: 0 auto 14px;
-  width: 94px;
-  height: 94px;
-  border-radius: 28px;
+  margin: 0 auto 18px;
+  width: min(270px, 82vw);
+  min-height: 118px;
   display: grid;
   place-items: center;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255,255,255,.24), transparent 35%),
-    linear-gradient(135deg, rgba(255,0,90,.92), rgba(60,0,30,.95));
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16), 0 18px 42px rgba(255,0,90,.22);
-  overflow: hidden;
+}
+
+.look-auth-logo img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 18px 34px rgba(255, 0, 90, .20));
 }
 
 .look-auth-logo-text {
-  font: 950 22px/1 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-  letter-spacing: -1.5px;
+  display: none !important;
 }
 
 .look-auth-title {
@@ -55,6 +56,15 @@
   font: 950 clamp(38px, 9vw, 58px)/.82 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
   letter-spacing: -3.5px;
   text-transform: uppercase;
+}
+
+.look-auth-title-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
 }
 
 .look-auth-subtitle {
