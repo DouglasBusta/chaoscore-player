@@ -222,6 +222,18 @@
   
     .paypal-card {
       min-height: 0;
+      transition: min-height .22s ease;
+    }
+
+    .paypal-card.paypal-expanded .paypal-button-window,
+    .paypal-card.paypal-expanded #paypal-buttons {
+      height: 360px;
+      min-height: 360px;
+      max-height: 360px;
+    }
+
+    .paypal-card.paypal-expanded .paypal-mask-bottom {
+      top: 356px;
     }
 
     .paypal-checkout-box {
@@ -238,9 +250,9 @@
     .paypal-button-window {
       position: relative;
       width: 100%;
-      height: 286px;
-      min-height: 286px;
-      max-height: 286px;
+      height: 148px;
+      min-height: 148px;
+      max-height: 148px;
       overflow: hidden;
       border-radius: 14px;
       background: rgba(255,255,255,.04);
@@ -251,9 +263,9 @@
       inset: 0;
       z-index: 1;
       width: 100%;
-      height: 286px;
-      min-height: 286px;
-      max-height: 286px;
+      height: 148px;
+      min-height: 148px;
+      max-height: 148px;
       overflow: hidden;
       border-radius: 14px;
       background: transparent;
@@ -299,7 +311,7 @@
     }
 
     .paypal-mask-bottom {
-      top: 278px;
+      top: 144px;
       bottom: 0;
     }
 
@@ -549,7 +561,16 @@
         const preview = document.getElementById("copybox")?.value || "";
         const customerEmail = getCustomerEmail();
 
+        const paypalCard = document.querySelector(".paypal-card");
+        const expandPayPalCard = () => {
+          if (paypalCard) paypalCard.classList.add("paypal-expanded");
+        };
+
         window.paypal.Buttons({
+          onClick() {
+            expandPayPalCard();
+          },
+
           style: {
             layout: "vertical",
             color: "gold",
