@@ -222,10 +222,11 @@
     .paypal-checkout-box {
       width: 100%;
       margin-top: auto;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      background: rgba(255,255,255,.045);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.18);
     }
 
     #paypal-buttons {
@@ -426,7 +427,25 @@
           if (window.paypal) return resolve();
 
           const script = document.createElement("script");
-          script.src = "https://www.paypal.com/sdk/js?client-id=" + encodeURIComponent(clientId) + "&currency=EUR&intent=capture&locale=it_IT";
+          const paypalParams = new URLSearchParams({
+
+            "client-id": clientId,
+
+            currency: "EUR",
+
+            intent: "capture",
+
+            locale: "it_IT"
+
+          });
+
+          if (config.env === "sandbox") {
+
+            paypalParams.set("buyer-country", "IT");
+
+          }
+
+          script.src = "https://www.paypal.com/sdk/js?" + paypalParams.toString();
           script.onload = resolve;
           script.onerror = () => reject(new Error("Impossibile caricare PayPal SDK"));
           document.head.appendChild(script);
