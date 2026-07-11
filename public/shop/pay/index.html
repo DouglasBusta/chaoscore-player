@@ -574,9 +574,15 @@
 
           try {
             const fundingSources = window.paypal.getFundingSources ? window.paypal.getFundingSources() : [];
-            const myBankSource = fundingSources.find((source) =>
-              String(source || "").toLowerCase().includes("mybank")
-            );
+            const myBankCandidates = [
+              window.paypal.FUNDING && window.paypal.FUNDING.MYBANK,
+              "mybank",
+              ...fundingSources.filter((source) =>
+                String(source || "").toLowerCase().includes("mybank")
+              )
+            ].filter(Boolean);
+
+            const myBankSource = myBankCandidates[0];
 
             if (myBankSource && bankTarget) {
               const myBankButton = window.paypal.Buttons({
