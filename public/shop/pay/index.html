@@ -222,10 +222,10 @@
     .paypal-checkout-box {
       width: 100%;
       margin-top: auto;
-      padding: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 18px;
-      background: rgba(255,255,255,.055);
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
     }
 
     #paypal-buttons {
@@ -235,13 +235,12 @@
       border-radius: 14px;
     }
 
+    #paypal-buttons iframe {
+      border-radius: 14px !important;
+    }
+
     .manual-fallback-note {
-      margin: 12px 0 8px !important;
-      font-size: 11px !important;
-      text-align: center;
-      color: rgba(255,255,255,.52) !important;
-      text-transform: uppercase;
-      letter-spacing: .08em;
+      display: none;
     }
 
     .coming-soon-btn {
@@ -304,19 +303,13 @@
       <article class="card">
         <h2>PayPal</h2>
         <p>
-          Paga tramite PayPal.me con importo precompilato. Inserisci l’Order ID nelle note del pagamento,
-          se PayPal ti permette di aggiungerle.
+          Completa il pagamento tramite PayPal Checkout. Dopo la conferma, l’ordine viene collegato
+          automaticamente al codice ordine e riceverai l’email di conferma.
         </p>
         <div class="paypal-checkout-box">
           <div id="paypal-buttons"></div>
-          <div class="paypal-powered">Pagamento sicuro tramite PayPal Checkout.</div>
+          <div class="paypal-powered">Pagamento sicuro con tecnologia PayPal.</div>
         </div>
-
-        <p class="manual-fallback-note">Se il checkout non funziona</p>
-
-        <a class="btn secondary" id="paypal-link" href="https://paypal.me/grevrellegr" target="_blank" rel="noopener">
-          Fallback manuale PayPal.me
-        </a>
 
         <p id="paypal-status" style="margin-top:10px;font-size:12px;text-align:center;"></p>
       </article>
@@ -349,9 +342,9 @@
 
     <section class="rules">
       <strong>Regole pagamento:</strong><br>
-      Il pagamento deve corrispondere esattamente al totale indicato e deve essere collegabile all’Order ID.
-      Pagamenti incompleti, senza Order ID o non riconciliabili con un ordine non comportano spedizione automatica
-      e richiedono verifica via email. Per assistenza: orders@lookapp.org.
+      Il pagamento viene gestito tramite PayPal Checkout. Dopo il pagamento confermato, LOOK APP SHOP riceve
+      automaticamente i dati ordine via email. Se il pagamento non viene completato, l’ordine resta in attesa
+      e non viene preparato. Per assistenza: orders@lookapp.org.
     </section>
   </main>
 
@@ -377,11 +370,6 @@
     document.getElementById("order-id").textContent = orderId;
     document.getElementById("order-total").textContent = totalLabel;
 
-    const paypal = document.getElementById("paypal-link");
-    paypal.href = totalNumber
-      ? "https://paypal.me/grevrellegr/" + encodeURIComponent(totalNumber)
-      : "https://paypal.me/grevrellegr";
-
     let originalPreview = "";
 
     try {
@@ -398,12 +386,11 @@
       "PAYMENT OPTIONS\\n" +
       "Order ID: " + orderId + "\\n" +
       "Totale da pagare: " + totalLabel + "\\n" +
-      "PayPal: " + paypal.href + "\\n" +
+      "Metodo: PayPal Checkout\\n" +
       "Supporto: orders@lookapp.org\\n\\n" +
       "IMPORTANTE:\\n" +
-      "Il pagamento deve corrispondere esattamente al totale indicato e deve essere collegabile all’Order ID. " +
-      "Pagamenti incompleti, senza Order ID o non riconciliabili con un ordine non comportano spedizione automatica " +
-      "e richiedono verifica via email.";
+      "L’ordine viene confermato automaticamente dopo il pagamento PayPal completato. " +
+      "Se il pagamento non viene completato, l’ordine resta in attesa e non viene preparato.";
 
     document.getElementById("copybox").value = details;
 
