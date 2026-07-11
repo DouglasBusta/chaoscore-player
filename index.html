@@ -1867,7 +1867,12 @@
             <div class="evidence-grid">
               ${folderFiles.map(item => `
                 <a class="evidence" href="${item.src}" target="_blank" rel="noopener noreferrer">
-                  <img src="${item.src}" alt="${item.name}" loading="lazy">
+                  <img
+            src="${item.src}"
+            alt="${item.name}"
+            loading="lazy"
+            style="${item.src && item.src.includes('82179e2f') ? 'object-position:center center; transform:translateX(18%) scale(1.22); transform-origin:center center;' : ''}"
+          >
                   <div class="evidence-body">
                     <div class="evidence-status">${item.status}</div>
                     <div class="evidence-name">${item.name}</div>
