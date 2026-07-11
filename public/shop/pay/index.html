@@ -227,13 +227,13 @@
 
     .paypal-card.paypal-expanded .paypal-button-window,
     .paypal-card.paypal-expanded #paypal-buttons {
-      height: 360px;
-      min-height: 360px;
-      max-height: 360px;
+      height: 520px;
+      min-height: 520px;
+      max-height: 520px;
     }
 
     .paypal-card.paypal-expanded .paypal-mask-bottom {
-      top: 356px;
+      top: 516px;
     }
 
     .paypal-checkout-box {
@@ -256,6 +256,7 @@
       overflow: hidden;
       border-radius: 14px;
       background: rgba(255,255,255,.04);
+      transition: height .22s ease, min-height .22s ease, max-height .22s ease;
     }
 
     #paypal-buttons {
@@ -566,9 +567,45 @@
           if (paypalCard) paypalCard.classList.add("paypal-expanded");
         };
 
+        const collapsePayPalCard = () => {
+          if (paypalCard) paypalCard.classList.remove("paypal-expanded");
+        };
+
+        function watchPayPalFrameSize() {
+          const check = () => {
+            const frame = document.querySelector("#paypal-buttons iframe");
+            if (!frame || !paypalCard) return;
+
+            const frameHeight = frame.getBoundingClientRect().height || Number(frame.getAttribute("height")) || 0;
+
+            if (frameHeight > 210) {
+              expandPayPalCard();
+            }
+
+            if (frameHeight > 0 && frameHeight <= 180) {
+              collapsePayPalCard();
+            }
+          };
+
+          check();
+          setInterval(check, 350);
+
+          const target = document.getElementById("paypal-buttons");
+          if (target && "MutationObserver" in window) {
+            const observer = new MutationObserver(check);
+            observer.observe(target, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ["style", "height", "class"]
+            });
+          }
+        }
+
         window.paypal.Buttons({
           onClick() {
             expandPayPalCard();
+            setTimeout(watchPayPalFrameSize, 250);
           },
 
           style: {
@@ -638,6 +675,7 @@
           }
         }).render("#paypal-buttons");
 
+        setTimeout(watchPayPalFrameSize, 500);
         setStatus("");
       } catch (err) {
         console.error(err);
