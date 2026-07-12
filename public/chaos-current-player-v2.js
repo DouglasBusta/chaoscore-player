@@ -1,6 +1,14 @@
 (function () {
   "use strict";
 
+  if (window.__CHAOS_CURRENT_PLAYER_V2_ACTIVE) {
+    console.warn("[chaos current player v2] second player blocked");
+    return;
+  }
+
+  window.__CHAOS_CURRENT_PLAYER_V2_ACTIVE = true;
+  window.__CHAOS_CURRENT_PLAYER_V2_BOOT_COUNT = (window.__CHAOS_CURRENT_PLAYER_V2_BOOT_COUNT || 0) + 1;
+
   if (window.__chaosCurrentPlayerV2Mounted) return;
   window.__chaosCurrentPlayerV2Mounted = true;
 
@@ -356,22 +364,23 @@
   }
 
   function nextTrack() {
-    inferIndexFromAudio();
+    if (!state.tracks.length) return;
 
-    if (state.index >= state.tracks.length - 1) {
+    const currentIndex = Math.max(0, Math.min(state.index, state.tracks.length - 1));
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex >= state.tracks.length) {
       pause();
       if (audio) audio.currentTime = 0;
       render();
       return;
     }
 
-    loadTrack(state.index + 1, true);
+    loadTrack(nextIndex, true);
   }
 
   function previousTrack() {
-    if (!audio) return;
-
-    inferIndexFromAudio();
+    if (!audio || !state.tracks.length) return;
 
     if (audio.currentTime > 3) {
       audio.currentTime = 0;
@@ -379,17 +388,61 @@
       return;
     }
 
-    loadTrack(Math.max(0, state.index - 1), true);
+    const currentIndex = Math.max(0, Math.min(state.index, state.tracks.length - 1));
+    loadTrack(Math.max(0, currentIndex - 1), true);
+  }
+
+  function parseDurationSeconds(value) {
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+
+    if (typeof value !== "string") return 0;
+
+    const parts = value.trim().split(":").map((part) => Number(part));
+
+    if (parts.some((part) => !Number.isFinite(part))) return 0;
+
+    if (parts.length === 2) {
+      return (parts[0] * 60) + parts[1];
+    }
+
+    if (parts.length === 3) {
+      return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+    }
+
+    return 0;
+  }
+
+  function effectiveDuration() {
+    if (!audio) return 0;
+
+    const track = currentTrack();
+    const realDuration = Number.isFinite(audio.duration) ? audio.duration : 0;
+    const listedDuration = parseDurationSeconds(
+      track?.duration ||
+      track?.time ||
+      track?.length ||
+      track?.displayDuration
+    );
+
+    return Math.max(realDuration, listedDuration, 0);
+  }
+
+  function seekByClientX(clientX, bar) {
+    if (!audio || !bar) return;
+
+    const duration = effectiveDuration();
+
+    if (!duration) return;
+
+    const rect = bar.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+
+    audio.currentTime = ratio * duration;
+    render();
   }
 
   function seek(event, bar) {
-    if (!audio || !audio.duration) return;
-
-    const rect = bar.getBoundingClientRect();
-    const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-
-    audio.currentTime = ratio * audio.duration;
-    render();
+    seekByClientX(event.clientX, bar);
   }
 
   function setExpanded(value) {
@@ -415,14 +468,12 @@
   function render() {
     if (!player || !audio) return;
 
-    inferIndexFromAudio();
-
     const track = currentTrack();
     const title = track?.title || "#chaoscore";
     const artist = displayArtists(track);
     const current = audio.currentTime || 0;
-    const duration = audio.duration || 0;
-    const pct = duration ? (current / duration) * 100 : 0;
+    const duration = effectiveDuration();
+    const pct = duration ? Math.min(100, Math.max(0, (current / duration) * 100)) : 0;
 
     player.dataset.expanded = String(state.expanded);
 
@@ -483,6 +534,41 @@
       event.preventDefault();
       seek(event, bar);
     });
+
+    section.addEventListener("pointerdown", function (event) {
+      const bar = event.target.closest("[data-progress]");
+      if (!bar) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      let active = true;
+
+      if (bar.setPointerCapture && event.pointerId != null) {
+        try {
+          bar.setPointerCapture(event.pointerId);
+        } catch (_error) {}
+      }
+
+      seekByClientX(event.clientX, bar);
+
+      const move = (moveEvent) => {
+        if (!active) return;
+        moveEvent.preventDefault();
+        seekByClientX(moveEvent.clientX, bar);
+      };
+
+      const stop = () => {
+        active = false;
+        document.removeEventListener("pointermove", move, { capture: true });
+        document.removeEventListener("pointerup", stop, { capture: true });
+        document.removeEventListener("pointercancel", stop, { capture: true });
+      };
+
+      document.addEventListener("pointermove", move, { capture: true, passive: false });
+      document.addEventListener("pointerup", stop, { capture: true });
+      document.addEventListener("pointercancel", stop, { capture: true });
+    }, { passive: false });
 
     section.addEventListener("input", function (event) {
       const volume = event.target.closest("[data-volume]");

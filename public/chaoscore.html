@@ -1466,245 +1466,13 @@ dialog {
 
 
 
-<script>
-/* FINAL MINI PLAYER + WAVEFORM FIX */
-(function () {
-  const tracks = [
-    { title: "banale", file: "/audio-flac/01-banale.flac" },
-    { title: "STAR II", file: "/audio-flac/02-star-ii.flac" },
-    { title: "stella vera reale.wav", file: "/audio-flac/03-stella-vera-reale.flac" },
-    { title: "so ki 6... ft. 39Redboy", file: "/audio-flac/04-so-ki-6-ft-39redboy.flac" },
-    { title: "sono triste e caco.", file: "/audio-flac/05-sono-triste-e-caco.flac" },
-    { title: "blue hair", file: "/audio-flac/06-blue-hair.flac" },
-    { title: "piccolo ME", file: "/audio-flac/07-piccolo-me.flac" },
-    { title: "Patto d'Achille ft. Gador", file: "/audio-flac/08-patto-d-achille-ft-gador.flac" },
-    { title: "Stop the EMOTIONS", file: "/audio-flac/09-stop-the-emotions.flac" },
-    { title: "sensibileh! ft. Deffy", file: "/audio-flac/10-sensibileh-ft-deffy.flac" },
-    { title: "ma che ho fatto mo??...", file: "/audio-flac/11-ma-che-ho-fatto-mo.flac" },
-    { title: "NO TIME!", file: "/audio-flac/12-no-time.flac" },
-    { title: "GET OUT!", file: "/audio-flac/13-get-out.flac" },
-    { title: "LOOK UP!", file: "/audio-flac/14-look-up.flac" },
-    { title: "1 normale (Bonus Track)", file: "/audio-flac/15-1-normale-bonus-track.flac" }
-  ];
 
-  const wavePatterns = [
-    [18,24,32,45,58,74,88,66,52,41,69,83,77,56,35,22,31,49,73,92,85,61,44,38,57,79,95,82,64,47,29,21,38,54,72,90,69,44,30,18],
-    [40,52,63,72,41,29,58,84,91,66,36,24,44,70,88,76,55,39,28,35,61,83,96,71,48,31,23,42,67,89,80,59,33,25,47,73,92,64,38,20],
-    [22,28,44,67,91,86,60,34,25,37,59,78,94,88,62,41,29,23,35,54,75,97,82,57,36,26,30,49,69,90,84,63,40,27,21,39,61,79,58,33],
-    [64,38,25,31,56,83,96,71,45,29,22,48,77,91,68,42,30,53,87,94,73,51,35,24,44,69,89,78,57,36,28,50,81,93,66,43,32,55,76,48],
-    [20,21,25,31,44,68,92,95,73,48,29,24,36,55,79,90,61,39,27,34,52,74,88,69,46,30,22,28,43,65,84,76,53,35,26,32,47,70,91,58]
-  ];
-
-  let activeIndex = 0;
-
-  function absoluteUrl(path) {
-    return new URL(path, window.location.origin).href;
-  }
-
-  function getAudio() {
-    return document.getElementById("audio");
-  }
-
-  function getRows() {
-    return Array.from(document.querySelectorAll(".track"));
-  }
-
-  function getIndexFromAudio() {
-    const audio = getAudio();
-    if (!audio || !audio.src) return activeIndex;
-
-    const found = tracks.findIndex((track) => audio.src === absoluteUrl(track.file));
-    return found >= 0 ? found : activeIndex;
-  }
-
-  function fmt(seconds) {
-    if (!Number.isFinite(seconds)) return "0:00";
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  }
-
-  function setMiniPlayer(index) {
-    const track = tracks[index];
-    if (!track) return;
-
-    const nowTitle = document.getElementById("now-title");
-    const nowSubtitle = document.querySelector(".now-sub");
-
-    if (nowTitle) nowTitle.textContent = track.title;
-    if (nowSubtitle) nowSubtitle.textContent = "#chaoscore";
-  }
-
-  function renderWave(index, progress = 0) {
-    const wave = document.getElementById("wave");
-    if (!wave) return;
-
-    const pattern = wavePatterns[index % wavePatterns.length];
-    wave.innerHTML = "";
-
-    pattern.forEach((height, i) => {
-      const bar = document.createElement("span");
-      bar.className = "bar";
-      bar.style.setProperty("--h", height / 100);
-
-      if (i / pattern.length <= progress) {
-        bar.classList.add("on");
-      }
-
-      wave.appendChild(bar);
-    });
-  }
-
-  function animateRow(row, className) {
-    if (!row) return;
-    row.classList.remove("play-pop", "pause-pop");
-    void row.offsetWidth;
-    row.classList.add(className);
-    window.setTimeout(() => row.classList.remove(className), 430);
-  }
-
-  function syncUI(animationType) {
-    const audio = getAudio();
-    const rows = getRows();
-    const currentIndex = getIndexFromAudio();
-    const isPlaying = audio && !audio.paused;
-
-    activeIndex = currentIndex;
-    setMiniPlayer(currentIndex);
-
-    rows.forEach((row, index) => {
-      const button = row.querySelector(".play-small");
-      const currentAndPlaying = index === currentIndex && isPlaying;
-
-      row.classList.toggle("active", index === currentIndex);
-      row.classList.toggle("is-playing", currentAndPlaying);
-
-      if (button) {
-        button.textContent = currentAndPlaying ? "❚❚" : "▶";
-        button.setAttribute("aria-label", currentAndPlaying ? "Pause track" : "Play track");
-      }
-    });
-
-    const progress = audio && audio.duration ? audio.currentTime / audio.duration : 0;
-    renderWave(currentIndex, progress);
-
-    const time = document.getElementById("time");
-    if (time && audio) {
-      time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
-    }
-
-    if (animationType === "play") {
-      animateRow(rows[currentIndex], "play-pop");
-    }
-
-    if (animationType === "pause") {
-      animateRow(rows[currentIndex], "pause-pop");
-    }
-  }
-
-  async function toggleTrack(index) {
-    const audio = getAudio();
-    if (!audio) return;
-
-    const track = tracks[index];
-    if (!track) return;
-
-    const targetSrc = absoluteUrl(track.file);
-    const sameTrack = audio.src === targetSrc;
-
-    activeIndex = index;
-    setMiniPlayer(index);
-    renderWave(index, 0);
-
-    if (sameTrack && !audio.paused) {
-      audio.pause();
-      syncUI("pause");
-      return;
-    }
-
-    if (!sameTrack) {
-      audio.pause();
-      audio.src = targetSrc;
-      audio.load();
-    }
-
-    try {
-      await audio.play();
-      syncUI("play");
-    } catch (error) {
-      console.warn(error);
-      const status = document.getElementById("audio-status");
-      if (status) status.textContent = "Audio non partito: premi di nuovo play.";
-      syncUI("pause");
-    }
-  }
-
-  document.addEventListener("click", function (event) {
-    if (event.target.closest(".credit-link")) return;
-
-    const playButton = event.target.closest(".play-small");
-    const row = event.target.closest(".track");
-
-    if (!playButton && !row) return;
-
-    const rows = getRows();
-    const targetRow = row || playButton.closest(".track");
-    const index = rows.indexOf(targetRow);
-
-    if (index < 0) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
-    toggleTrack(index);
-  }, true);
-
-  document.addEventListener("click", function (event) {
-    const mainPlay = event.target.closest("#play, #hero-play");
-    if (!mainPlay) return;
-
-    const audio = getAudio();
-    if (!audio) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
-    if (!audio.paused) {
-      audio.pause();
-      syncUI("pause");
-    } else {
-      toggleTrack(activeIndex);
-    }
-  }, true);
-
-  const audio = getAudio();
-
-  if (audio) {
-    audio.addEventListener("play", () => syncUI("play"));
-    audio.addEventListener("pause", () => syncUI("pause"));
-    audio.addEventListener("ended", () => syncUI("pause"));
-    audio.addEventListener("loadedmetadata", () => syncUI());
-    audio.addEventListener("timeupdate", () => syncUI());
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    setMiniPlayer(0);
-    renderWave(0, 0);
-    syncUI();
-    setTimeout(syncUI, 300);
-    setTimeout(syncUI, 1000);
-  });
-
-  window.addEventListener("load", () => {
-    setMiniPlayer(activeIndex);
-    renderWave(activeIndex, 0);
-    syncUI();
-    setTimeout(syncUI, 300);
-    setTimeout(syncUI, 1000);
-  });
-})();
+<script id="chaoscore-old-inline-player-disabled">
+  /*
+    Disabled old inline Chaoscore player.
+    The active player is /chaos-current-player-v2.js.
+    Keeping this disabled prevents double click/timeupdate/ended handlers.
+  */
 </script>
 
 
@@ -1834,7 +1602,14 @@ dialog {
                 </div>
               </div>
 
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <div style="
+                display:flex;
+                gap:10px;
+                flex-wrap:nowrap;
+                align-items:center;
+                justify-content:space-between;
+                width:100%;
+              ">
                 <a href="/" style="
                   display:inline-flex;
                   border:1px solid rgba(231,224,210,.24);
@@ -1846,10 +1621,12 @@ dialog {
                   text-transform:uppercase;
                   letter-spacing:.12em;
                   font-size:.72rem;
+                  white-space:nowrap;
                 ">Back to Busta Files</a>
 
                 <a href="/account" style="
                   display:inline-flex;
+                  margin-left:auto;
                   border:1px solid rgba(231,224,210,.16);
                   border-radius:999px;
                   background:rgba(0,0,0,.18);
@@ -1859,6 +1636,7 @@ dialog {
                   text-transform:uppercase;
                   letter-spacing:.12em;
                   font-size:.72rem;
+                  white-space:nowrap;
                 ">My Account</a>
               </div>
             </section>
@@ -1910,7 +1688,7 @@ dialog {
     });
   </script>
   <script src="/chaoscore-v2/chaoscore-tracks.js?v=3"></script>
-  <script src="/chaos-current-player-v2.js?v=4"></script>
+  <script src="/chaos-current-player-v2.js?v=5"></script>
   <script src="/chaos-cover-carousel-v2.js?v=9"></script>
 
   <script src="/look-shop-busta-card.js?v=8"></script>
