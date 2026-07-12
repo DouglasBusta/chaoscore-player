@@ -510,13 +510,15 @@
     });
   }
 
+  function getLegacyTrackRows() {
+    return Array.from(document.querySelectorAll("#tracks .track, .tracks .track, .track"));
+  }
 
   function getLegacyTrackIndex(target) {
     const row = target.closest(".track");
     if (!row) return -1;
 
-    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track, .track"));
-    return rows.indexOf(row);
+    return getLegacyTrackRows().indexOf(row);
   }
 
   function setLegacyButtonState(button, isPlaying) {
@@ -530,25 +532,14 @@
 
     button.classList.toggle("playing", isPlaying);
     button.classList.toggle("is-playing", isPlaying);
-
-    const icon = button.querySelector("svg, img, span, i");
-
-    if (icon && icon.textContent && icon.textContent.trim().length <= 2) {
-      icon.textContent = isPlaying ? "❚❚" : "▶";
-      return;
-    }
-
-    if (!icon && button.children.length === 0) {
-      button.textContent = isPlaying ? "❚❚" : "▶";
-    }
   }
 
   function syncLegacyTrackButtons() {
-    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track, .track"));
+    const rows = getLegacyTrackRows();
 
     rows.forEach((row, index) => {
       const isActive = index === state.index;
-      const isPlaying = isActive && state.isPlaying;
+      const isPlaying = isActive && Boolean(audio && !audio.paused && !audio.ended);
 
       row.classList.toggle("active", isActive);
       row.classList.toggle("playing", isPlaying);
@@ -557,11 +548,73 @@
       setLegacyButtonState(row.querySelector(".play-small"), isPlaying);
     });
 
-    setLegacyButtonState(document.getElementById("play"), state.isPlaying);
-    setLegacyButtonState(document.getElementById("hero-play"), state.isPlaying);
+    const mainIsPlaying = Boolean(audio && !audio.paused && !audio.ended);
+
+    setLegacyButtonState(document.getElementById("play"), mainIsPlaying);
+    setLegacyButtonState(document.getElementById("hero-play"), mainIsPlaying);
+  }
+
+  function handleLegacyPlayClick(event) {
+    const legacyControl = event.target.closest(".play-small, #hero-play, #play, #prev, #next, #tracks .track, .tracks .track");
+
+    if (!legacyControl) return false;
+
+    const isInsideNewPlayer = legacyControl.closest(".chaos-current-player, [data-chaos-current-player]");
+    if (isInsideNewPlayer) return false;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (typeof event.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+
+    if (legacyControl.id === "prev") {
+      previousTrack();
+      requestAnimationFrame(syncLegacyTrackButtons);
+      return true;
+    }
+
+    if (legacyControl.id === "next") {
+      nextTrack();
+      requestAnimationFrame(syncLegacyTrackButtons);
+      return true;
+    }
+
+    if (legacyControl.id === "hero-play" || legacyControl.id === "play") {
+      const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended);
+
+      if (actuallyPlaying || state.isPlaying) {
+        pause();
+      } else {
+        play();
+      }
+
+      requestAnimationFrame(syncLegacyTrackButtons);
+      return true;
+    }
+
+    const index = getLegacyTrackIndex(legacyControl);
+
+    if (index < 0) return false;
+
+    const sameTrack = index === state.index;
+    const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended);
+
+    if (sameTrack && (actuallyPlaying || state.isPlaying)) {
+      pause();
+    } else if (sameTrack) {
+      play();
+    } else {
+      loadTrack(index, true);
+    }
+
+    requestAnimationFrame(syncLegacyTrackButtons);
+    return true;
   }
 
   function bind() {
+    document.addEventListener("click", handleLegacyPlayClick, true);
     section.addEventListener("click", function (event) {
       const actionEl = event.target.closest("[data-action]");
       if (!actionEl) return;
@@ -628,67 +681,7 @@
 
       setVolume(volume.value);
     });
-
-    document.addEventListener("click", function (event) {
-      const legacyPlay = event.target.closest(".play-small, #hero-play, #play, #prev, #next, #tracks .track, .tracks .track");
-
-      if (!legacyPlay) return;
-
-      const isInsideNewPlayer = legacyPlay.closest(".chaos-current-player, [data-chaos-current-player]");
-      if (isInsideNewPlayer) return;
-
-      if (legacyPlay.id === "prev") {
-        event.preventDefault();
-        event.stopPropagation();
-        previousTrack();
-        return;
-      }
-
-      if (legacyPlay.id === "next") {
-        event.preventDefault();
-        event.stopPropagation();
-        nextTrack();
-        return;
-      }
-
-      if (legacyPlay.id === "hero-play" || legacyPlay.id === "play") {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended);
-
-        if (state.isPlaying || actuallyPlaying) {
-          pause();
-        } else {
-          play();
-        }
-
-        syncLegacyTrackButtons();
-        return;
-      }
-
-      const index = getLegacyTrackIndex(legacyPlay);
-
-      if (index >= 0) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const sameTrack = index === state.index;
-        const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended);
-
-        if (sameTrack && (state.isPlaying || actuallyPlaying)) {
-          pause();
-        } else if (sameTrack) {
-          play();
-        } else {
-          loadTrack(index, true);
-        }
-
-        syncLegacyTrackButtons();
-      }
-    }, true);
-
-    document.addEventListener("click", function (event) {
+document.addEventListener("click", function (event) {
       const target = event.target.closest("a, button, [role='button']");
       if (!target || target.closest("section.player")) return;
 
