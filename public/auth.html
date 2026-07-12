@@ -210,6 +210,38 @@
     });
 
     const params = new URLSearchParams(window.location.search);
+
+    function getSafeNext(rawNext) {
+      const fallback = "/account.html";
+
+      if (!rawNext) return fallback;
+
+      try {
+        const url = new URL(rawNext, window.location.origin);
+
+        if (url.origin !== window.location.origin) return fallback;
+
+        const nextPath = url.pathname + url.search + url.hash;
+
+        if (
+          url.pathname === "/auth" ||
+          url.pathname === "/auth.html" ||
+          url.pathname === "/public/auth.html"
+        ) {
+          return fallback;
+        }
+
+        return nextPath || fallback;
+      } catch (_error) {
+        return fallback;
+      }
+    }
+
+    const safeNext = getSafeNext(params.get("next"));
+
+    function authUrl(nextMode) {
+      return "/auth?mode=" + encodeURIComponent(nextMode) + "&next=" + encodeURIComponent(safeNext);
+    }
     let mode = params.get("mode") === "login" ? "login" : "signup";
 
     const title = document.getElementById("title");
@@ -350,7 +382,7 @@
             email: userEmail,
             password: userPassword,
             options: {
-              emailRedirectTo: "https://lookapp.org/account"
+              emailRedirectTo: window.location.origin + safeNext
             }
           });
         } else {
@@ -383,7 +415,7 @@
         if (!session?.user) {
           setMessage("Account created. Now switch to Log In with the same email and password.");
           mode = "login";
-          history.replaceState(null, "", "/auth?mode=login");
+          history.replaceState(null, "", authUrl("login"));
           renderMode();
           return;
         }
@@ -391,7 +423,7 @@
         setMessage(mode === "signup" ? "Account created. Opening your account..." : "Access granted. Opening your account...");
 
         setTimeout(() => {
-          window.location.href = "/account.html";
+          window.location.href = safeNext;
         }, 700);
       } catch (err) {
         setMessage("Unexpected error: " + readableError(err));
@@ -417,7 +449,7 @@
       setMessage("Sending password reset email...");
 
       const result = await client.auth.resetPasswordForEmail(userEmail, {
-        redirectTo: "https://lookapp.org/account"
+        redirectTo: window.location.origin + safeNext
       });
 
       if (result.error) {
@@ -431,7 +463,7 @@
     signupTab.addEventListener("click", (event) => {
       event.preventDefault();
       mode = "signup";
-      history.replaceState(null, "", "/auth?mode=signup");
+      history.replaceState(null, "", authUrl("signup"));
       setMessage("");
       setDebug("");
       renderMode();
@@ -440,7 +472,7 @@
     loginTab.addEventListener("click", (event) => {
       event.preventDefault();
       mode = "login";
-      history.replaceState(null, "", "/auth?mode=login");
+      history.replaceState(null, "", authUrl("login"));
       setMessage("");
       setDebug("");
       renderMode();

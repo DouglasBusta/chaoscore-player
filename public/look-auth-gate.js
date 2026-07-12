@@ -158,14 +158,14 @@
     if (loginButton) {
       event.preventDefault();
       event.stopPropagation();
-      window.location.href = "/auth?mode=login";
+      window.location.href = "/auth?mode=login&next=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
       return;
     }
 
     if (signupButton) {
       event.preventDefault();
       event.stopPropagation();
-      window.location.href = "/auth?mode=signup";
+      window.location.href = "/auth?mode=signup&next=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
     }
   }, true);
 
