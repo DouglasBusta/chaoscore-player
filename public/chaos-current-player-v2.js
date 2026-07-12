@@ -515,12 +515,35 @@
     const row = target.closest(".track");
     if (!row) return -1;
 
-    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track"));
+    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track, .track"));
     return rows.indexOf(row);
   }
 
+  function setLegacyButtonState(button, isPlaying) {
+    if (!button) return;
+
+    button.dataset.chaosLegacyBridge = "1";
+    button.dataset.playing = isPlaying ? "1" : "0";
+    button.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+    button.setAttribute("aria-label", isPlaying ? "Pause track" : "Play track");
+
+    button.classList.toggle("playing", isPlaying);
+    button.classList.toggle("is-playing", isPlaying);
+
+    const icon = button.querySelector("svg, img, span, i");
+
+    if (icon && icon.textContent && icon.textContent.trim().length <= 2) {
+      icon.textContent = isPlaying ? "❚❚" : "▶";
+      return;
+    }
+
+    if (!icon && button.children.length === 0) {
+      button.textContent = isPlaying ? "❚❚" : "▶";
+    }
+  }
+
   function syncLegacyTrackButtons() {
-    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track"));
+    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track, .track"));
 
     rows.forEach((row, index) => {
       const isActive = index === state.index;
@@ -530,15 +553,11 @@
       row.classList.toggle("playing", isPlaying);
       row.classList.toggle("is-playing", isPlaying);
 
-      const btn = row.querySelector(".play-small");
-      if (btn) btn.textContent = isPlaying ? "❚❚" : "▶";
+      setLegacyButtonState(row.querySelector(".play-small"), isPlaying);
     });
 
-    const mainPlay = document.getElementById("play");
-    const heroPlay = document.getElementById("hero-play");
-
-    if (mainPlay) mainPlay.textContent = state.isPlaying ? "❚❚" : "▶";
-    if (heroPlay) heroPlay.textContent = state.isPlaying ? "❚❚" : "▶";
+    setLegacyButtonState(document.getElementById("play"), state.isPlaying);
+    setLegacyButtonState(document.getElementById("hero-play"), state.isPlaying);
   }
 
   function bind() {
@@ -635,7 +654,9 @@
         event.preventDefault();
         event.stopPropagation();
 
-        if (state.isPlaying) {
+        const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended);
+
+        if (state.isPlaying || actuallyPlaying) {
           pause();
         } else {
           play();
@@ -651,8 +672,13 @@
         event.preventDefault();
         event.stopPropagation();
 
-        if (index === state.index && state.isPlaying) {
+        const sameTrack = index === state.index;
+        const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended);
+
+        if (sameTrack && (state.isPlaying || actuallyPlaying)) {
           pause();
+        } else if (sameTrack) {
+          play();
         } else {
           loadTrack(index, true);
         }
