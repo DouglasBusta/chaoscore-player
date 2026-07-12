@@ -111,7 +111,8 @@
         auth: {
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true
+          detectSessionInUrl: true,
+          storageKey: "lookapp-auth-token"
         }
       });
 

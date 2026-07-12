@@ -420,11 +420,18 @@
           return;
         }
 
-        setMessage(mode === "signup" ? "Account created. Opening your account..." : "Access granted. Opening your account...");
+        setMessage(mode === "signup" ? "Account created. Opening your account..." : "Access granted. Opening LOOK APP...");
+
+        // Aspetta che Supabase abbia salvato davvero la sessione nel browser.
+        for (let i = 0; i < 10; i += 1) {
+          const savedSession = await client.auth.getSession();
+          if (savedSession.data?.session?.user) break;
+          await new Promise((resolve) => setTimeout(resolve, 150));
+        }
 
         setTimeout(() => {
           window.location.href = safeNext;
-        }, 700);
+        }, 350);
       } catch (err) {
         setMessage("Unexpected error: " + readableError(err));
         setDebug(String(err?.stack || err?.message || err));
