@@ -3,7 +3,6 @@
 
   const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
   const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
-  const STORAGE_KEY = "lookapp-auth-token";
 
   const ALLOWED_PATHS = new Set([
     "/auth",
@@ -15,13 +14,6 @@
 
   if (ALLOWED_PATHS.has(path)) {
     return;
-  }
-
-  function clearOldFakeUnlock() {
-    try {
-      localStorage.removeItem("lookapp-auth-ok");
-      localStorage.removeItem("lookapp-auth-ok-at");
-    } catch (_error) {}
   }
 
   function lockPage() {
@@ -119,7 +111,7 @@
   }
 
   async function checkAuth() {
-    clearOldFakeUnlock();
+    ensureGate("Controllo sessione...");
 
     try {
       const supabaseLib = await loadSupabase();
@@ -133,8 +125,7 @@
         auth: {
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true,
-          storageKey: STORAGE_KEY
+          detectSessionInUrl: true
         }
       });
 
