@@ -523,6 +523,7 @@
     if (!button) return;
 
     button.dataset.chaosLegacyBridge = "1";
+    button.setAttribute("data-chaos-legacy-bridge", "1");
     button.dataset.playing = isPlaying ? "1" : "0";
     button.setAttribute("aria-pressed", isPlaying ? "true" : "false");
     button.setAttribute("aria-label", isPlaying ? "Pause track" : "Play track");
