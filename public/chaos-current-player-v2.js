@@ -466,6 +466,7 @@
     render();
   }
   function render() {
+    syncLegacyTrackButtons();
     if (!player || !audio) return;
 
     const track = currentTrack();
@@ -507,6 +508,37 @@
     $all("[data-mute]", player).forEach((el) => {
       el.textContent = audio.muted ? "UNMUTE" : "MUTE";
     });
+  }
+
+
+  function getLegacyTrackIndex(target) {
+    const row = target.closest(".track");
+    if (!row) return -1;
+
+    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track"));
+    return rows.indexOf(row);
+  }
+
+  function syncLegacyTrackButtons() {
+    const rows = Array.from(document.querySelectorAll("#tracks .track, .tracks .track"));
+
+    rows.forEach((row, index) => {
+      const isActive = index === state.index;
+      const isPlaying = isActive && state.isPlaying;
+
+      row.classList.toggle("active", isActive);
+      row.classList.toggle("playing", isPlaying);
+      row.classList.toggle("is-playing", isPlaying);
+
+      const btn = row.querySelector(".play-small");
+      if (btn) btn.textContent = isPlaying ? "❚❚" : "▶";
+    });
+
+    const mainPlay = document.getElementById("play");
+    const heroPlay = document.getElementById("hero-play");
+
+    if (mainPlay) mainPlay.textContent = state.isPlaying ? "❚❚" : "▶";
+    if (heroPlay) heroPlay.textContent = state.isPlaying ? "❚❚" : "▶";
   }
 
   function bind() {
@@ -576,6 +608,59 @@
 
       setVolume(volume.value);
     });
+
+    document.addEventListener("click", function (event) {
+      const legacyPlay = event.target.closest(".play-small, #hero-play, #play, #prev, #next, #tracks .track, .tracks .track");
+
+      if (!legacyPlay) return;
+
+      const isInsideNewPlayer = legacyPlay.closest(".chaos-current-player, [data-chaos-current-player]");
+      if (isInsideNewPlayer) return;
+
+      if (legacyPlay.id === "prev") {
+        event.preventDefault();
+        event.stopPropagation();
+        previousTrack();
+        return;
+      }
+
+      if (legacyPlay.id === "next") {
+        event.preventDefault();
+        event.stopPropagation();
+        nextTrack();
+        return;
+      }
+
+      if (legacyPlay.id === "hero-play" || legacyPlay.id === "play") {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (state.isPlaying) {
+          pause();
+        } else {
+          play();
+        }
+
+        syncLegacyTrackButtons();
+        return;
+      }
+
+      const index = getLegacyTrackIndex(legacyPlay);
+
+      if (index >= 0) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (index === state.index && state.isPlaying) {
+          pause();
+        } else {
+          loadTrack(index, true);
+        }
+
+        syncLegacyTrackButtons();
+      }
+    }, true);
+
     document.addEventListener("click", function (event) {
       const target = event.target.closest("a, button, [role='button']");
       if (!target || target.closest("section.player")) return;
