@@ -47,21 +47,21 @@
 
 .look-auth-brand-wrap {
   width: 100%;
-  min-height: 270px;
+  min-height: 300px;
   display: grid;
   place-items: center;
-  margin: 0 auto 10px;
+  margin: 0 auto 4px;
   pointer-events: none;
   overflow: visible;
 }
 
 .look-auth-main-logo {
-  width: min(900px, 100%);
+  width: min(980px, 125%);
   max-width: none;
-  max-height: 430px;
+  max-height: 460px;
   object-fit: contain;
   display: block;
-  transform: scale(1.18);
+  transform: scale(1.42);
   filter:
     drop-shadow(0 24px 46px rgba(255, 0, 90, .30))
     drop-shadow(0 2px 0 rgba(255,255,255,.05));
@@ -172,21 +172,21 @@ body.look-auth-locked {
 
   .look-auth-brand-wrap {
   width: 100%;
-  min-height: 270px;
+  min-height: 300px;
   display: grid;
   place-items: center;
-  margin: 0 auto 10px;
+  margin: 0 auto 4px;
   pointer-events: none;
   overflow: visible;
 }
 
   .look-auth-main-logo {
-  width: min(900px, 100%);
+  width: min(980px, 125%);
   max-width: none;
-  max-height: 430px;
+  max-height: 460px;
   object-fit: contain;
   display: block;
-  transform: scale(1.18);
+  transform: scale(1.42);
   filter:
     drop-shadow(0 24px 46px rgba(255, 0, 90, .30))
     drop-shadow(0 2px 0 rgba(255,255,255,.05));
