@@ -532,6 +532,18 @@
 
     button.classList.toggle("playing", isPlaying);
     button.classList.toggle("is-playing", isPlaying);
+
+    // Mantiene l'icona originale semplice: triangolo quando è ferma, due barre quando suona.
+    if (
+      button.classList.contains("play-small") ||
+      button.id === "play" ||
+      button.id === "hero-play"
+    ) {
+      const nextIcon = isPlaying ? "Ⅱ" : "▶";
+      if (button.textContent.trim() !== nextIcon) {
+        button.textContent = nextIcon;
+      }
+    }
   }
 
   function syncLegacyTrackButtons() {
