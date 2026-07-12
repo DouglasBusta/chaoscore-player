@@ -29,10 +29,10 @@
 }
 
 .look-auth-card {
-  width: min(650px, 94vw);
+  width: min(920px, 94vw);
   border: 1px solid var(--look-auth-border);
   border-radius: 34px;
-  padding: 46px 34px 30px;
+  padding: 46px 44px 30px;
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 110, 160, .10), transparent 42%),
     linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
@@ -42,12 +42,12 @@
     inset 0 1px 0 rgba(255,255,255,.09);
   text-align: center;
   color: var(--look-auth-text);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .look-auth-brand-wrap {
   width: 100%;
-  min-height: 260px;
+  min-height: 270px;
   display: grid;
   place-items: center;
   margin: 0 auto 10px;
@@ -56,12 +56,12 @@
 }
 
 .look-auth-main-logo {
-  width: min(980px, 178%);
+  width: min(900px, 100%);
   max-width: none;
-  max-height: 420px;
+  max-height: 430px;
   object-fit: contain;
   display: block;
-  transform: scale(1.42);
+  transform: scale(1.18);
   filter:
     drop-shadow(0 24px 46px rgba(255, 0, 90, .30))
     drop-shadow(0 2px 0 rgba(255,255,255,.05));
@@ -154,22 +154,43 @@ body.look-auth-locked {
 
 @media (max-width: 720px) {
   .look-auth-card {
-    width: min(430px, 94vw);
-    border-radius: 28px;
-    padding: 34px 18px 22px;
-  }
+  width: min(920px, 94vw);
+  border: 1px solid var(--look-auth-border);
+  border-radius: 34px;
+  padding: 46px 44px 30px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 110, 160, .10), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+    var(--look-auth-card);
+  box-shadow:
+    0 34px 110px rgba(0,0,0,.66),
+    inset 0 1px 0 rgba(255,255,255,.09);
+  text-align: center;
+  color: var(--look-auth-text);
+  overflow: visible;
+}
 
   .look-auth-brand-wrap {
-    min-height: 210px;
-    margin-bottom: 6px;
-    overflow: visible;
-  }
+  width: 100%;
+  min-height: 270px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 10px;
+  pointer-events: none;
+  overflow: visible;
+}
 
   .look-auth-main-logo {
-    width: min(660px, 170%);
-    max-height: 310px;
-    transform: scale(1.34);
-  }
+  width: min(900px, 100%);
+  max-width: none;
+  max-height: 430px;
+  object-fit: contain;
+  display: block;
+  transform: scale(1.18);
+  filter:
+    drop-shadow(0 24px 46px rgba(255, 0, 90, .30))
+    drop-shadow(0 2px 0 rgba(255,255,255,.05));
+}
 
   .look-auth-subtitle {
     font-size: 12px;
