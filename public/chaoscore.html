@@ -991,6 +991,42 @@ dialog {
   <link rel="stylesheet" href="/look-shop-busta-card.css?v=7">
 
   <link rel="stylesheet" href="/look-auth-gate.css?v=2">
+
+<style id="chaos-legacy-play-stable-icons">
+  .track .play-small {
+    position: relative !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+    color: transparent !important;
+    text-shadow: none !important;
+  }
+
+  .track .play-small > * {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .track .play-small::before {
+    content: "▶";
+    color: #fff;
+    font-size: 10px;
+    line-height: 1;
+    transform: translateX(1px);
+  }
+
+  .track.playing .play-small::before,
+  .track.is-playing .play-small::before,
+  .track .play-small.playing::before,
+  .track .play-small.is-playing::before,
+  .track .play-small[data-playing="1"]::before,
+  .track .play-small[aria-pressed="true"]::before {
+    content: "❚❚";
+    transform: none;
+  }
+</style>
+
 </head>
 <body>
   <main class="shell">
