@@ -171,3 +171,74 @@
   }, true);
 
 })();
+
+
+/* LOOK APP: evita loop del login gate dopo accesso riuscito. */
+(function () {
+  function hasRecentLookAppLogin() {
+    try {
+      const ok = localStorage.getItem("lookapp-auth-ok") === "1";
+      const at = Number(localStorage.getItem("lookapp-auth-ok-at") || "0");
+      const maxAge = 1000 * 60 * 60 * 24 * 30; // 30 giorni
+      return ok && at && Date.now() - at < maxAge;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function hasAnyStoredSupabaseSession() {
+    try {
+      const keys = [
+        "lookapp-auth-token",
+        "sb-giixvsfwsguudrvvbmkj-auth-token"
+      ];
+
+      return keys.some((key) => {
+        const raw = localStorage.getItem(key);
+        if (!raw) return false;
+
+        if (raw.includes("access_token") || raw.includes("refresh_token")) {
+          return true;
+        }
+
+        try {
+          const parsed = JSON.parse(raw);
+          return Boolean(
+            parsed?.access_token ||
+            parsed?.refresh_token ||
+            parsed?.currentSession?.access_token ||
+            parsed?.session?.access_token
+          );
+        } catch (_error) {
+          return false;
+        }
+      });
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function forceCloseLookAuthGate() {
+    if (!hasRecentLookAppLogin() && !hasAnyStoredSupabaseSession()) return false;
+
+    document.documentElement.classList.remove("look-auth-locked");
+    if (document.body) document.body.classList.remove("look-auth-locked");
+
+    const gate = document.getElementById("look-auth-gate") || document.querySelector(".look-auth-gate");
+    if (gate) gate.remove();
+
+    return true;
+  }
+
+  forceCloseLookAuthGate();
+
+  let attempts = 0;
+  const timer = setInterval(() => {
+    attempts += 1;
+
+    if (forceCloseLookAuthGate() || attempts > 80) {
+      clearInterval(timer);
+    }
+  }, 250);
+})();
+

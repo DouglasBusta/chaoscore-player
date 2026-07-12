@@ -431,6 +431,11 @@
         }
 
         setTimeout(() => {
+          try {
+            localStorage.setItem("lookapp-auth-ok", "1");
+            localStorage.setItem("lookapp-auth-ok-at", String(Date.now()));
+          } catch (_error) {}
+
           window.location.href = safeNext;
         }, 350);
       } catch (err) {
