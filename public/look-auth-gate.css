@@ -53,6 +53,8 @@
   margin: 0 auto 4px;
   pointer-events: none;
   overflow: visible;
+  position: relative;
+  z-index: 1;
 }
 
 .look-auth-main-logo {
@@ -62,6 +64,8 @@
   object-fit: contain;
   display: block;
   transform: scale(1.42);
+  pointer-events: none;
+  user-select: none;
   filter:
     drop-shadow(0 24px 46px rgba(255, 0, 90, .30))
     drop-shadow(0 2px 0 rgba(255,255,255,.05));
@@ -70,6 +74,9 @@
 .look-auth-panel {
   width: min(520px, 100%);
   margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .look-auth-title {
@@ -98,6 +105,9 @@
 .look-auth-actions {
   display: grid;
   gap: 10px;
+  position: relative;
+  z-index: 11;
+  pointer-events: auto;
 }
 
 .look-auth-btn {
@@ -113,6 +123,9 @@
   align-items: center;
   justify-content: center;
   transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+  position: relative;
+  z-index: 12;
+  pointer-events: auto;
 }
 
 .look-auth-btn:active {
@@ -178,6 +191,8 @@ body.look-auth-locked {
   margin: 0 auto 4px;
   pointer-events: none;
   overflow: visible;
+  position: relative;
+  z-index: 1;
 }
 
   .look-auth-main-logo {
@@ -187,6 +202,8 @@ body.look-auth-locked {
   object-fit: contain;
   display: block;
   transform: scale(1.42);
+  pointer-events: none;
+  user-select: none;
   filter:
     drop-shadow(0 24px 46px rgba(255, 0, 90, .30))
     drop-shadow(0 2px 0 rgba(255,255,255,.05));
@@ -197,6 +214,20 @@ body.look-auth-locked {
   }
 
   .look-auth-btn {
-    min-height: 50px;
-  }
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font: 950 13px/1 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+  position: relative;
+  z-index: 12;
+  pointer-events: auto;
+}
 }

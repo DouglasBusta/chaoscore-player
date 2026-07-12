@@ -151,4 +151,22 @@
   } else {
     checkAuth();
   }
+  document.addEventListener("click", function(event) {
+    const loginButton = event.target.closest("[data-look-auth-login]");
+    const signupButton = event.target.closest("[data-look-auth-signup]");
+
+    if (loginButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      window.location.href = "/auth?mode=login";
+      return;
+    }
+
+    if (signupButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      window.location.href = "/auth?mode=signup";
+    }
+  }, true);
+
 })();
