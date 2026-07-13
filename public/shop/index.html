@@ -1352,6 +1352,26 @@
   </style>
 
   <link rel="stylesheet" href="/look-auth-gate.css?v=2">
+
+<style id="look-shop-unavailable-products">
+  /* LOOK APP unavailable product controls */
+  .product[data-available="false"] {
+    opacity: .78;
+  }
+
+  .product[data-available="false"] .buy-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .product .add.coming-soon {
+    cursor: not-allowed;
+    opacity: .62;
+    filter: saturate(.55);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+</style>
+
 </head>
 <body>
   <main class="shell">
@@ -1455,7 +1475,7 @@
               <div class="product-art">◎</div>
               <h3>NFC #chaoscore tag</h3>
               <p>Tag fisico da avvicinare al telefono per aprire l’esperienza #chaoscore.</p>
-              <div class="rating"><span>rating <strong>★★★★★</strong></span><span>limited</span></div>
+              <div class="rating"><span>No reviews yet</span><span>limited</span></div>
             </div>
             <div class="buy-row">
               <span class="price">€4,99 <span class="subprice">+ shipping</span></span>
@@ -1464,33 +1484,31 @@
             </div>
           </article>
 
-          <article class="product" data-id="chaoscore-sticker-pack" data-product="#chaoscore sticker pack" data-price="4.99">
+          <article class="product" data-id="chaoscore-sticker-pack" data-available="false" data-product="#chaoscore sticker pack" data-price="4.99">
             <div class="product-top">
               <div class="product-meta"><span>sticker</span><span>coming soon</span></div>
               <div class="product-art">★</div>
               <h3>#chaoscore sticker pack</h3>
               <p>Sticker pack fisico in stile LOOK APP / chaoscore. Ancora non definitivo.</p>
-              <div class="rating"><span>rating <strong>★★★★☆</strong></span><span>preview</span></div>
+              <div class="rating"><span>No reviews yet</span><span>preview</span></div>
             </div>
             <div class="buy-row">
               <span class="price">€4,99</span>
-              <button class="quick-remove" type="button" aria-label="Rimuovi sticker pack">×</button>
-              <button class="add" type="button">add</button>
+              <button class="add coming-soon" type="button" disabled aria-disabled="true">coming soon</button>
             </div>
           </article>
 
-          <article class="product" data-id="chaoscore-bundle" data-product="#chaoscore bundle" data-price="24.99">
+          <article class="product" data-id="chaoscore-bundle" data-available="false" data-product="#chaoscore bundle" data-price="24.99">
             <div class="product-top">
               <div class="product-meta"><span>bundle</span><span>drop beta</span></div>
               <div class="product-art">▣</div>
               <h3>#chaoscore bundle</h3>
               <p>Bundle fisico #chaoscore. La maglietta sarà parte del bundle, non prodotto singolo isolato.</p>
-              <div class="rating"><span>rating <strong>★★★★★</strong></span><span>best value</span></div>
+              <div class="rating"><span>No reviews yet</span><span>best value</span></div>
             </div>
             <div class="buy-row">
               <span class="price">€24,99</span>
-              <button class="quick-remove" type="button" aria-label="Rimuovi bundle">×</button>
-              <button class="add" type="button">add</button>
+              <button class="add coming-soon" type="button" disabled aria-disabled="true">coming soon</button>
             </div>
           </article>
         </div>
@@ -1618,7 +1636,16 @@
       return cart.find((item) => item.id === id);
     }
 
+    const AVAILABLE_PRODUCT_IDS = new Set([
+      "nfc-chaoscore-tag"
+    ]);
+
     function addToCart(product) {
+      if (!product || !AVAILABLE_PRODUCT_IDS.has(product.id)) {
+        console.warn("[LOOK APP SHOP] Product unavailable:", product?.id);
+        return;
+      }
+
       const existing = getCartItem(product.id);
 
       if (existing) {
@@ -1693,7 +1720,15 @@
 
     document.querySelectorAll(".add").forEach((button) => {
       button.addEventListener("click", () => {
+        if (button.disabled || button.getAttribute("aria-disabled") === "true") {
+          return;
+        }
+
         const product = button.closest(".product");
+        if (!product || product.dataset.available === "false") {
+          return;
+        }
+
         addToCart({
           id: product.dataset.id,
           name: product.dataset.product,
