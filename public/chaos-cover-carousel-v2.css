@@ -194,3 +194,39 @@
   align-items: center !important;
   justify-content: center !important;
 }
+
+
+@keyframes chaosCoverSwap {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.965) rotate(-0.6deg);
+    filter: blur(1.5px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.018) rotate(0.3deg);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+    filter: blur(0);
+  }
+}
+
+#main-cover.chaos-cover-swap,
+img.cover.chaos-cover-swap,
+.cover img.chaos-cover-swap {
+  animation: chaosCoverSwap 360ms cubic-bezier(.22, .8, .24, 1);
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #main-cover.chaos-cover-swap,
+  img.cover.chaos-cover-swap,
+  .cover img.chaos-cover-swap {
+    animation-duration: 1ms;
+  }
+}

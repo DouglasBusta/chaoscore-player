@@ -7,6 +7,41 @@
   ];
 
   let currentIndex = 0;
+  const preloadedCovers = new Map();
+
+  function preloadCover(src) {
+    if (preloadedCovers.has(src)) {
+      return preloadedCovers.get(src);
+    }
+
+    const promise = new Promise(function (resolve) {
+      const image = new Image();
+
+      image.onload = async function () {
+        try {
+          if (typeof image.decode === "function") {
+            await image.decode();
+          }
+        } catch (_) {}
+
+        resolve(src);
+      };
+
+      image.onerror = function () {
+        console.warn("[chaos cover] preload fallito:", src);
+        resolve(src);
+      };
+
+      image.src = src;
+    });
+
+    preloadedCovers.set(src, promise);
+    return promise;
+  }
+
+  function preloadAllCovers() {
+    return Promise.all(coverSources.map(preloadCover));
+  }
 
   function getCover() {
     return document.getElementById("main-cover") || document.querySelector("img.cover") || document.querySelector(".cover img");
@@ -36,7 +71,7 @@
     if (found >= 0) currentIndex = found;
   }
 
-  function setCover(index) {
+  function setCover(index, animate = true) {
     const cover = getCover();
     if (!cover) {
       console.warn("[chaos cover] main cover non trovata");
@@ -45,6 +80,12 @@
 
     currentIndex = (index + coverSources.length) % coverSources.length;
     const nextSrc = coverSources[currentIndex];
+
+    if (animate) {
+      cover.classList.remove("chaos-cover-swap");
+      void cover.offsetWidth;
+      cover.classList.add("chaos-cover-swap");
+    }
 
     cover.setAttribute("src", nextSrc);
     cover.src = nextSrc;
@@ -94,8 +135,11 @@
     picker.appendChild(next);
   }
 
-  function boot() {
+  async function boot() {
     rebuildButtons();
+
+    await preloadAllCovers();
+    console.log("[chaos cover] entrambe le cover precaricate");
 
     const saved = localStorage.getItem("chaoscore-selected-cover") || "";
     const savedIndex = coverSources.findIndex(function (src) {
@@ -103,7 +147,7 @@
     });
 
     currentIndex = savedIndex >= 0 ? savedIndex : 0;
-    setCover(currentIndex);
+    setCover(currentIndex, false);
 
     /*
       Funzionamento vero:
