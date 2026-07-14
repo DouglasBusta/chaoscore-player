@@ -876,6 +876,36 @@
   }
 </style>
 
+
+<style id="look-shop-product-photo">
+  .product-art.product-art-photo {
+    width: 100%;
+    height: clamp(210px, 26vw, 330px);
+    padding: 0;
+    overflow: hidden;
+    border-radius: 22px;
+    background: #050505;
+    border: 1px solid rgba(255,255,255,.10);
+  }
+
+  .product-art.product-art-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  @media (max-width: 720px) {
+    .product-art.product-art-photo {
+      height: 220px;
+      border-radius: 18px;
+    }
+  }
+</style>
+
 </head>
 <body>
   <main class="shell">
@@ -976,7 +1006,14 @@
           <article class="product" data-id="nfc-chaoscore-tag" data-product="NFC #chaoscore tag" data-price="4.99">
             <div class="product-top">
               <div class="product-meta"><span>nfc access</span><span>in stock soon</span></div>
-              <div class="product-art">◎</div>
+              <div class="product-art product-art-photo">
+                <img
+                  src="/shop/products/nfc-chaoscore-tag/cover.jpg"
+                  alt="NFC #chaoscore tag"
+                  loading="eager"
+                  decoding="async"
+                >
+              </div>
               <h3>NFC #chaoscore tag</h3>
               <p>Tag fisico da avvicinare al telefono per aprire l’esperienza #chaoscore.</p>
               <div class="rating"><span>No reviews yet</span><span>limited</span></div>
