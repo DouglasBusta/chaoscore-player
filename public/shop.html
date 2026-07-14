@@ -985,6 +985,37 @@
     }
   }
 
+
+  /* MOBILE NFC IMAGE REFINEMENT */
+  @media (max-width: 720px) {
+    .product[data-id="nfc-chaoscore-tag"] .product-art-photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      padding: 0;
+      background: #050505;
+    }
+
+    .product[data-id="nfc-chaoscore-tag"] .product-art-photo img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      object-fit: contain;
+      object-position: center;
+      transform: translateY(-7%) scale(1.16);
+      transform-origin: center;
+    }
+
+    #cart {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 18px 0;
+    }
+  }
 </style>
 
 </head>
@@ -1590,5 +1621,38 @@ Checkout in modalità preview.`;
 
   </script>
   <script src="/look-auth-gate.js?v=2"></script>
+
+  <script>
+    /* MOBILE CART ORDER */
+    (() => {
+      const MOBILE_BREAKPOINT = 720;
+      const cart = document.querySelector("#cart");
+      const products = document.querySelector("#products");
+
+      if (!cart || !products) return;
+
+      const originalParent = cart.parentNode;
+      const originalPlaceholder = document.createComment("original cart position");
+
+      originalParent.insertBefore(originalPlaceholder, cart);
+
+      function updateMobileOrder() {
+        if (window.innerWidth <= MOBILE_BREAKPOINT) {
+          if (products.nextElementSibling !== cart) {
+            products.insertAdjacentElement("afterend", cart);
+          }
+        } else if (originalPlaceholder.parentNode) {
+          originalPlaceholder.parentNode.insertBefore(
+            cart,
+            originalPlaceholder.nextSibling
+          );
+        }
+      }
+
+      updateMobileOrder();
+      window.addEventListener("resize", updateMobileOrder, { passive: true });
+    })();
+  </script>
+
 </body>
 </html>
