@@ -1840,8 +1840,14 @@
       }).join("\n");
     }
 
+    const SHIPPING_COST = 2;
+
     function cartTotalValue() {
       return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    }
+
+    function orderTotalValue() {
+      return cartTotalValue() + SHIPPING_COST;
     }
 
     function getFieldValue(id) {
@@ -1875,7 +1881,9 @@
       }
 
       const orderCode = "LOOK-" + Date.now().toString().slice(-8);
-      const total = euro(cartTotalValue());
+      const productsTotal = euro(cartTotalValue());
+      const shippingTotal = euro(SHIPPING_COST);
+      const orderTotal = euro(orderTotalValue());
 
       preview.textContent =
 `ORDINE ${orderCode}
@@ -1888,8 +1896,9 @@ Telefono: ${phone}
 PRODOTTI
 ${cartSummaryText()}
 
-Totale prodotti: ${total}
-Spedizione: da calcolare
+Totale prodotti: ${productsTotal}
+Spedizione: ${shippingTotal}
+Totale ordine: ${orderTotal}
 
 INDIRIZZO SPEDIZIONE
 Via: ${shipping}
@@ -1905,8 +1914,8 @@ NOTE
 ${notes}
 
 STATO
-Pagamento in attesa di conferma Stripe.
-Checkout sicuro tramite Stripe.`;
+Pagamento in attesa di conferma PayPal.
+Checkout sicuro tramite PayPal.`;
 
       preview.dataset.orderCode = orderCode;
     }
@@ -2126,6 +2135,14 @@ Checkout sicuro tramite Stripe.`;
       }
 
       function extractTotal(text) {
+        const orderTotalLine = text.match(
+          /Totale ordine:\s*€\s*([0-9]+(?:[.,][0-9]{1,2})?)/i
+        );
+
+        if (orderTotalLine) {
+          return orderTotalLine[1].replace(",", ".");
+        }
+
         const matches = [];
         const euroRegex = /€\s*([0-9]+(?:[.,][0-9]{1,2})?)/g;
         let match;

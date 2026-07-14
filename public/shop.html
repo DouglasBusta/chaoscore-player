@@ -1328,8 +1328,14 @@
       }).join("\n");
     }
 
+    const SHIPPING_COST = 2;
+
     function cartTotalValue() {
       return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    }
+
+    function orderTotalValue() {
+      return cartTotalValue() + SHIPPING_COST;
     }
 
     function getFieldValue(id) {
@@ -1363,7 +1369,9 @@
       }
 
       const orderCode = "LOOK-" + Date.now().toString().slice(-8);
-      const total = euro(cartTotalValue());
+      const productsTotal = euro(cartTotalValue());
+      const shippingTotal = euro(SHIPPING_COST);
+      const orderTotal = euro(orderTotalValue());
 
       preview.textContent =
 `ORDINE ${orderCode}
@@ -1376,8 +1384,9 @@ Telefono: ${phone}
 PRODOTTI
 ${cartSummaryText()}
 
-Totale prodotti: ${total}
-Spedizione: da calcolare
+Totale prodotti: ${productsTotal}
+Spedizione: ${shippingTotal}
+Totale ordine: ${orderTotal}
 
 INDIRIZZO SPEDIZIONE
 Via: ${shipping}

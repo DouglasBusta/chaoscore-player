@@ -30,11 +30,7 @@ async function getAccessToken() {
   return data.access_token;
 }
 
-function cleanAmount(value) {
-  const n = Number(String(value || "").replace(",", "."));
-  if (!Number.isFinite(n) || n <= 0) return null;
-  return n.toFixed(2);
-}
+const EXPECTED_ORDER_AMOUNT = "6.99";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -43,11 +39,20 @@ export default async function handler(req, res) {
 
   try {
     const { orderId, total } = req.body || {};
-    const amount = cleanAmount(total);
+    const submittedAmount = Number(String(total || "").replace(",", ".")).toFixed(2);
 
-    if (!orderId || !amount) {
-      return res.status(400).json({ error: "Missing orderId or valid total" });
+    if (!orderId) {
+      return res.status(400).json({ error: "Missing orderId" });
     }
+
+    if (submittedAmount !== EXPECTED_ORDER_AMOUNT) {
+      return res.status(400).json({
+        error: "Invalid order total",
+        expected: EXPECTED_ORDER_AMOUNT
+      });
+    }
+
+    const amount = EXPECTED_ORDER_AMOUNT;
 
     const accessToken = await getAccessToken();
 
