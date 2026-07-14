@@ -166,68 +166,195 @@ body.look-auth-locked {
 }
 
 @media (max-width: 720px) {
+  html.look-auth-locked,
+  body.look-auth-locked {
+    width: 100%;
+    min-height: 100%;
+    overflow: hidden !important;
+    background: #050407;
+  }
+
+  .look-auth-gate {
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding:
+      max(14px, env(safe-area-inset-top))
+      14px
+      max(18px, env(safe-area-inset-bottom));
+    background:
+      radial-gradient(
+        circle at 50% 7%,
+        rgba(255, 48, 112, .18),
+        transparent 32%
+      ),
+      radial-gradient(
+        circle at 50% 100%,
+        rgba(255, 0, 82, .08),
+        transparent 42%
+      ),
+      #050407;
+  }
+
   .look-auth-card {
-  width: min(920px, 94vw);
-  border: 1px solid var(--look-auth-border);
-  border-radius: 34px;
-  padding: 46px 44px 30px;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 110, 160, .10), transparent 42%),
-    linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
-    var(--look-auth-card);
-  box-shadow:
-    0 34px 110px rgba(0,0,0,.66),
-    inset 0 1px 0 rgba(255,255,255,.09);
-  text-align: center;
-  color: var(--look-auth-text);
-  overflow: visible;
-}
+    width: 100%;
+    max-width: 420px;
+    min-height: min(690px, calc(100dvh - 32px));
+    margin: 0 auto;
+    box-sizing: border-box;
+    border: 1px solid rgba(255,255,255,.11);
+    border-radius: 30px;
+    padding: 24px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--look-auth-text);
+    text-align: center;
+    overflow: hidden;
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        rgba(255, 76, 137, .14),
+        transparent 36%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(255,255,255,.075),
+        rgba(255,255,255,.025)
+      ),
+      var(--look-auth-card);
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.62),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
 
   .look-auth-brand-wrap {
-  width: 100%;
-  min-height: 300px;
-  display: grid;
-  place-items: center;
-  margin: 0 auto 4px;
-  pointer-events: none;
-  overflow: visible;
-  position: relative;
-  z-index: 1;
-}
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+  }
 
   .look-auth-main-logo {
-  width: min(980px, 125%);
-  max-width: none;
-  max-height: 460px;
-  object-fit: contain;
-  display: block;
-  transform: scale(1.42);
-  pointer-events: none;
-  user-select: none;
-  filter:
-    drop-shadow(0 24px 46px rgba(255, 0, 90, .30))
-    drop-shadow(0 2px 0 rgba(255,255,255,.05));
-}
+    width: min(100%, 320px);
+    max-width: 100%;
+    height: auto;
+    max-height: 180px;
+    margin: 0 auto;
+    display: block;
+    object-fit: contain;
+    transform: none;
+    pointer-events: none;
+    user-select: none;
+    filter:
+      drop-shadow(0 18px 34px rgba(255, 0, 90, .28))
+      drop-shadow(0 2px 0 rgba(255,255,255,.04));
+  }
+
+  .look-auth-panel {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  .look-auth-title {
+    font-size: clamp(32px, 10vw, 46px);
+    line-height: .9;
+    letter-spacing: -2.5px;
+  }
 
   .look-auth-subtitle {
+    max-width: 310px;
+    margin: 0 auto 18px;
+    padding: 0 4px;
     font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .look-auth-actions {
+    width: 100%;
+    gap: 11px;
   }
 
   .look-auth-btn {
-  width: 100%;
-  min-height: 54px;
-  border: 0;
-  border-radius: 999px;
-  cursor: pointer;
-  font: 950 13px/1 system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-  letter-spacing: .9px;
-  text-transform: uppercase;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform .15s ease, filter .15s ease, opacity .15s ease;
-  position: relative;
-  z-index: 12;
-  pointer-events: auto;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 18px;
+    box-sizing: border-box;
+    border-radius: 16px;
+    font-size: 13px;
+    letter-spacing: .8px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .look-auth-btn-primary {
+    color: #170009;
+    background: linear-gradient(90deg, #ffffff, #ffadc6);
+    box-shadow:
+      0 12px 30px rgba(255, 68, 126, .22),
+      inset 0 1px 0 rgba(255,255,255,.8);
+  }
+
+  .look-auth-btn-secondary {
+    color: #fff;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.15);
+  }
+
+  .look-auth-note {
+    margin-top: 14px;
+    padding: 0 8px;
+    font-size: 9px;
+    line-height: 1.45;
+  }
+
+  .look-auth-loading {
+    margin-top: 8px;
+    font-size: 9px;
+  }
 }
+
+@media (max-width: 720px) and (max-height: 650px) {
+  .look-auth-gate {
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .look-auth-card {
+    min-height: calc(100dvh - 16px);
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .look-auth-main-logo {
+    width: min(86%, 270px);
+    max-height: 125px;
+  }
+
+  .look-auth-brand-wrap {
+    margin-bottom: 6px;
+  }
+
+  .look-auth-subtitle {
+    margin-bottom: 12px;
+  }
+
+  .look-auth-btn {
+    min-height: 48px;
+  }
 }
