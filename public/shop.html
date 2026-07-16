@@ -1226,6 +1226,57 @@
     }
   }
 
+
+
+  /* SHOP DROP CONTEXT */
+
+  .drop-context {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    width: auto;
+    margin-left: auto;
+    padding: 0 3px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .drop-context span {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.52rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.15em;
+  }
+
+  .drop-context strong {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.09em;
+  }
+
+  @media (max-width: 720px) {
+    .drop-context {
+      margin-left: 0;
+      gap: 6px;
+      padding: 2px 0;
+    }
+
+    .drop-context span {
+      font-size: 0.47rem;
+    }
+
+    .drop-context strong {
+      font-size: 0.56rem;
+    }
+  }
+
 </style>
 
 </head>
@@ -1251,9 +1302,10 @@
     <section class="shop-frame">
       <div class="notice-bar">
         <div class="notice-main">storefront online</div>
-        <div class="pill">drop: #chaoscore</div>
-        <div class="pill">pay: PayPal soon</div>
-        <div class="pill">ship: Italy beta</div>
+        <div class="drop-context" aria-label="Drop attuale">
+          <span>DROP ATTUALE</span>
+          <strong>#CHAOSCORE</strong>
+        </div>
       </div>
 
       <div class="main">
