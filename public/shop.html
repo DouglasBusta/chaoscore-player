@@ -1041,6 +1041,128 @@
       margin-top: 18px !important;
     }
   }
+
+
+  /* CART SIZE NORMALIZATION */
+
+  @media (min-width: 721px) {
+    .shop-content {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 380px) !important;
+      align-items: start !important;
+      gap: 16px !important;
+    }
+
+    .shop-left {
+      min-width: 0 !important;
+    }
+
+    .side {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    #cart {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 320px !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+    }
+
+    #cart .panel-head {
+      min-height: 48px !important;
+      padding: 0 16px !important;
+    }
+
+    #cart .panel-body {
+      min-height: 250px !important;
+      padding: 16px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 14px !important;
+    }
+
+    #cart-lines {
+      min-height: 72px !important;
+    }
+
+    #cart .cart-sum {
+      min-height: 25px !important;
+      font-size: 0.8rem !important;
+    }
+
+    #cart .progress {
+      margin-top: 4px !important;
+    }
+
+    #cart .secure-note,
+    #cart [class*="secure"],
+    #cart [class*="checkout-note"] {
+      margin-top: auto !important;
+      padding: 14px !important;
+      line-height: 1.45 !important;
+    }
+  }
+
+  @media (min-width: 721px) and (max-width: 1050px) {
+    .shop-content {
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 330px) !important;
+      gap: 12px !important;
+    }
+
+    #cart {
+      min-height: 290px !important;
+    }
+
+    #cart .panel-body {
+      min-height: 220px !important;
+      padding: 14px !important;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .shop-content {
+      display: block !important;
+    }
+
+    .side {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    #cart {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 260px !important;
+      margin: 20px 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    #cart .panel-head {
+      min-height: 48px !important;
+      padding: 0 15px !important;
+    }
+
+    #cart .panel-body {
+      min-height: 200px !important;
+      padding: 15px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 13px !important;
+    }
+
+    #cart-lines {
+      min-height: 62px !important;
+    }
+
+    #cart .secure-note,
+    #cart [class*="secure"],
+    #cart [class*="checkout-note"] {
+      margin-top: auto !important;
+    }
+  }
+
 </style>
 
 </head>
