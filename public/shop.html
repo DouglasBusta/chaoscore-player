@@ -1277,6 +1277,30 @@
     }
   }
 
+
+
+  /* STABLE PRODUCT HEIGHTS AND CLEAN CHECKOUT */
+
+  .product-grid .product {
+    box-sizing: border-box;
+  }
+
+  .product-grid .product .product-top {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+  }
+
+  .product-grid .product .buy-row {
+    margin-top: auto;
+  }
+
+  @media (max-width: 720px) {
+    .product-grid .product {
+      width: 100%;
+    }
+  }
+
 </style>
 
 </head>
@@ -1958,6 +1982,99 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+</script>
+
+
+
+<script>
+/* STABLE PRODUCT HEIGHTS AND CLEAN CHECKOUT */
+
+(() => {
+  function removeUnusedCheckoutTabs() {
+    const checkout =
+      document.querySelector("#checkout") ||
+      document.querySelector(".checkout") ||
+      document.querySelector("section.checkout");
+
+    if (!checkout) return;
+
+    const candidates = Array.from(checkout.querySelectorAll("div, nav"));
+
+    const tabsBlock = candidates.find((element) => {
+      const directChildren = Array.from(element.children);
+
+      if (directChildren.length !== 3) return false;
+
+      const labels = directChildren
+        .map((child) =>
+          child.textContent
+            .replace(/\s+/g, " ")
+            .trim()
+            .toLowerCase()
+        )
+        .sort();
+
+      return (
+        labels[0] === "billing" &&
+        labels[1] === "customer" &&
+        labels[2] === "shipping"
+      );
+    });
+
+    if (tabsBlock) {
+      tabsBlock.remove();
+    }
+  }
+
+  function normalizeProductCardHeights() {
+    const products = Array.from(
+      document.querySelectorAll(".product-grid .product")
+    );
+
+    if (!products.length) return;
+
+    products.forEach((product) => {
+      product.style.minHeight = "";
+    });
+
+    const tallestHeight = Math.max(
+      ...products.map((product) => product.getBoundingClientRect().height)
+    );
+
+    if (!Number.isFinite(tallestHeight) || tallestHeight <= 0) return;
+
+    products.forEach((product) => {
+      product.style.minHeight = `${Math.ceil(tallestHeight)}px`;
+      product.style.display = product.style.display;
+    });
+  }
+
+  function initializeShopCleanup() {
+    removeUnusedCheckoutTabs();
+
+    requestAnimationFrame(() => {
+      normalizeProductCardHeights();
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      initializeShopCleanup,
+      { once: true }
+    );
+  } else {
+    initializeShopCleanup();
+  }
+
+  window.addEventListener(
+    "load",
+    () => {
+      normalizeProductCardHeights();
+    },
+    { once: true }
+  );
+})();
 </script>
 
 </body>
