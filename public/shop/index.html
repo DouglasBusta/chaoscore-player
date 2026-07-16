@@ -1856,7 +1856,7 @@
           <div class="tabs">
             <span class="tab active">all</span>
             <span class="tab">nfc</span>
-            <span class="tab">merch</span>
+            <span class="tab">bundle</span>
             <span class="tab">sticker</span>
           </div>
         </div>
@@ -2626,6 +2626,61 @@ Checkout sicuro tramite PayPal.`;
       window.addEventListener("resize", updateMobileOrder, { passive: true });
     })();
   </script>
+
+
+<script>
+
+/* SHOP CATEGORY FILTERS */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const tabs = [...document.querySelectorAll(".tabs .tab")];
+  const products = [...document.querySelectorAll(".product-grid .product")];
+
+  if (tabs.length === 0 || products.length === 0) return;
+
+  const categoryMap = {
+    all: () => true,
+    nfc: p => p.dataset.id === "nfc-chaoscore-tag",
+    bundle: p => p.dataset.id === "chaoscore-bundle",
+    sticker: p => p.dataset.id === "chaoscore-sticker-pack"
+  };
+
+  tabs.forEach(tab => {
+
+    if (tab.textContent.trim().toLowerCase() === "merch") {
+      tab.textContent = "bundle";
+    }
+
+    tab.style.cursor = "pointer";
+
+    tab.addEventListener("click", () => {
+
+      const filter =
+        tab.textContent.trim().toLowerCase();
+
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      products.forEach(product => {
+
+        const visible =
+          categoryMap[filter]
+            ? categoryMap[filter](product)
+            : true;
+
+        product.style.display =
+          visible ? "" : "none";
+
+      });
+
+    });
+
+  });
+
+});
+
+</script>
 
 </body>
 </html>
