@@ -522,7 +522,7 @@ dialog {
         justify-content: flex-start;
       }
 
-  
+
     .track.playing {
       animation: trackPulse 420ms ease;
     }
@@ -608,7 +608,7 @@ dialog {
         padding-left: 0;
       }
     }
-  
+
     /* FORCE FINAL CREDITS SPACING */
     .credits-block:has(a[href*="39redboy"]),
     .credits-block:has(a[href*="ohmygador"]),
@@ -637,7 +637,7 @@ dialog {
       margin-top: -0.25rem !important;
     }
 
-  
+
     /* REAL CIRCLE CLOSE BUTTON */
     dialog {
       scrollbar-width: thin;
@@ -744,7 +744,7 @@ dialog {
       transform: rotate(-45deg);
     }
 
-  
+
     /* FORCE CLOSE CIRCLE CLICK */
     #modal-close-circle {
       pointer-events: auto !important;
@@ -754,7 +754,7 @@ dialog {
       pointer-events: none !important;
     }
 
-  
+
     .chaoscore-back-to-files {
       position: fixed;
       top: 18px;
@@ -783,7 +783,7 @@ dialog {
       border-color: rgba(231,224,210,0.45);
       background: rgba(30,18,15,0.9);
     }
-  
+
     /* COVER ARROW REPAIR */
     .cover-arrow-repaired {
       border: 0 !important;
@@ -811,7 +811,7 @@ dialog {
     }
     /* END COVER ARROW REPAIR */
 
-  
+
     /* chaos-sheet-size-polish */
 
     html. .player. {
@@ -911,7 +911,7 @@ dialog {
       }
     }
 
-  
+
 
     /* chaos-drag-polish */
     html. .player. {
@@ -957,7 +957,7 @@ dialog {
       }
     }
 
-  
+
 
     /* chaos-files-topbar-visibility-fix */
     .chaos-files-topbar {
@@ -973,7 +973,7 @@ dialog {
     }
 
 
-  
+
 
     /* chaos-original-player-restore */
     html:not(.) .chaos-player-handle,
@@ -981,9 +981,42 @@ dialog {
       display: none !important;
     }
 
-  
 
-    </style>
+
+
+    .spotify-button {
+      border-color: rgba(30, 215, 96, 0.5);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(30, 215, 96, 0.18),
+          rgba(30, 215, 96, 0.06)
+        ),
+        rgba(10, 18, 13, 0.94);
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.3),
+        0 0 24px rgba(30, 215, 96, 0.09);
+    }
+
+    .spotify-button:hover {
+      border-color: rgba(30, 215, 96, 0.9);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(30, 215, 96, 0.3),
+          rgba(30, 215, 96, 0.1)
+        ),
+        rgba(10, 18, 13, 0.98);
+    }
+
+    @media (max-width: 720px) {
+      .spotify-button {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="/chaos-current-player-v2.css?v=2">
   <link rel="stylesheet" href="/chaos-cover-carousel-v2.css?v=6">
@@ -1010,6 +1043,16 @@ dialog {
           <button class="clean-button" id="android-download">🤖 Download Android</button>
         </div>
         <div class="quality-downloads">
+          <a
+            class="quality-button spotify-button"
+            href="https://orcd.co/chaoscore"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Ascolta l'album #chaoscore su Spotify"
+          >
+            <span aria-hidden="true">▶</span>
+            Ascolta su Spotify
+          </a>
           <a class="quality-button" href="https://drive.google.com/drive/folders/1058oD--H9tKeTxN4ukLf_qZDHjH1gJqB?usp=drive_link" target="_blank" rel="noopener noreferrer">
             Download
           </a>
@@ -1430,7 +1473,7 @@ dialog {
     renderWave(0);
     loadTrack(0, false);
 
-  
+
     // Real circle modal close
     function closeModalPanel() {
       if (!modal || !modal.open) return;
