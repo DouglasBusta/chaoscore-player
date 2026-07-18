@@ -2960,7 +2960,7 @@
 
       <div class="busta-upload-field">
         <label for="busta-upload-file">File</label>
-        <input id="busta-upload-file" type="file" required>
+        <input id="busta-upload-file" type="file" accept="image/*,video/*" required>
       </div>
 
       <div class="busta-upload-field">
@@ -3082,9 +3082,50 @@
           return;
         }
 
+        const isImage = file.type.startsWith("image/");
+        const isVideo = file.type.startsWith("video/");
+
+        if (!isImage && !isVideo) {
+          setMessage("Only images and videos are supported.");
+          return;
+        }
+
         if (file.size > 50 * 1024 * 1024) {
           setMessage("File too large. Max 50 MB for now.");
           return;
+        }
+
+        if (isVideo) {
+          const duration = await new Promise((resolve, reject) => {
+            const video = document.createElement("video");
+            const objectUrl = URL.createObjectURL(file);
+
+            video.preload = "metadata";
+
+            video.onloadedmetadata = () => {
+              const value = Number(video.duration);
+              URL.revokeObjectURL(objectUrl);
+
+              if (!Number.isFinite(value)) {
+                reject(new Error("Unable to read video duration."));
+                return;
+              }
+
+              resolve(value);
+            };
+
+            video.onerror = () => {
+              URL.revokeObjectURL(objectUrl);
+              reject(new Error("Unable to read video file."));
+            };
+
+            video.src = objectUrl;
+          });
+
+          if (duration > 15.05) {
+            setMessage("Video too long. Maximum duration is 15 seconds.");
+            return;
+          }
         }
 
         submitButton.disabled = true;

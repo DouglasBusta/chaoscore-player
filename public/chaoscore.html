@@ -1693,8 +1693,66 @@ dialog {
         return;
       }
 
-      const { data } = await client.auth.getSession();
-      const session = data?.session || null;
+      async function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      async function getStableSession() {
+        for (let attempt = 0; attempt < 8; attempt += 1) {
+          const { data, error } = await client.auth.getSession();
+
+          if (error) {
+            console.warn("Chaoscore session check failed:", error);
+          }
+
+          const session = data?.session || null;
+
+          if (session?.user) {
+            return session;
+          }
+
+          await sleep(250);
+        }
+
+        return null;
+      }
+
+      async function getStableChaosAccess() {
+        let lastError = null;
+
+        for (let attempt = 0; attempt < 8; attempt += 1) {
+          const {
+            data: accessData,
+            error
+          } = await client.rpc("get_my_chaos_access");
+
+          if (error) {
+            lastError = error;
+            await sleep(250);
+            continue;
+          }
+
+          const access = Array.isArray(accessData)
+            ? accessData[0]
+            : accessData;
+
+          if (access?.chaos_verified) {
+            return {
+              ok: true,
+              access
+            };
+          }
+
+          await sleep(250);
+        }
+
+        return {
+          ok: false,
+          error: lastError
+        };
+      }
+
+      const session = await getStableSession();
 
       if (!session?.user) {
         lockPage("This album is private. To unlock it, avvicina il tuo tag NFC #Chaoscore al telefono. Il tag aprirà il link privato di sblocco e collegherà la key al tuo account.");
@@ -1702,13 +1760,13 @@ dialog {
       }
 
       try {
-        const { data: accessData, error } = await client.rpc("get_my_chaos_access");
+        const accessCheck = await getStableChaosAccess();
 
-        if (error) throw error;
+        if (!accessCheck.ok) {
+          if (accessCheck.error) {
+            throw accessCheck.error;
+          }
 
-        const access = Array.isArray(accessData) ? accessData[0] : accessData;
-
-        if (!access?.chaos_verified) {
           lockPage("Your account is logged in, but it is not Chaos Verificato yet. Avvicina il tuo tag NFC #Chaoscore al telefono per sbloccare l’album su questo account.");
           return;
         }
