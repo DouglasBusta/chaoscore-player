@@ -1016,6 +1016,66 @@ dialog {
       }
     }
 
+
+
+    /* CHAOSCORE PLAY COUNTERS */
+
+    .album-play-total {
+      margin: 0.18rem 0 0.35rem;
+      color: rgba(255,255,255,.52);
+      font-size: .72rem;
+      line-height: 1.2;
+      letter-spacing: .05em;
+    }
+
+    .track {
+      grid-template-columns: 28px 38px minmax(0,1fr) minmax(54px,auto) auto !important;
+      align-items: center;
+    }
+
+    .track-main {
+      min-width: 0;
+    }
+
+    .track-play-count {
+      justify-self: end;
+      white-space: nowrap;
+      color: rgba(255,255,255,.5);
+      font-size: .68rem;
+      font-variant-numeric: tabular-nums;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    @media (max-width: 720px) {
+      .track {
+        grid-template-columns: 28px 38px minmax(0,1fr) auto !important;
+      }
+
+      .track-main {
+        grid-column: 3;
+        grid-row: 1;
+      }
+
+      .track-play-count {
+        grid-column: 4;
+        grid-row: 1;
+        padding-left: 8px;
+        font-size: .62rem;
+      }
+
+      .credit-link {
+        grid-column: 3 / 5 !important;
+        grid-row: 2;
+        justify-self: start;
+        padding-left: 0;
+      }
+
+      .album-play-total {
+        font-size: .66rem;
+      }
+    }
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="/chaos-current-player-v2.css?v=2">
@@ -1067,6 +1127,7 @@ dialog {
         </div>
 
         <h1>#chaoscore</h1>
+        <p class="album-play-total" id="album-play-total">0 ascolti totali</p>
         <p class="by">By Douglas Busta</p>
 
         <div class="tracks" id="tracks"></div>
@@ -1227,11 +1288,136 @@ dialog {
       });
     }
 
+
+    /* CHAOSCORE PLAY COUNTER LOGIC */
+
+    const CHAOSCORE_VALID_PLAY_SECONDS = 30;
+
+    let chaosPlayRecorded = false;
+    let chaosListenedSeconds = 0;
+    let chaosLastAudioTime = 0;
+    let chaosRecordRunning = false;
+
+    function formatChaosPlayCount(value) {
+      return (Number(value) || 0).toLocaleString("it-IT");
+    }
+
+    async function waitForChaosSupabase() {
+      for (let i = 0; i < 30; i += 1) {
+        if (window.lookSupabase) return window.lookSupabase;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      return null;
+    }
+
+    async function loadChaoscorePlayCounts() {
+      const client = await waitForChaosSupabase();
+
+      if (!client) {
+        console.warn("Play counter: Supabase non disponibile");
+        return;
+      }
+
+      const { data, error } = await client.rpc(
+        "get_chaoscore_play_counts"
+      );
+
+      if (error) {
+        console.warn("Errore caricamento ascolti:", error);
+        return;
+      }
+
+      const rows = Array.isArray(data) ? data : [];
+
+      rows.forEach((row) => {
+        const counter = document.querySelector(
+          `.track-play-count[data-track-id="${row.track_id}"]`
+        );
+
+        if (counter) {
+          counter.textContent = formatChaosPlayCount(row.play_count);
+        }
+      });
+
+      const totalElement = document.getElementById("album-play-total");
+
+      if (totalElement) {
+        const total = rows.length
+          ? Number(rows[0].album_total) || 0
+          : 0;
+
+        totalElement.textContent =
+          `${formatChaosPlayCount(total)} ascolti totali`;
+      }
+    }
+
+    function resetChaosPlayTracking() {
+      chaosPlayRecorded = false;
+      chaosListenedSeconds = 0;
+      chaosLastAudioTime = Number(audio.currentTime) || 0;
+      chaosRecordRunning = false;
+    }
+
+    async function recordChaoscorePlay() {
+      if (chaosPlayRecorded || chaosRecordRunning) return;
+
+      const trackId = current + 1;
+
+      if (trackId < 1 || trackId > tracks.length) return;
+
+      chaosRecordRunning = true;
+
+      try {
+        const client = await waitForChaosSupabase();
+        if (!client) return;
+
+        const { data, error } = await client.rpc(
+          "record_chaoscore_play",
+          { p_track_id: trackId }
+        );
+
+        if (error) {
+          console.warn("Errore registrazione ascolto:", error);
+          return;
+        }
+
+        if (data === true) {
+          chaosPlayRecorded = true;
+          await loadChaoscorePlayCounts();
+        }
+      } finally {
+        chaosRecordRunning = false;
+      }
+    }
+
+    function trackChaosListeningTime() {
+      const currentTime = Number(audio.currentTime) || 0;
+
+      if (audio.paused || audio.seeking || chaosPlayRecorded) {
+        chaosLastAudioTime = currentTime;
+        return;
+      }
+
+      const delta = currentTime - chaosLastAudioTime;
+
+      if (delta > 0 && delta <= 2.5) {
+        chaosListenedSeconds += delta;
+      }
+
+      chaosLastAudioTime = currentTime;
+
+      if (chaosListenedSeconds >= CHAOSCORE_VALID_PLAY_SECONDS) {
+        recordChaoscorePlay();
+      }
+    }
+
+
     function loadTrack(index, shouldPlay = false) {
       current = index;
       const track = tracks[current];
       audio.src = track.file;
       audio.load();
+      resetChaosPlayTracking();
       nowTitle.textContent = track.title;
 
       document.querySelectorAll(".track").forEach((el, i) => {
@@ -1257,10 +1443,11 @@ dialog {
         row.innerHTML = `
           <div class="num">${index + 1}</div>
           <button class="play-small">▶</button>
-          <div>
+          <div class="track-main">
             <div class="track-title"></div>
             <div class="track-sub">Douglas Busta</div>
           </div>
+          <span class="track-play-count" data-track-id="${index + 1}">0</span>
           <button class="credit-link">credits</button>
         `;
 
@@ -1280,6 +1467,8 @@ dialog {
 
         tracksEl.appendChild(row);
       });
+
+      loadChaoscorePlayCounts();
     }
 
     function togglePlay() {
@@ -1321,6 +1510,7 @@ dialog {
       const progress = audio.duration ? audio.currentTime / audio.duration : 0;
       renderWave(progress);
       time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+      trackChaosListeningTime();
     });
 
     audio.addEventListener("ended", () => {
@@ -1538,6 +1728,8 @@ dialog {
             }
           })
         : null;
+
+      window.lookSupabase = client;
 
       function lockPage(message) {
         document.body.innerHTML = `
