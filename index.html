@@ -3067,123 +3067,297 @@
           return;
         }
 
-        const { data } = await client.auth.getSession();
-        const session = data?.session || null;
-
-        if (!session?.user) {
-          setMessage("Log in before uploading.");
-          return;
-        }
-
-        const file = fileInput?.files?.[0];
-
-        if (!file) {
-          setMessage("Choose a file first.");
-          return;
-        }
-
-        const isImage = file.type.startsWith("image/");
-        const isVideo = file.type.startsWith("video/");
-
-        if (!isImage && !isVideo) {
-          setMessage("Only images and videos are supported.");
-          return;
-        }
-
-        if (file.size > 50 * 1024 * 1024) {
-          setMessage("File too large. Max 50 MB for now.");
-          return;
-        }
-
-        if (isVideo) {
-          const duration = await new Promise((resolve, reject) => {
-            const video = document.createElement("video");
-            const objectUrl = URL.createObjectURL(file);
-
-            video.preload = "metadata";
-
-            video.onloadedmetadata = () => {
-              const value = Number(video.duration);
-              URL.revokeObjectURL(objectUrl);
-
-              if (!Number.isFinite(value)) {
-                reject(new Error("Unable to read video duration."));
-                return;
-              }
-
-              resolve(value);
-            };
-
-            video.onerror = () => {
-              URL.revokeObjectURL(objectUrl);
-              reject(new Error("Unable to read video file."));
-            };
-
-            video.src = objectUrl;
-          });
-
-          if (duration > 15.05) {
-            setMessage("Video too long. Maximum duration is 15 seconds.");
-            return;
-          }
-        }
-
         submitButton.disabled = true;
         submitButton.textContent = "Uploading...";
-        setMessage("Uploading private submission...");
+        setMessage("Preparing submission...");
+
+        let storagePath = "";
+        let fileUploaded = false;
 
         try {
+          const { data, error: sessionError } =
+            await client.auth.getSession();
+
+          if (sessionError) {
+            throw sessionError;
+          }
+
+          const session = data?.session || null;
+
+          if (!session?.user) {
+            setMessage("Log in before uploading.");
+            return;
+          }
+
+          const file = fileInput?.files?.[0];
+
+          if (!file) {
+            setMessage("Choose a file first.");
+            return;
+          }
+
+          const fileName = String(file.name || "");
+          const fileType = String(file.type || "").toLowerCase();
+
+          const imageExtension =
+            /\.(png|jpe?g|webp|gif|heic|heif)$/i.test(fileName);
+
+          const videoExtension =
+            /\.(mp4|mov|m4v|webm)$/i.test(fileName);
+
+          const isImage =
+            fileType.startsWith("image/") ||
+            imageExtension;
+
+          const isVideo =
+            fileType.startsWith("video/") ||
+            videoExtension;
+
+          if (!isImage && !isVideo) {
+            setMessage(
+              "Only images and videos are supported."
+            );
+            return;
+          }
+
+          if (file.size > 50 * 1024 * 1024) {
+            setMessage(
+              "File too large. Maximum size is 50 MB."
+            );
+            return;
+          }
+
+          /*
+           * Safari/iPhone può avere problemi nel leggere
+           * immediatamente i metadata. Il timeout evita
+           * che l'upload rimanga bloccato all'infinito.
+           */
+          if (isVideo) {
+            setMessage("Checking video duration...");
+
+            const duration = await new Promise(
+              (resolve, reject) => {
+                const video =
+                  document.createElement("video");
+
+                const objectUrl =
+                  URL.createObjectURL(file);
+
+                let finished = false;
+
+                function cleanup() {
+                  if (finished) return;
+
+                  finished = true;
+
+                  clearTimeout(timeout);
+                  URL.revokeObjectURL(objectUrl);
+
+                  video.removeAttribute("src");
+                  video.load();
+                }
+
+                const timeout = setTimeout(() => {
+                  cleanup();
+
+                  reject(
+                    new Error(
+                      "Unable to read video duration. Try exporting the video as MP4 or MOV."
+                    )
+                  );
+                }, 10000);
+
+                video.preload = "metadata";
+                video.muted = true;
+                video.playsInline = true;
+
+                video.onloadedmetadata = () => {
+                  const value =
+                    Number(video.duration);
+
+                  cleanup();
+
+                  if (
+                    !Number.isFinite(value) ||
+                    value <= 0
+                  ) {
+                    reject(
+                      new Error(
+                        "Unable to read video duration."
+                      )
+                    );
+                    return;
+                  }
+
+                  resolve(value);
+                };
+
+                video.onerror = () => {
+                  cleanup();
+
+                  reject(
+                    new Error(
+                      "Unable to read this video file."
+                    )
+                  );
+                };
+
+                video.src = objectUrl;
+              }
+            );
+
+            if (duration > 15.05) {
+              setMessage(
+                "Video too long. Maximum duration is 15 seconds."
+              );
+              return;
+            }
+          }
+
+          setMessage("Uploading private submission...");
+
           let username = "";
+
           const profileResult = await client
             .from("profiles")
             .select("username")
             .eq("user_id", session.user.id)
             .maybeSingle();
 
-          if (!profileResult.error && profileResult.data?.username) {
-            username = profileResult.data.username;
+          if (
+            !profileResult.error &&
+            profileResult.data?.username
+          ) {
+            username =
+              profileResult.data.username;
           }
 
-          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const storagePath = session.user.id + "/" + Date.now() + "-" + safeName;
+          const safeName = fileName.replace(
+            /[^a-zA-Z0-9._-]/g,
+            "_"
+          );
+
+          storagePath =
+            session.user.id +
+            "/" +
+            Date.now() +
+            "-" +
+            safeName;
 
           const upload = await client.storage
             .from("busta-submissions")
             .upload(storagePath, file, {
               cacheControl: "3600",
-              upsert: false
+              upsert: false,
+              contentType:
+                file.type ||
+                (isVideo
+                  ? "video/mp4"
+                  : "application/octet-stream")
             });
 
-          if (upload.error) throw upload.error;
+          if (upload.error) {
+            throw upload.error;
+          }
 
-          const insert = await client.from("pending_uploads").insert({
-            uploader_id: session.user.id,
-            uploader_email: session.user.email || "",
-            uploader_username: username,
-            file_name: file.name,
-            file_path: storagePath,
-            file_type: file.type || "",
-            file_size: file.size,
-            suggested_folder: folderInput?.value || "Other Busta Files",
-            note: noteInput?.value || "",
-            status: "pending"
-          });
+          fileUploaded = true;
 
-          if (insert.error) throw insert.error;
+          const insert = await client
+            .from("pending_uploads")
+            .insert({
+              uploader_id: session.user.id,
+              uploader_email:
+                session.user.email || "",
+              uploader_username: username,
+              file_name: fileName,
+              file_path: storagePath,
+              file_type:
+                file.type ||
+                (isVideo
+                  ? "video/mp4"
+                  : "application/octet-stream"),
+              file_size: file.size,
+              suggested_folder:
+                folderInput?.value ||
+                "Other Busta Files",
+              note:
+                noteInput?.value || "",
+              status: "pending"
+            });
 
-          setMessage("File submitted. Douglas will review it.");
+          if (insert.error) {
+            throw insert.error;
+          }
+
+          setMessage(
+            "File submitted. Douglas will review it."
+          );
+
           submitButton.textContent = "Sent";
 
           setTimeout(() => {
             dialog?.close();
+
+            if (fileInput) {
+              fileInput.value = "";
+            }
+
+            if (noteInput) {
+              noteInput.value = "";
+            }
+
             submitButton.disabled = false;
-            submitButton.textContent = "Send for Review";
+            submitButton.textContent =
+              "Send for Review";
           }, 900);
+
         } catch (err) {
-          console.error(err);
-          setMessage("Upload failed: " + (err.message || "Unknown error."));
-          submitButton.disabled = false;
-          submitButton.textContent = "Send for Review";
+          console.error(
+            "Busta submission upload failed:",
+            err
+          );
+
+          /*
+           * Se Storage è riuscito ma pending_uploads no,
+           * rimuove il file orfano.
+           */
+          if (
+            fileUploaded &&
+            storagePath
+          ) {
+            try {
+              const cleanup =
+                await client.storage
+                  .from("busta-submissions")
+                  .remove([storagePath]);
+
+              if (cleanup.error) {
+                console.warn(
+                  "Unable to clean failed upload:",
+                  cleanup.error
+                );
+              }
+            } catch (cleanupError) {
+              console.warn(
+                "Upload cleanup failed:",
+                cleanupError
+              );
+            }
+          }
+
+          setMessage(
+            "Upload failed: " +
+            (err?.message || "Unknown error.")
+          );
+
+        } finally {
+          if (
+            submitButton.textContent !== "Sent"
+          ) {
+            submitButton.disabled = false;
+            submitButton.textContent =
+              "Send for Review";
+          }
         }
       }
 
