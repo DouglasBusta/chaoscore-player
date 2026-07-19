@@ -1415,104 +1415,201 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
       }
 
       async function approveUpload(id, suggestedFolder) {
-        const title = prompt("Public title? Leave empty to use original filename.") || "";
-        const description = prompt("Public description? Optional.") || "";
+        const title =
+          prompt(
+            "Public title? Leave empty to use original filename."
+          ) || "";
+
+        const description =
+          prompt(
+            "Public description? Optional."
+          ) || "";
+
         const folder = "Other Busta Files";
 
-        try {
-          alert("Step 1/5: loading pending file...");
+        let publicPath = "";
+        let publicFileUploaded = false;
 
+        try {
           const pendingResult = await client
             .from("pending_uploads")
             .select("*")
             .eq("id", id)
             .single();
 
-          if (pendingResult.error) throw pendingResult.error;
+          if (pendingResult.error) {
+            throw pendingResult.error;
+          }
 
           const item = pendingResult.data;
 
           if (!item || !item.file_path) {
-            throw new Error("Missing pending file path.");
+            throw new Error(
+              "Missing pending file path."
+            );
           }
-
-          alert("Step 2/5: downloading private file...");
 
           const downloaded = await client.storage
             .from("busta-submissions")
             .download(item.file_path);
 
-          if (downloaded.error) throw downloaded.error;
+          if (downloaded.error) {
+            throw downloaded.error;
+          }
 
           const blob = downloaded.data;
 
           if (!blob) {
-            throw new Error("Downloaded file is empty.");
+            throw new Error(
+              "Downloaded file is empty."
+            );
           }
 
-          alert("Step 3/5: uploading public copy...");
+          const safeName = (
+            item.file_name || "file"
+          ).replace(
+            /[^a-zA-Z0-9._-]/g,
+            "_"
+          );
 
-          const safeName = (item.file_name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
-          const publicPath = "Other_Busta_Files/" + Date.now() + "-" + safeName;
+          publicPath =
+            "Other_Busta_Files/" +
+            Date.now() +
+            "-" +
+            safeName;
 
-          const uploadPublic = await client.storage
-            .from("busta-approved-files")
-            .upload(publicPath, blob, {
-              cacheControl: "3600",
-              upsert: false,
-              contentType: item.file_type || blob.type || "application/octet-stream"
-            });
+          const uploadPublic =
+            await client.storage
+              .from("busta-approved-files")
+              .upload(
+                publicPath,
+                blob,
+                {
+                  cacheControl: "3600",
+                  upsert: false,
+                  contentType:
+                    item.file_type ||
+                    blob.type ||
+                    "application/octet-stream"
+                }
+              );
 
-          if (uploadPublic.error) throw uploadPublic.error;
+          if (uploadPublic.error) {
+            throw uploadPublic.error;
+          }
 
-          alert("Step 4/5: creating public database record...");
+          publicFileUploaded = true;
 
-          const publicUrlResult = client.storage
-            .from("busta-approved-files")
-            .getPublicUrl(publicPath);
+          const publicUrlResult =
+            client.storage
+              .from("busta-approved-files")
+              .getPublicUrl(publicPath);
 
-          const publicUrl = publicUrlResult?.data?.publicUrl;
+          const publicUrl =
+            publicUrlResult?.data?.publicUrl;
 
           if (!publicUrl) {
-            throw new Error("Could not create public file URL.");
+            throw new Error(
+              "Could not create public file URL."
+            );
           }
 
           const approvedInsert = await client
             .from("approved_busta_files")
             .insert({
               original_pending_id: item.id,
-              file_name: item.file_name || safeName,
+              file_name:
+                item.file_name || safeName,
               file_url: publicUrl,
-              file_type: item.file_type || blob.type || "",
-              file_size: item.file_size || blob.size || 0,
+              file_type:
+                item.file_type ||
+                blob.type ||
+                "",
+              file_size:
+                item.file_size ||
+                blob.size ||
+                0,
               folder: folder,
-              title: title || item.file_name || safeName,
+              title:
+                title ||
+                item.file_name ||
+                safeName,
               description: description,
-              submitted_by: item.uploader_id,
-              submitted_by_username: item.uploader_username || "unknown"
+              submitted_by:
+                item.uploader_id,
+              submitted_by_username:
+                item.uploader_username ||
+                "unknown"
             });
 
-          if (approvedInsert.error) throw approvedInsert.error;
-
-          alert("Step 5/5: marking submission as approved...");
+          if (approvedInsert.error) {
+            throw approvedInsert.error;
+          }
 
           const updatePending = await client
             .from("pending_uploads")
             .update({
               status: "approved",
-              reviewed_at: new Date().toISOString(),
-              admin_note: "Published to Other Busta Files",
+              reviewed_at:
+                new Date().toISOString(),
+              admin_note:
+                "Published to Other Busta Files",
               target_folder: folder
             })
             .eq("id", id);
 
-          if (updatePending.error) throw updatePending.error;
+          if (updatePending.error) {
+            throw updatePending.error;
+          }
 
-          alert("Published inside Other Busta Files.");
-          loadPending();
+          alert(
+            "Approved and published inside Other Busta Files."
+          );
+
+          await loadPending();
+
         } catch (err) {
-          console.error("APPROVE/PUBLISH ERROR", err);
-          alert("Publish failed: " + (err.message || JSON.stringify(err)));
+          console.error(
+            "APPROVE/PUBLISH ERROR",
+            err
+          );
+
+          /*
+           * Se il file pubblico è stato creato
+           * ma il database fallisce dopo,
+           * lo rimuoviamo per evitare file orfani.
+           */
+          if (
+            publicFileUploaded &&
+            publicPath
+          ) {
+            try {
+              const cleanup =
+                await client.storage
+                  .from("busta-approved-files")
+                  .remove([publicPath]);
+
+              if (cleanup.error) {
+                console.warn(
+                  "Unable to clean public file:",
+                  cleanup.error
+                );
+              }
+            } catch (cleanupError) {
+              console.warn(
+                "Public file cleanup failed:",
+                cleanupError
+              );
+            }
+          }
+
+          alert(
+            "Publish failed: " +
+            (
+              err?.message ||
+              JSON.stringify(err)
+            )
+          );
         }
       }
 
