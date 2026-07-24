@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+
+  <title>Privacy Policy | LOOK APP</title>
+
+  <meta
+    name="description"
+    content="Informativa sul trattamento dei dati personali degli utenti di LOOK APP."
+  />
+
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#08080b" />
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #08080b;
+      --surface: rgba(19, 19, 25, 0.86);
+      --surface-strong: rgba(27, 27, 35, 0.96);
+      --border: rgba(255, 255, 255, 0.12);
+      --border-strong: rgba(255, 255, 255, 0.22);
+      --text: #f7f7f8;
+      --muted: #aaaab5;
+      --accent: #ff3030;
+      --accent-soft: rgba(255, 48, 48, 0.14);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.44);
+      --radius-large: 28px;
+      --radius-medium: 18px;
+      --page-width: 980px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--background);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding:
+        env(safe-area-inset-top)
+        env(safe-area-inset-right)
+        env(safe-area-inset-bottom)
+        env(safe-area-inset-left);
+      overflow-x: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(
+          circle at 14% 0%,
+          rgba(255, 35, 35, 0.18),
+          transparent 34rem
+        ),
+        radial-gradient(
+          circle at 100% 25%,
+          rgba(110, 40, 255, 0.13),
+          transparent 32rem
+        ),
+        linear-gradient(180deg, #0b0b10 0%, #070709 100%);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .page-shell {
+      width: min(calc(100% - 32px), var(--page-width));
+      margin: 0 auto;
+      padding: 24px 0 64px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: max(12px, env(safe-area-inset-top));
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 64px;
+      margin-bottom: 30px;
+      padding: 12px 14px 12px 20px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(10, 10, 14, 0.78);
+      box-shadow: 0 14px 50px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .brand {
+      min-width: 0;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.045);
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+      white-space: nowrap;
+      transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        transform 160ms ease;
+    }
+
+    .back-link:hover {
+      border-color: var(--border-strong);
+      background: rgba(255, 255, 255, 0.09);
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 22px;
+      padding: clamp(28px, 6vw, 64px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.015)
+        ),
+        var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      position: absolute;
+      right: -100px;
+      bottom: -130px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(255, 42, 42, 0.18);
+      filter: blur(70px);
+      content: "";
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      margin: 0 0 20px;
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 65, 65, 0.34);
+      border-radius: 999px;
+      color: #ff8989;
+      background: var(--accent-soft);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(2.35rem, 8vw, 5.7rem);
+      font-weight: 950;
+      letter-spacing: -0.065em;
+      line-height: 0.92;
+      text-wrap: balance;
+    }
+
+    .hero-description {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.15rem);
+    }
+
+    .metadata {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 26px;
+    }
+
+    .metadata span {
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: #d5d5dc;
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.75rem;
+      font-weight: 750;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .summary-card {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-medium);
+      background: var(--surface);
+    }
+
+    .summary-label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .summary-value {
+      display: block;
+      overflow-wrap: anywhere;
+      font-size: 0.93rem;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .content {
+      padding: clamp(23px, 5vw, 52px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .notice {
+      margin-bottom: 40px;
+      padding: 18px 20px;
+      border: 1px solid rgba(255, 66, 66, 0.28);
+      border-radius: var(--radius-medium);
+      color: #e9e9ed;
+      background: rgba(255, 48, 48, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .section {
+      scroll-margin-top: 110px;
+    }
+
+    .section + .section {
+      margin-top: 46px;
+      padding-top: 46px;
+      border-top: 1px solid var(--border);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      color: var(--text);
+      font-size: clamp(1.28rem, 3vw, 1.85rem);
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      line-height: 1.2;
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: #d1d1d8;
+    }
+
+    ul {
+      margin: 16px 0;
+      padding-left: 22px;
+      color: #d1d1d8;
+    }
+
+    li + li {
+      margin-top: 9px;
+    }
+
+    strong {
+      color: var(--text);
+    }
+
+    .inline-link {
+      color: #ff8686;
+      font-weight: 800;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      margin-top: 20px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-medium);
+      background: rgba(0, 0, 0, 0.18);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th,
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: #ceced5;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .contact-box {
+      margin-top: 22px;
+      padding: 22px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-medium);
+      background: var(--surface-strong);
+    }
+
+    .contact-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .footer {
+      padding: 34px 10px 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-align: center;
+    }
+
+    .footer a {
+      color: var(--text);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        width: min(calc(100% - 20px), var(--page-width));
+        padding-top: 12px;
+        padding-bottom: 42px;
+      }
+
+      .topbar {
+        top: max(8px, env(safe-area-inset-top));
+        min-height: 56px;
+        margin-bottom: 18px;
+        padding: 8px 9px 8px 16px;
+      }
+
+      .brand {
+        font-size: 0.76rem;
+        letter-spacing: 0.13em;
+      }
+
+      .back-link {
+        min-height: 38px;
+        padding: 8px 13px;
+        font-size: 0.75rem;
+      }
+
+      .hero {
+        border-radius: 22px;
+      }
+
+      h1 {
+        font-size: clamp(2.45rem, 14vw, 4.3rem);
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-card {
+        padding: 17px;
+      }
+
+      .content {
+        border-radius: 22px;
+      }
+
+      .section + .section {
+        margin-top: 38px;
+        padding-top: 38px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .brand {
+        max-width: 124px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .back-link {
+        padding-inline: 11px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page-shell">
+    <nav class="topbar" aria-label="Navigazione">
+      <a class="brand" href="/">LOOK APP</a>
+      <a class="back-link" href="/">← Torna al sito</a>
+    </nav>
+
+    <header class="hero">
+      <p class="eyebrow">Documento legale</p>
+
+      <h1>Privacy<br />Policy</h1>
+
+      <p class="hero-description">
+        Questa informativa descrive come LOOK APP tratta i dati personali
+        degli utenti che visitano il sito, creano un account, caricano
+        contenuti, utilizzano i servizi digitali o acquistano prodotti.
+      </p>
+
+      <div class="metadata" aria-label="Informazioni sul documento">
+        <span>Versione 1.0</span>
+        <span>In vigore dal 25 luglio 2026</span>
+        <span>GDPR — Regolamento UE 2016/679</span>
+      </div>
+    </header>
+
+    <section class="summary" aria-label="Riepilogo">
+      <div class="summary-card">
+        <span class="summary-label">Titolare</span>
+        <span class="summary-value">Douglas Busta — LOOK APP</span>
+      </div>
+
+      <div class="summary-card">
+        <span class="summary-label">Sito</span>
+        <span class="summary-value">lookapp.org</span>
+      </div>
+
+      <div class="summary-card">
+        <span class="summary-label">Contatto</span>
+        <span class="summary-value">orders@lookapp.org</span>
+      </div>
+    </section>
+
+    <article class="content">
+      <div class="notice">
+        <strong>In breve:</strong> LOOK APP utilizza i dati necessari per
+        fornire account, autenticazione, Player, Busta Files, accessi NFC,
+        upload, assistenza e acquisti. Non vende i dati personali degli utenti.
+      </div>
+
+      <section class="section" id="titolare">
+        <h2>1. Titolare del trattamento</h2>
+
+        <p>
+          Il titolare del trattamento dei dati personali è
+          <strong>Douglas Busta</strong>, gestore del progetto e della
+          piattaforma <strong>LOOK APP</strong>, raggiungibile attraverso il
+          sito
+          <a class="inline-link" href="https://lookapp.org">lookapp.org</a>.
+        </p>
+
+        <div class="contact-box">
+          <p><strong>Contatto privacy e assistenza:</strong></p>
+          <p>
+            <a class="inline-link" href="mailto:orders@lookapp.org">
+              orders@lookapp.org
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="ambito">
+        <h2>2. Ambito di applicazione</h2>
+
+        <p>
+          La presente informativa si applica ai trattamenti effettuati tramite
+          LOOK APP e i relativi servizi, inclusi:
+        </p>
+
+        <ul>
+          <li>il sito e la web app disponibili su lookapp.org;</li>
+          <li>registrazione, accesso e gestione dell'account;</li>
+          <li>Player, Chaoscore e Busta Files;</li>
+          <li>accessi e contenuti associati ai tag NFC;</li>
+          <li>Shop e acquisto di prodotti fisici o digitali;</li>
+          <li>caricamento di fotografie, video e altri contenuti;</li>
+          <li>moderazione, sicurezza e assistenza agli utenti;</li>
+          <li>eventuali future funzionalità della piattaforma.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="dati">
+        <h2>3. Dati personali trattati</h2>
+
+        <h3>3.1 Dati dell'account</h3>
+        <p>
+          Possono essere trattati indirizzo email, nome utente, identificativo
+          dell'account, data di registrazione, dati di accesso e informazioni
+          necessarie alla gestione del profilo.
+        </p>
+
+        <h3>3.2 Dati tecnici e di sicurezza</h3>
+        <p>
+          Possono essere trattati indirizzo IP, tipo di dispositivo, browser,
+          sistema operativo, log tecnici, identificativi di sessione,
+          informazioni sugli errori e dati necessari a prevenire accessi
+          abusivi, frodi o utilizzi illeciti.
+        </p>
+
+        <h3>3.3 Dati relativi agli NFC Tag</h3>
+        <p>
+          Quando viene utilizzato un tag NFC, LOOK APP può trattare il codice
+          o l'identificativo del tag, il relativo stato, la data di attivazione
+          e l'associazione con l'account dell'utente.
+        </p>
+
+        <h3>3.4 Contenuti caricati dagli utenti</h3>
+        <p>
+          Possono essere trattati fotografie, video, testi, descrizioni,
+          metadati, data di caricamento e informazioni necessarie alla
+          moderazione e pubblicazione dei contenuti.
+        </p>
+
+        <h3>3.5 Dati relativi agli acquisti</h3>
+        <p>
+          Per gli ordini possono essere trattati nome e cognome, indirizzo di
+          spedizione, email, prodotti acquistati, importi, stato del pagamento,
+          dati di consegna, comunicazioni e informazioni necessarie agli
+          obblighi amministrativi e fiscali.
+        </p>
+
+        <p>
+          I dati completi delle carte di pagamento non vengono normalmente
+          memorizzati direttamente da LOOK APP, ma sono gestiti dai fornitori
+          di pagamento utilizzati, come Stripe o PayPal, secondo le rispettive
+          condizioni e informative.
+        </p>
+
+        <h3>3.6 Comunicazioni</h3>
+        <p>
+          Se l'utente contatta LOOK APP, possono essere trattati il contenuto
+          del messaggio, i dati di contatto e le informazioni necessarie a
+          fornire assistenza.
+        </p>
+      </section>
+
+      <section class="section" id="finalita">
+        <h2>4. Finalità e basi giuridiche</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Finalità</th>
+                <th>Dati</th>
+                <th>Base giuridica</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Creazione e gestione dell'account</td>
+                <td>Email, username, identificativi e dati di autenticazione</td>
+                <td>
+                  Esecuzione del servizio richiesto e misure precontrattuali
+                </td>
+              </tr>
+
+              <tr>
+                <td>Accesso a Player, Busta Files e contenuti digitali</td>
+                <td>Account, sessione, autorizzazioni e attività tecnica</td>
+                <td>Esecuzione del contratto o del servizio richiesto</td>
+              </tr>
+
+              <tr>
+                <td>Attivazione e controllo degli NFC Tag</td>
+                <td>
+                  Account, codice del tag, stato, associazione e data di
+                  attivazione
+                </td>
+                <td>
+                  Esecuzione del servizio e legittimo interesse alla sicurezza
+                </td>
+              </tr>
+
+              <tr>
+                <td>Gestione degli ordini e delle spedizioni</td>
+                <td>
+                  Dati anagrafici, contatto, consegna, ordine e pagamento
+                </td>
+                <td>
+                  Esecuzione del contratto e adempimento di obblighi legali
+                </td>
+              </tr>
+
+              <tr>
+                <td>Upload, pubblicazione e moderazione dei contenuti</td>
+                <td>Contenuti, account, metadati e segnalazioni</td>
+                <td>
+                  Esecuzione del servizio, consenso ove necessario e legittimo
+                  interesse alla sicurezza della community
+                </td>
+              </tr>
+
+              <tr>
+                <td>Assistenza e comunicazioni operative</td>
+                <td>Email, messaggi e informazioni relative alla richiesta</td>
+                <td>
+                  Esecuzione del servizio e legittimo interesse a rispondere
+                  agli utenti
+                </td>
+              </tr>
+
+              <tr>
+                <td>Sicurezza, prevenzione di frodi e abusi</td>
+                <td>IP, log, dispositivi, sessioni e attività anomale</td>
+                <td>
+                  Legittimo interesse del titolare e tutela dei diritti
+                </td>
+              </tr>
+
+              <tr>
+                <td>Adempimenti legali, fiscali e richieste delle autorità</td>
+                <td>Dati necessari in relazione allo specifico obbligo</td>
+                <td>Adempimento di un obbligo legale</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="conferimento">
+        <h2>5. Natura del conferimento</h2>
+
+        <p>
+          Il conferimento dei dati contrassegnati come necessari è richiesto
+          per creare un account, utilizzare determinate funzionalità, attivare
+          un tag NFC, effettuare un acquisto o ricevere assistenza.
+        </p>
+
+        <p>
+          Il mancato conferimento può rendere impossibile fornire il servizio
+          richiesto. Gli eventuali dati facoltativi possono essere omessi
+          senza impedire l'utilizzo delle funzioni essenziali, salvo quando
+          risultino necessari per una specifica richiesta dell'utente.
+        </p>
+      </section>
+
+      <section class="section" id="modalita">
+        <h2>6. Modalità del trattamento e sicurezza</h2>
+
+        <p>
+          I dati sono trattati prevalentemente con strumenti elettronici e
+          adottando misure tecniche e organizzative proporzionate al rischio,
+          allo scopo di ridurre accessi non autorizzati, perdita, diffusione,
+          alterazione o utilizzo illecito.
+        </p>
+
+        <p>
+          Nessun sistema informatico può essere considerato completamente
+          privo di rischi. LOOK APP aggiorna progressivamente le misure di
+          sicurezza e invita gli utenti a utilizzare password sicure, non
+          condividere le credenziali e segnalare eventuali attività sospette.
+        </p>
+      </section>
+
+      <section class="section" id="fornitori">
+        <h2>7. Fornitori e destinatari dei dati</h2>
+
+        <p>
+          I dati possono essere trattati da fornitori tecnici e professionali
+          esclusivamente nella misura necessaria a svolgere i rispettivi
+          servizi. Tra le categorie di destinatari possono rientrare:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Supabase</strong>, per database, autenticazione, storage e
+            funzionalità backend;
+          </li>
+          <li>
+            <strong>Vercel</strong>, per hosting, distribuzione e funzionamento
+            della piattaforma;
+          </li>
+          <li>
+            <strong>Stripe</strong> e <strong>PayPal</strong>, per la gestione
+            dei pagamenti;
+          </li>
+          <li>
+            fornitori di email transazionali e comunicazioni relative agli
+            ordini;
+          </li>
+          <li>corrieri e operatori utilizzati per le spedizioni;</li>
+          <li>
+            consulenti, autorità o soggetti pubblici nei casi previsti dalla
+            legge.
+          </li>
+        </ul>
+
+        <p>
+          I fornitori possono agire come responsabili del trattamento per conto
+          di LOOK APP oppure come autonomi titolari, in base al servizio
+          prestato e alla normativa applicabile.
+        </p>
+      </section>
+
+      <section class="section" id="trasferimenti">
+        <h2>8. Trasferimenti internazionali</h2>
+
+        <p>
+          Alcuni fornitori possono trattare dati anche al di fuori dello
+          Spazio Economico Europeo. In tali casi, i trasferimenti vengono
+          gestiti attraverso gli strumenti previsti dalla normativa
+          applicabile, come decisioni di adeguatezza, clausole contrattuali
+          standard o altre garanzie riconosciute dal GDPR.
+        </p>
+
+        <p>
+          La collocazione concreta dei dati può dipendere dalla regione scelta
+          nelle configurazioni dei singoli servizi tecnici.
+        </p>
+      </section>
+
+      <section class="section" id="conservazione">
+        <h2>9. Periodi di conservazione</h2>
+
+        <p>
+          I dati vengono conservati per il tempo necessario alle finalità per
+          cui sono stati raccolti e, quando richiesto, per i successivi periodi
+          previsti dalla legge.
+        </p>
+
+        <ul>
+          <li>
+            <strong>Dati dell'account:</strong> per tutta la durata
+            dell'account e per il tempo necessario alla sua chiusura,
+            sicurezza e gestione di eventuali contestazioni.
+          </li>
+          <li>
+            <strong>Dati degli ordini:</strong> per il periodo necessario
+            all'esecuzione dell'acquisto e agli obblighi amministrativi,
+            contabili e fiscali applicabili.
+          </li>
+          <li>
+            <strong>Contenuti caricati:</strong> fino alla cancellazione,
+            rimozione, revoca della pubblicazione o chiusura del servizio,
+            salvo esigenze legali o di tutela.
+          </li>
+          <li>
+            <strong>Log tecnici e di sicurezza:</strong> per un periodo
+            proporzionato alle esigenze di sicurezza e prevenzione degli abusi.
+          </li>
+          <li>
+            <strong>Richieste di assistenza:</strong> per il tempo necessario
+            a gestire la richiesta e le eventuali controversie.
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" id="cookie">
+        <h2>10. Cookie e tecnologie simili</h2>
+
+        <p>
+          LOOK APP può utilizzare cookie e tecnologie tecniche necessarie al
+          funzionamento del sito, alla gestione delle sessioni, alla sicurezza
+          e all'autenticazione.
+        </p>
+
+        <p>
+          Eventuali cookie analitici, pubblicitari o non strettamente necessari
+          saranno utilizzati solo nel rispetto delle scelte espresse
+          dall'utente attraverso gli strumenti di gestione del consenso.
+        </p>
+
+        <p>
+          Ulteriori informazioni saranno disponibili nella
+          <a class="inline-link" href="/legal/cookies.html">Cookie Policy</a>.
+        </p>
+      </section>
+
+      <section class="section" id="minori">
+        <h2>11. Minori</h2>
+
+        <p>
+          LOOK APP non è destinata consapevolmente alla raccolta illecita di
+          dati di minori. Quando il consenso costituisce la base giuridica del
+          trattamento, l'accesso dei minori è soggetto ai requisiti di età e
+          autorizzazione previsti dalla normativa applicabile.
+        </p>
+
+        <p>
+          Qualora il titolare venga a conoscenza di dati trattati senza le
+          condizioni necessarie, potrà limitarne l'utilizzo o procedere alla
+          cancellazione.
+        </p>
+      </section>
+
+      <section class="section" id="diritti">
+        <h2>12. Diritti dell'utente</h2>
+
+        <p>
+          Nei casi previsti dagli articoli 15–22 del GDPR, l'utente può
+          esercitare i seguenti diritti:
+        </p>
+
+        <ul>
+          <li>ottenere conferma dell'esistenza dei propri dati;</li>
+          <li>accedere ai dati e riceverne una copia;</li>
+          <li>chiedere la rettifica di dati inesatti o incompleti;</li>
+          <li>chiedere la cancellazione dei dati;</li>
+          <li>chiedere la limitazione del trattamento;</li>
+          <li>opporsi al trattamento basato sul legittimo interesse;</li>
+          <li>ricevere i dati in formato strutturato, quando applicabile;</li>
+          <li>revocare il consenso senza pregiudicare i trattamenti precedenti;</li>
+          <li>
+            non essere sottoposto a decisioni esclusivamente automatizzate nei
+            casi previsti dalla legge.
+          </li>
+        </ul>
+
+        <p>
+          Per esercitare i diritti è possibile scrivere a
+          <a class="inline-link" href="mailto:orders@lookapp.org">
+            orders@lookapp.org
+          </a>.
+          Il titolare potrà chiedere le informazioni necessarie a verificare
+          l'identità del richiedente.
+        </p>
+
+        <p>
+          L'utente può inoltre proporre reclamo al
+          <strong>Garante per la protezione dei dati personali</strong> oppure
+          all'autorità di controllo competente nel proprio Paese.
+        </p>
+      </section>
+
+      <section class="section" id="profilazione">
+        <h2>13. Decisioni automatizzate e profilazione</h2>
+
+        <p>
+          Alla data di entrata in vigore della presente informativa, LOOK APP
+          non adotta decisioni basate unicamente su trattamenti automatizzati
+          che producano effetti giuridici o conseguenze analogamente
+          significative sull'utente.
+        </p>
+
+        <p>
+          Qualora tali sistemi venissero introdotti, l'informativa sarà
+          aggiornata e saranno fornite le informazioni e le garanzie richieste
+          dalla normativa.
+        </p>
+      </section>
+
+      <section class="section" id="modifiche">
+        <h2>14. Modifiche alla Privacy Policy</h2>
+
+        <p>
+          La presente informativa può essere aggiornata per adeguarla a nuove
+          funzionalità, modifiche tecniche, cambiamenti dei fornitori o
+          aggiornamenti normativi.
+        </p>
+
+        <p>
+          La versione e la data di entrata in vigore sono indicate all'inizio
+          della pagina. In caso di modifiche rilevanti, LOOK APP potrà
+          informare gli utenti tramite il sito, l'account o i recapiti
+          disponibili e, quando necessario, richiedere una nuova presa visione
+          o accettazione.
+        </p>
+      </section>
+    </article>
+
+    <footer class="footer">
+      <p>
+        © 2026 LOOK APP ·
+        <a href="/">lookapp.org</a>
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
