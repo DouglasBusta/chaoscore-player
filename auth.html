@@ -143,6 +143,99 @@
       color: rgba(231,224,210,0.62);
     }
 
+    .legal-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      margin: 18px 2px 6px;
+      padding: 14px;
+      border: 1px solid rgba(231,224,210,0.18);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.18);
+    }
+
+    .legal-consent input {
+      position: relative;
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      margin: 2px 0 0;
+      padding: 0;
+      border: 1px solid rgba(231,224,210,0.42);
+      border-radius: 50%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(0,0,0,0.32);
+      cursor: pointer;
+      transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+    }
+
+    .legal-consent input:hover {
+      border-color: rgba(231,224,210,0.72);
+    }
+
+    .legal-consent input:checked {
+      border-color: #ff304f;
+      background:
+        radial-gradient(
+          circle at 35% 28%,
+          #ffffff 0,
+          #ffb2bd 8%,
+          #ff304f 24%,
+          #d90028 62%,
+          #790014 100%
+        );
+      box-shadow:
+        0 0 3px rgba(255,255,255,0.95) inset,
+        0 0 7px rgba(255,30,65,0.95),
+        0 0 15px rgba(255,20,55,0.78),
+        0 0 28px rgba(255,0,45,0.46);
+    }
+
+    .legal-consent input:checked::after {
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      width: 4px;
+      height: 8px;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      content: "";
+      transform: translate(-50%, -55%) rotate(45deg);
+    }
+
+    .legal-consent input:active {
+      transform: scale(0.92);
+    }
+
+    .legal-consent input:focus-visible {
+      outline: 2px solid rgba(255,255,255,0.8);
+      outline-offset: 3px;
+    }
+
+    .legal-consent label {
+      margin: 0;
+      color: rgba(231,224,210,0.76);
+      font-size: 0.76rem;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .legal-consent a {
+      color: #e7e0d2;
+      font-weight: 700;
+      text-underline-offset: 3px;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
+    }
+
     .message {
       min-height: 24px;
       margin-top: 16px;
@@ -188,6 +281,16 @@
         <input id="confirm" type="password" autocomplete="new-password">
       </div>
 
+      <div id="legal-consent-wrap" class="legal-consent">
+        <input id="legal-consent" type="checkbox">
+        <label for="legal-consent">
+          Ho letto e accetto i
+          <a href="/terms" data-local-href="legal/terms.html" target="_blank" rel="noopener noreferrer">Termini e Condizioni</a>
+          e dichiaro di aver preso visione della
+          <a href="/privacy" data-local-href="legal/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+        </label>
+      </div>
+
       <button id="main-action" class="primary" type="submit">Create Account</button>
       <button id="forgot" class="forgot hidden" type="button">Forgot Password?</button>
       <a class="button" href="/">Back to Busta Files</a>
@@ -212,7 +315,10 @@
     const params = new URLSearchParams(window.location.search);
 
     function getSafeNext(rawNext) {
-      const fallback = "/account.html";
+      const fallback =
+        window.location.protocol === "file:"
+          ? "index.html"
+          : "/";
 
       if (!rawNext) return fallback;
 
@@ -371,6 +477,11 @@
         return;
       }
 
+      if (mode === "signup" && !document.getElementById("legal-consent").checked) {
+        setMessage("Devi accettare i Termini e prendere visione della Privacy Policy per creare l'account.");
+        return;
+      }
+
       mainAction.disabled = true;
       mainAction.textContent = mode === "signup" ? "Creating..." : "Logging in...";
 
@@ -489,6 +600,58 @@
     forgot.addEventListener("click", resetPassword);
 
     renderMode();
+
+    const legalConsentWrap = document.getElementById("legal-consent-wrap");
+    const legalConsent = document.getElementById("legal-consent");
+
+    function syncLegalConsent() {
+      const isSignup = mode === "signup";
+
+      legalConsentWrap.classList.toggle("hidden", !isSignup);
+      legalConsent.required = isSignup;
+
+      if (!isSignup) {
+        legalConsent.checked = false;
+        mainAction.disabled = false;
+        return;
+      }
+
+      mainAction.disabled = !legalConsent.checked;
+    }
+
+    document.querySelectorAll(".legal-consent a[data-local-href]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const destination =
+          window.location.protocol === "file:"
+            ? link.dataset.localHref
+            : link.getAttribute("href");
+
+        window.open(destination, "_blank", "noopener,noreferrer");
+      });
+    });
+
+    legalConsent.addEventListener("change", () => {
+      if (mode === "signup") {
+        mainAction.disabled = !legalConsent.checked;
+        setMessage("");
+      }
+    });
+
+    const legalModeObserver = new MutationObserver(syncLegalConsent);
+
+    legalModeObserver.observe(
+      document.getElementById("title"),
+      {
+        childList: true,
+        subtree: true
+      }
+    );
+
+    syncLegalConsent();
+
   </script>
 </body>
 </html>

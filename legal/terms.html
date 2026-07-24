@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+
+  <title>Termini e Condizioni | LOOK APP</title>
+
+  <meta
+    name="description"
+    content="Termini e Condizioni di utilizzo della piattaforma LOOK APP."
+  />
+
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#08080b" />
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #08080b;
+      --surface: rgba(19, 19, 25, 0.86);
+      --surface-strong: rgba(27, 27, 35, 0.96);
+      --border: rgba(255, 255, 255, 0.12);
+      --border-strong: rgba(255, 255, 255, 0.22);
+      --text: #f7f7f8;
+      --muted: #aaaab5;
+      --accent: #ff3030;
+      --accent-soft: rgba(255, 48, 48, 0.14);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.44);
+      --radius-large: 28px;
+      --radius-medium: 18px;
+      --page-width: 980px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--background);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding:
+        env(safe-area-inset-top)
+        env(safe-area-inset-right)
+        env(safe-area-inset-bottom)
+        env(safe-area-inset-left);
+      overflow-x: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(
+          circle at 14% 0%,
+          rgba(255, 35, 35, 0.18),
+          transparent 34rem
+        ),
+        radial-gradient(
+          circle at 100% 25%,
+          rgba(110, 40, 255, 0.13),
+          transparent 32rem
+        ),
+        linear-gradient(180deg, #0b0b10 0%, #070709 100%);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .page-shell {
+      width: min(calc(100% - 32px), var(--page-width));
+      margin: 0 auto;
+      padding: 24px 0 64px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: max(12px, env(safe-area-inset-top));
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 64px;
+      margin-bottom: 30px;
+      padding: 12px 14px 12px 20px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(10, 10, 14, 0.78);
+      box-shadow: 0 14px 50px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .brand {
+      min-width: 0;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.045);
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 22px;
+      padding: clamp(28px, 6vw, 64px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.015)
+        ),
+        var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      position: absolute;
+      right: -100px;
+      bottom: -130px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(255, 42, 42, 0.18);
+      filter: blur(70px);
+      content: "";
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      margin: 0 0 20px;
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 65, 65, 0.34);
+      border-radius: 999px;
+      color: #ff8989;
+      background: var(--accent-soft);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      margin: 0;
+      font-size: clamp(2.35rem, 8vw, 5.3rem);
+      font-weight: 950;
+      letter-spacing: -0.065em;
+      line-height: 0.92;
+      text-wrap: balance;
+    }
+
+    .hero-description {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.15rem);
+    }
+
+    .metadata {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 26px;
+    }
+
+    .metadata span {
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: #d5d5dc;
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.75rem;
+      font-weight: 750;
+    }
+
+    .content {
+      padding: clamp(23px, 5vw, 52px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .notice {
+      margin-bottom: 40px;
+      padding: 18px 20px;
+      border: 1px solid rgba(255, 66, 66, 0.28);
+      border-radius: var(--radius-medium);
+      color: #e9e9ed;
+      background: rgba(255, 48, 48, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .section {
+      scroll-margin-top: 110px;
+    }
+
+    .section + .section {
+      margin-top: 46px;
+      padding-top: 46px;
+      border-top: 1px solid var(--border);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: clamp(1.28rem, 3vw, 1.85rem);
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      line-height: 1.2;
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: #d1d1d8;
+    }
+
+    ul {
+      margin: 16px 0;
+      padding-left: 22px;
+      color: #d1d1d8;
+    }
+
+    li + li {
+      margin-top: 9px;
+    }
+
+    strong {
+      color: var(--text);
+    }
+
+    .inline-link {
+      color: #ff8686;
+      font-weight: 800;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .contact-box {
+      margin-top: 22px;
+      padding: 22px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-medium);
+      background: var(--surface-strong);
+    }
+
+    .footer {
+      padding: 34px 10px 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-align: center;
+    }
+
+    .footer a {
+      color: var(--text);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        width: min(calc(100% - 20px), var(--page-width));
+        padding-top: 12px;
+        padding-bottom: 42px;
+      }
+
+      .topbar {
+        top: max(8px, env(safe-area-inset-top));
+        min-height: 56px;
+        margin-bottom: 18px;
+        padding: 8px 9px 8px 16px;
+      }
+
+      .brand {
+        font-size: 0.76rem;
+        letter-spacing: 0.13em;
+      }
+
+      .back-link {
+        min-height: 38px;
+        padding: 8px 13px;
+        font-size: 0.75rem;
+      }
+
+      .hero,
+      .content {
+        border-radius: 22px;
+      }
+
+      h1 {
+        font-size: clamp(2.3rem, 13vw, 4rem);
+      }
+
+      .section + .section {
+        margin-top: 38px;
+        padding-top: 38px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .brand {
+        max-width: 124px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page-shell">
+    <nav class="topbar" aria-label="Navigazione">
+      <a class="brand" href="/">LOOK APP</a>
+      <a class="back-link" href="/">← Torna al sito</a>
+    </nav>
+
+    <header class="hero">
+      <p class="eyebrow">Documento legale</p>
+
+      <h1>Termini e<br />Condizioni</h1>
+
+      <p class="hero-description">
+        Questi Termini regolano l'accesso e l'utilizzo di LOOK APP,
+        degli account, di Busta Files, del Player, dei contenuti,
+        degli NFC Tag e delle funzionalità della piattaforma.
+      </p>
+
+      <div class="metadata">
+        <span>Versione 1.0</span>
+        <span>In vigore dal 25 luglio 2026</span>
+        <span>LOOK APP · lookapp.org</span>
+      </div>
+    </header>
+
+    <article class="content">
+      <div class="notice">
+        Creando un account o utilizzando LOOK APP, l'utente dichiara di aver
+        letto e accettato questi Termini. La Privacy Policy disciplina invece
+        il trattamento dei dati personali.
+      </div>
+
+      <section class="section">
+        <h2>1. Identità del gestore</h2>
+
+        <p>
+          LOOK APP è un progetto digitale gestito da
+          <strong>Douglas Busta</strong>, raggiungibile tramite il sito
+          <a class="inline-link" href="https://lookapp.org">lookapp.org</a>.
+        </p>
+
+        <div class="contact-box">
+          <p><strong>Contatto:</strong></p>
+          <p>
+            <a class="inline-link" href="mailto:orders@lookapp.org">
+              orders@lookapp.org
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>2. Oggetto del servizio</h2>
+
+        <p>
+          LOOK APP è una piattaforma digitale dedicata alla musica,
+          ai contenuti artistici e alle esperienze collegate al progetto
+          Douglas Busta.
+        </p>
+
+        <p>La piattaforma può comprendere:</p>
+
+        <ul>
+          <li>account personali e autenticazione;</li>
+          <li>Busta Files e contenuti riservati;</li>
+          <li>Player musicale e contenuti audio;</li>
+          <li>accessi tramite NFC Tag;</li>
+          <li>download e contenuti digitali;</li>
+          <li>Shop e acquisto di prodotti fisici;</li>
+          <li>caricamento di fotografie e video;</li>
+          <li>funzioni community, giochi e interazioni;</li>
+          <li>servizi futuri, inclusi marketplace e profili artista.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>3. Registrazione e account</h2>
+
+        <p>
+          Alcune funzioni richiedono la creazione di un account.
+          L'utente deve fornire informazioni corrette, aggiornate e non
+          ingannevoli.
+        </p>
+
+        <p>L'utente è responsabile:</p>
+
+        <ul>
+          <li>della riservatezza delle proprie credenziali;</li>
+          <li>delle attività effettuate mediante il proprio account;</li>
+          <li>della sicurezza del dispositivo utilizzato;</li>
+          <li>della tempestiva segnalazione di accessi non autorizzati.</li>
+        </ul>
+
+        <p>
+          Non è consentito creare account falsi, impersonare altre persone,
+          trasferire l'account senza autorizzazione o utilizzare sistemi
+          automatizzati per registrazioni massive.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>4. Requisiti di età</h2>
+
+        <p>
+          L'utente dichiara di avere l'età necessaria per concludere
+          validamente il rapporto previsto dai presenti Termini o di utilizzare
+          il servizio con l'autorizzazione e sotto la responsabilità di un
+          genitore o tutore quando richiesto dalla legge.
+        </p>
+
+        <p>
+          LOOK APP può limitare o chiudere account quando emergano dubbi
+          fondati sull'età o sulla validità del consenso necessario.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>5. NFC Tag e accessi digitali</h2>
+
+        <p>
+          Alcuni contenuti possono essere sbloccati mediante NFC Tag,
+          codice o altro identificativo associato al prodotto.
+        </p>
+
+        <ul>
+          <li>Ogni tag può essere soggetto a regole di attivazione specifiche.</li>
+          <li>Un tag può essere associato a un singolo account.</li>
+          <li>Un tag già utilizzato può non essere nuovamente attivabile.</li>
+          <li>È vietato clonare, alterare o manomettere tag e codici.</li>
+          <li>
+            L'accesso digitale non trasferisce il diritto d'autore sui
+            contenuti disponibili.
+          </li>
+        </ul>
+
+        <p>
+          LOOK APP può disabilitare tag o accessi ottenuti tramite frode,
+          duplicazione, chargeback abusivo, manomissione o violazione dei
+          presenti Termini.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>6. Contenuti musicali e licenza d'uso</h2>
+
+        <p>
+          Musica, testi, artwork, video, fotografie, software, elementi grafici,
+          marchi e materiali presenti su LOOK APP sono protetti dalle norme
+          sulla proprietà intellettuale.
+        </p>
+
+        <p>
+          Salvo diversa indicazione, l'utente riceve esclusivamente una licenza
+          personale, limitata, non esclusiva, non trasferibile e revocabile per
+          fruire dei contenuti attraverso le modalità offerte dalla
+          piattaforma.
+        </p>
+
+        <p>Non è consentito:</p>
+
+        <ul>
+          <li>ridistribuire o rivendere i contenuti;</li>
+          <li>caricarli su altre piattaforme senza autorizzazione;</li>
+          <li>rimuovere crediti, watermark o protezioni tecniche;</li>
+          <li>
+            utilizzare audio, artwork o altri materiali per finalità
+            commerciali non autorizzate;
+          </li>
+          <li>
+            estrarre, copiare o riprodurre sistematicamente parti della
+            piattaforma.
+          </li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>7. Contenuti caricati dagli utenti</h2>
+
+        <p>
+          L'utente conserva i diritti sui contenuti che carica, ma concede a
+          LOOK APP una licenza gratuita, non esclusiva e limitata a ospitare,
+          riprodurre tecnicamente, adattare al formato, moderare e mostrare il
+          contenuto all'interno della piattaforma e dei servizi collegati.
+        </p>
+
+        <p>L'utente dichiara che:</p>
+
+        <ul>
+          <li>il contenuto è proprio o viene utilizzato con autorizzazione;</li>
+          <li>possiede i diritti e i consensi delle persone rappresentate;</li>
+          <li>il contenuto non viola copyright, privacy o altri diritti;</li>
+          <li>il contenuto non è illecito, ingannevole o dannoso;</li>
+          <li>
+            il caricamento non comporta obblighi economici verso soggetti
+            terzi per LOOK APP.
+          </li>
+        </ul>
+
+        <p>
+          L'utente può chiedere la rimozione del contenuto, fatti salvi i tempi
+          tecnici, gli obblighi di legge e le copie strettamente necessarie per
+          sicurezza o gestione di contestazioni.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>8. Condotte vietate</h2>
+
+        <p>È vietato utilizzare LOOK APP per:</p>
+
+        <ul>
+          <li>commettere reati o violare diritti di terzi;</li>
+          <li>pubblicare minacce, molestie o contenuti discriminatori;</li>
+          <li>diffondere malware, spam o collegamenti dannosi;</li>
+          <li>tentare accessi non autorizzati a sistemi o account;</li>
+          <li>aggirare limitazioni tecniche o controlli di sicurezza;</li>
+          <li>manipolare artificialmente ascolti, visualizzazioni o interazioni;</li>
+          <li>raccogliere dati di altri utenti senza autorizzazione;</li>
+          <li>interferire con il funzionamento della piattaforma;</li>
+          <li>effettuare reverse engineering nei limiti vietati dalla legge.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>9. Moderazione</h2>
+
+        <p>
+          LOOK APP può esaminare, limitare, rifiutare, oscurare o rimuovere
+          contenuti che violino i presenti Termini, la legge, i diritti di
+          terzi o le regole della community.
+        </p>
+
+        <p>
+          La moderazione può avvenire in seguito a controlli interni,
+          segnalazioni degli utenti, richieste delle autorità o notifiche dei
+          titolari dei diritti.
+        </p>
+
+        <p>
+          La presenza di strumenti di moderazione non implica un obbligo di
+          controllo preventivo generale di ogni contenuto caricato.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>10. Sospensione e chiusura dell'account</h2>
+
+        <p>
+          LOOK APP può sospendere, limitare o chiudere un account in caso di:
+        </p>
+
+        <ul>
+          <li>violazione grave o ripetuta dei presenti Termini;</li>
+          <li>attività fraudolente o pericolose;</li>
+          <li>utilizzo illecito di pagamenti, tag o codici;</li>
+          <li>rischi per la sicurezza della piattaforma o degli utenti;</li>
+          <li>obblighi di legge o richieste delle autorità;</li>
+          <li>cessazione o modifica sostanziale del servizio.</li>
+        </ul>
+
+        <p>
+          Quando ragionevolmente possibile, l'utente verrà informato della
+          misura adottata. Nei casi urgenti o gravi, la sospensione può essere
+          immediata.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>11. Shop e acquisti</h2>
+
+        <p>
+          Gli acquisti effettuati tramite LOOK APP sono inoltre disciplinati
+          dalle specifiche Condizioni di Vendita mostrate prima del pagamento
+          o pubblicate sul sito.
+        </p>
+
+        <p>
+          Descrizioni, prezzi, disponibilità, costi di spedizione e condizioni
+          applicabili sono quelli indicati durante il checkout.
+        </p>
+
+        <p>
+          L'invio di un ordine non garantisce automaticamente la sua
+          accettazione quando il pagamento non sia autorizzato, il prodotto non
+          sia disponibile, il prezzo presenti un errore evidente o l'ordine
+          risulti fraudolento.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>12. Contenuti digitali</h2>
+
+        <p>
+          L'acquisto o lo sblocco di contenuti digitali concede solamente i
+          diritti d'uso espressamente indicati. Non comporta il trasferimento
+          del copyright, dei master, dei diritti editoriali o di altri diritti
+          di proprietà intellettuale.
+        </p>
+
+        <p>
+          Quando l'utente richiede l'esecuzione immediata della fornitura di un
+          contenuto digitale, potranno essere richiesti un consenso espresso e
+          la presa d'atto delle conseguenze sul diritto di recesso previste
+          dalla normativa applicabile.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>13. Disponibilità del servizio</h2>
+
+        <p>
+          LOOK APP viene sviluppata e aggiornata progressivamente. Alcune
+          funzioni possono essere temporaneamente sospese, modificate,
+          sostituite o rimosse per manutenzione, sicurezza, miglioramenti,
+          problemi tecnici o cambiamenti del progetto.
+        </p>
+
+        <p>
+          Non viene garantita un'operatività priva di interruzioni o errori,
+          ma saranno adottate misure ragionevoli per mantenere il servizio
+          accessibile e sicuro.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>14. Servizi di terze parti</h2>
+
+        <p>
+          LOOK APP utilizza o può collegarsi a servizi esterni, inclusi
+          fornitori di autenticazione, hosting, database, pagamenti, email,
+          piattaforme musicali e spedizioni.
+        </p>
+
+        <p>
+          L'utilizzo di tali servizi può essere soggetto anche alle condizioni
+          e informative dei rispettivi fornitori. LOOK APP non controlla il
+          funzionamento dei servizi esterni indipendenti.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>15. Limitazioni di responsabilità</h2>
+
+        <p>
+          Nei limiti consentiti dalla legge, LOOK APP non risponde di danni
+          causati da:
+        </p>
+
+        <ul>
+          <li>uso improprio della piattaforma da parte dell'utente;</li>
+          <li>condivisione o perdita delle credenziali;</li>
+          <li>disservizi temporanei di reti o fornitori esterni;</li>
+          <li>contenuti caricati o condotte di altri utenti;</li>
+          <li>dispositivi incompatibili, modificati o non aggiornati;</li>
+          <li>eventi imprevedibili o fuori dal ragionevole controllo.</li>
+        </ul>
+
+        <p>
+          Nessuna clausola limita i diritti inderogabili del consumatore o
+          esclude responsabilità che non possono essere escluse per legge.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>16. Segnalazioni e copyright</h2>
+
+        <p>
+          Chi ritiene che un contenuto violi copyright, privacy o altri diritti
+          può inviare una segnalazione indicando:
+        </p>
+
+        <ul>
+          <li>i propri dati di contatto;</li>
+          <li>il contenuto contestato e la sua posizione;</li>
+          <li>il diritto che si ritiene violato;</li>
+          <li>le informazioni utili a verificare la segnalazione;</li>
+          <li>una dichiarazione di buona fede.</li>
+        </ul>
+
+        <p>
+          Le segnalazioni possono essere inviate a
+          <a class="inline-link" href="mailto:orders@lookapp.org">
+            orders@lookapp.org
+          </a>.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>17. Privacy</h2>
+
+        <p>
+          Il trattamento dei dati personali è descritto nella
+          <a class="inline-link" href="/privacy">Privacy Policy</a>.
+        </p>
+
+        <p>
+          Cookie e tecnologie simili saranno disciplinati nella
+          Cookie Policy dedicata.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>18. Modifiche ai Termini</h2>
+
+        <p>
+          I presenti Termini possono essere aggiornati per riflettere nuove
+          funzioni, cambiamenti tecnici, evoluzioni del progetto o modifiche
+          normative.
+        </p>
+
+        <p>
+          La versione e la data di entrata in vigore sono indicate all'inizio
+          della pagina. In caso di modifiche rilevanti, LOOK APP potrà
+          richiedere una nuova accettazione prima di consentire l'uso delle
+          funzioni interessate.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>19. Legge applicabile e controversie</h2>
+
+        <p>
+          I presenti Termini sono regolati dalla legge italiana, fatti salvi i
+          diritti inderogabili riconosciuti ai consumatori dalla normativa del
+          Paese in cui risiedono.
+        </p>
+
+        <p>
+          Per le controversie con consumatori è competente il giudice del luogo
+          di residenza o domicilio del consumatore, quando previsto dalla
+          normativa applicabile.
+        </p>
+
+        <p>
+          Prima di avviare una controversia, le parti sono invitate a tentare
+          una soluzione amichevole contattando LOOK APP.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>20. Disposizioni finali</h2>
+
+        <p>
+          L'eventuale invalidità di una clausola non comporta l'invalidità
+          delle altre disposizioni.
+        </p>
+
+        <p>
+          Il mancato esercizio immediato di un diritto non costituisce rinuncia
+          allo stesso.
+        </p>
+
+        <p>
+          I presenti Termini, insieme alle policy richiamate e alle eventuali
+          condizioni specifiche mostrate durante un acquisto o l'utilizzo di
+          una funzione, regolano il rapporto tra l'utente e LOOK APP.
+        </p>
+      </section>
+    </article>
+
+    <footer class="footer">
+      <p>
+        © 2026 LOOK APP ·
+        <a href="/privacy">Privacy Policy</a> ·
+        <a href="/">lookapp.org</a>
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
