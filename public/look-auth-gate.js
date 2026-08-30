@@ -135,10 +135,6 @@
     installUnifiedBackButton();
   }
 
-  if (ALLOWED_PATHS.has(path)) {
-    return;
-  }
-
   function lockPage() {
     document.documentElement.classList.add("look-auth-locked");
     if (document.body) document.body.classList.add("look-auth-locked");
@@ -233,24 +229,47 @@
     });
   }
 
+  let sharedClientPromise = null;
+
+  async function getSharedClient() {
+    if (!sharedClientPromise) {
+      sharedClientPromise = loadSupabase().then((supabaseLib) => {
+        if (!supabaseLib?.createClient) {
+          throw new Error("Supabase non disponibile");
+        }
+
+        return supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        });
+      });
+    }
+
+    return sharedClientPromise;
+  }
+
+  window.lookAuth = window.lookAuth || {};
+  window.lookAuth.getSession = async function () {
+    const client = await getSharedClient();
+    const { data, error } = await client.auth.getSession();
+
+    if (error) throw error;
+
+    return data?.session || null;
+  };
+
+  if (ALLOWED_PATHS.has(path)) {
+    return;
+  }
+
   async function checkAuth() {
     ensureGate("Controllo sessione...");
 
     try {
-      const supabaseLib = await loadSupabase();
-
-      if (!supabaseLib?.createClient) {
-        ensureGate("Accesso richiesto.");
-        return;
-      }
-
-      const client = supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        }
-      });
+      const client = await getSharedClient();
 
       const { data } = await client.auth.getSession();
 

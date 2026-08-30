@@ -2566,7 +2566,7 @@ Checkout sicuro tramite PayPal.`;
         return makeOrderId();
       }
 
-      function goToManualPayment() {
+      async function goToManualPayment() {
         const preview = ensureOrderPreview();
 
         if (!preview) {
@@ -2594,7 +2594,21 @@ Checkout sicuro tramite PayPal.`;
           "&total=" +
           encodeURIComponent(total);
 
-        window.location.href = url;
+        try {
+          const session = await window.lookAuth?.getSession?.();
+
+          if (!session) {
+            const next = encodeURIComponent(url);
+            window.location.href = "/auth?mode=login&next=" + next;
+            return;
+          }
+
+          window.location.href = url;
+        } catch (error) {
+          console.error("Unable to verify checkout session:", error);
+          const next = encodeURIComponent(url);
+          window.location.href = "/auth?mode=login&next=" + next;
+        }
       }
 
       window.openLookManualPayment = goToManualPayment;
