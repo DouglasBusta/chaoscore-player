@@ -5,9 +5,29 @@
   const SUPABASE_KEY = "sb_publishable_Ae2dmdo-KYyNxcVntZg_2Q_xkWq5Bzm";
 
   const ALLOWED_PATHS = new Set([
+    "/",
+    "/index.html",
     "/auth",
     "/auth.html",
-    "/public/auth.html"
+    "/public/auth.html",
+    "/shop",
+    "/shop/",
+    "/shop.html",
+    "/shop/index.html",
+    "/claim",
+    "/claim/",
+    "/claim.html",
+    "/public/claim.html",
+    "/terms",
+    "/terms/",
+    "/legal/terms.html",
+    "/privacy",
+    "/privacy/",
+    "/legal/privacy.html",
+    "/chaoscore",
+    "/chaoscore/",
+    "/chaoscore.html",
+    "/public/chaoscore.html"
   ]);
 
   const path = window.location.pathname;
