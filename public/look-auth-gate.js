@@ -32,6 +32,109 @@
 
   const path = window.location.pathname;
 
+  function installUnifiedBackButton() {
+    const cleanPath = path.replace(/\/$/, "") || "/";
+    const supported = new Set([
+      "/shop",
+      "/shop/index.html",
+      "/shop.html",
+      "/account",
+      "/account.html",
+      "/chaoscore",
+      "/chaoscore.html"
+    ]);
+
+    if (!supported.has(cleanPath)) return;
+
+    const styleId = "look-unified-back-style";
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = `
+        .look-unified-back {
+          position: fixed !important;
+          top: max(12px, env(safe-area-inset-top)) !important;
+          left: max(12px, env(safe-area-inset-left)) !important;
+          z-index: 2147483000 !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          min-height: 38px !important;
+          width: auto !important;
+          margin: 0 !important;
+          padding: 0 14px !important;
+          border: 1px solid rgba(231,224,210,.22) !important;
+          border-radius: 999px !important;
+          background: rgba(12,9,9,.78) !important;
+          color: #e7e0d2 !important;
+          box-shadow: 0 8px 28px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04) !important;
+          backdrop-filter: blur(12px) !important;
+          -webkit-backdrop-filter: blur(12px) !important;
+          text-decoration: none !important;
+          text-transform: uppercase !important;
+          letter-spacing: .12em !important;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+          font-size: .68rem !important;
+          font-weight: 800 !important;
+          line-height: 1 !important;
+          white-space: nowrap !important;
+          cursor: pointer !important;
+          transition: background 160ms ease, border-color 160ms ease, transform 160ms ease !important;
+        }
+
+        .look-unified-back:hover {
+          background: rgba(255,255,255,.09) !important;
+          border-color: rgba(231,224,210,.4) !important;
+          transform: translateY(-1px) !important;
+        }
+
+        .look-unified-back:focus-visible {
+          outline: 2px solid rgba(231,224,210,.65) !important;
+          outline-offset: 3px !important;
+        }
+
+        @media (max-width: 560px) {
+          .look-unified-back {
+            top: max(10px, env(safe-area-inset-top)) !important;
+            left: max(10px, env(safe-area-inset-left)) !important;
+            min-height: 36px !important;
+            padding: 0 12px !important;
+            font-size: .62rem !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const candidates = Array.from(document.querySelectorAll("a"));
+    let backLink = candidates.find((link) =>
+      /back\s+to\s+busta\s+files/i.test((link.textContent || "").trim())
+    );
+
+    if (!backLink) {
+      backLink = document.createElement("a");
+      document.body.appendChild(backLink);
+    }
+
+    backLink.classList.add("look-unified-back");
+    backLink.href = "/";
+    backLink.textContent = "← Back to Busta Files";
+    backLink.setAttribute("aria-label", "Back to Busta Files");
+
+    candidates.forEach((link) => {
+      if (link === backLink) return;
+      if (/back\s+to\s+busta\s+files/i.test((link.textContent || "").trim())) {
+        link.style.display = "none";
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", installUnifiedBackButton, { once: true });
+  } else {
+    installUnifiedBackButton();
+  }
+
   if (ALLOWED_PATHS.has(path)) {
     return;
   }
