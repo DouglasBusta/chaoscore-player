@@ -555,9 +555,18 @@
       async function capturePayPalOrder(data) {
         setStatus("Pagamento approvato. Conferma in corso...");
 
+        const session = await window.lookAuth?.getSession?.();
+
+        if (!session?.access_token) {
+          throw new Error("Sessione account non valida. Accedi di nuovo prima di pagare.");
+        }
+
         const response = await fetch("/api/paypal-capture-order", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session.access_token
+          },
           body: JSON.stringify({
             paypalOrderId: data.orderID,
             lookOrderId: orderId,

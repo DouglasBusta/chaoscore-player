@@ -2,6 +2,53 @@ const PAYPAL_API = process.env.PAYPAL_ENV === "live"
   ? "https://api-m.paypal.com"
   : "https://api-m.sandbox.paypal.com";
 
+
+const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
+
+async function supabaseAdminFetch(path, options = {}) {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!serviceRoleKey) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY missing");
+  }
+
+  return fetch(`${SUPABASE_URL}${path}`, {
+    ...options,
+    headers: {
+      apikey: serviceRoleKey,
+      Authorization: `Bearer ${serviceRoleKey}`,
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
+}
+
+async function getAuthenticatedUser(req) {
+  const authHeader = String(req.headers.authorization || "");
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice(7).trim()
+    : "";
+
+  if (!token) {
+    return null;
+  }
+
+  const response = await supabaseAdminFetch("/auth/v1/user", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const user = await response.json();
+
+  return user?.id ? user : null;
+}
+
 async function getAccessToken() {
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const secret = process.env.PAYPAL_CLIENT_SECRET;
@@ -79,6 +126,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing paypalOrderId" });
     }
 
+    const authenticatedUser = await getAuthenticatedUser(req);
+
+    if (!authenticatedUser) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
     const accessToken = await getAccessToken();
 
     const response = await fetch(`${PAYPAL_API}/v2/checkout/orders/${paypalOrderId}/capture`, {
@@ -102,6 +155,36 @@ export default async function handler(req, res) {
     const status = capture?.status || data?.status || "UNKNOWN";
     const paidAmount = capture?.amount?.value || total || "";
     const paidCurrency = capture?.amount?.currency_code || "EUR";
+
+    try {
+      const orderSaveResponse = await supabaseAdminFetch(
+        "/rest/v1/orders?on_conflict=paypal_order_id",
+        {
+          method: "POST",
+          headers: {
+            Prefer: "resolution=merge-duplicates,return=minimal"
+          },
+          body: JSON.stringify({
+            user_id: authenticatedUser.id,
+            look_order_id: lookOrderId || paypalOrderId,
+            paypal_order_id: paypalOrderId,
+            payment_status: status,
+            amount: Number(paidAmount),
+            currency: paidCurrency,
+            customer_email: authenticatedUser.email || customerEmail || null,
+            order_preview: preview || null,
+            updated_at: new Date().toISOString()
+          })
+        }
+      );
+
+      if (!orderSaveResponse.ok) {
+        const details = await orderSaveResponse.text();
+        console.error("Unable to save PayPal order to Supabase:", details);
+      }
+    } catch (error) {
+      console.error("Unable to save PayPal order to Supabase:", error);
+    }
 
     const orderText =
 `LOOK APP SHOP — PAGAMENTO PAYPAL CONFERMATO
