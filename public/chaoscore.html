@@ -1731,157 +1731,80 @@ dialog {
 
       window.lookSupabase = client;
 
-      function lockPage(message) {
-        document.body.innerHTML = `
-          <main style="
-            min-height:100vh;
-            display:grid;
-            place-items:center;
-            padding:24px;
-            background:
-              radial-gradient(circle at 20% 0%, rgba(139,23,23,.34), transparent 35%),
-              radial-gradient(circle at 80% 20%, rgba(231,224,210,.08), transparent 28%),
-              linear-gradient(180deg,#0c0908 0%,#030303 72%);
-            color:#e7e0d2;
-            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;
-          ">
-            <section style="
-              width:min(680px,100%);
-              border:1px solid rgba(231,224,210,.2);
-              border-radius:28px;
-              padding:clamp(24px,6vw,48px);
-              background:
-                linear-gradient(135deg, rgba(231,224,210,.08), rgba(231,224,210,.025)),
-                rgba(0,0,0,.34);
-              box-shadow:0 32px 110px rgba(0,0,0,.48);
-              position:relative;
-              overflow:hidden;
-            ">
-              <div style="
-                position:absolute;
-                right:-20px;
-                top:26px;
-                transform:rotate(14deg);
-                border:3px solid rgba(179,34,34,.5);
-                color:rgba(179,34,34,.58);
-                border-radius:10px;
-                padding:4px 14px;
-                font-weight:900;
-                letter-spacing:.08em;
-                font-size:clamp(1.9rem,7vw,4.4rem);
-                pointer-events:none;
-              ">LOCKED</div>
+      function lockPage(message, options = {}) {
+        const showLogin = !!options.showLogin;
+        const isVerifiedMissing = options.state === "verified-missing";
+        const authHref = "/auth?mode=login&next=" + encodeURIComponent("/chaoscore");
+        const safeMessage = escapeHtml(message);
+        const accountStateTitle = isVerifiedMissing
+          ? "Account attivo, TAG non verificato"
+          : "Accesso riservato con #CHAOSCORE TAG";
+        const accountStateCopy = isVerifiedMissing
+          ? "Questo account e loggato, ma non risulta ancora collegato a un #CHAOSCORE TAG riscattato correttamente. Se hai gia un tag, scannerizzalo di nuovo per completare il claim su questo account."
+          : "Il login serve solo a verificare se il tuo account possiede gia l'accesso. Il player resta bloccato finche un #CHAOSCORE TAG valido non viene riscattato.";
+        const loginAction = showLogin
+          ? [
+              "<a class='chaos-gate-button chaos-gate-login' href='" + authHref + "'>",
+                "Accedi per verificare il tuo accesso",
+              "</a>"
+            ].join("")
+          : "";
 
-              <div style="
-                color:rgba(231,224,210,.56);
-                text-transform:uppercase;
-                letter-spacing:.18em;
-                font-size:.72rem;
-                margin-bottom:14px;
-              ">
-                Private NFC Album Access
-              </div>
+        function escapeHtml(value) {
+          return String(value || "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+        }
 
-              <h1 style="
-                font-family:Georgia,'Times New Roman',serif;
-                font-size:clamp(3rem,11vw,6rem);
-                line-height:.86;
-                letter-spacing:-.08em;
-                margin:0 0 18px;
-                text-transform:uppercase;
-              ">#chaoscore<br>Locked</h1>
-
-              <p style="color:rgba(231,224,210,.78);line-height:1.7;margin:0 0 18px;font-size:1rem;">
-                ${message}
-              </p>
-
-              <div style="
-                border:1px solid rgba(231,224,210,.18);
-                border-radius:18px;
-                padding:16px;
-                background:rgba(255,255,255,.045);
-                margin:18px 0 22px;
-              ">
-                <div style="
-                  color:#d8f7cf;
-                  text-transform:uppercase;
-                  letter-spacing:.14em;
-                  font-size:.72rem;
-                  margin-bottom:8px;
-                ">
-                  How to unlock
-                </div>
-                <div style="color:rgba(231,224,210,.74);line-height:1.65;">
-                  Avvicina il tuo tag NFC #Chaoscore al telefono. Il tag aprirà automaticamente il link privato di sblocco.
-                  Dopo il login, la chiave verrà collegata al tuo account e l’album si aprirà.
-                </div>
-              </div>
-
-              <div style="
-                border:1px solid rgba(231,224,210,.18);
-                border-radius:18px;
-                padding:16px;
-                background:rgba(255,255,255,.035);
-                margin:0 0 22px;
-              ">
-                <div style="
-                  color:rgba(231,224,210,.72);
-                  text-transform:uppercase;
-                  letter-spacing:.14em;
-                  font-size:.72rem;
-                  margin-bottom:8px;
-                ">
-                  Other ways to listen
-                </div>
-                <div style="color:rgba(231,224,210,.62);line-height:1.65;">
-                  Coming Soon. Quando l’album sarà disponibile fuori dal tag NFC, qui appariranno i link ufficiali per ascoltarlo.
-                </div>
-              </div>
-
-              <div style="
-                display:flex;
-                gap:10px;
-                flex-wrap:nowrap;
-                align-items:center;
-                justify-content:space-between;
-                width:100%;
-              ">
-                <a href="/" style="
-                  display:inline-flex;
-                  border:1px solid rgba(231,224,210,.24);
-                  border-radius:999px;
-                  background:rgba(231,224,210,.08);
-                  color:#e7e0d2;
-                  padding:13px 15px;
-                  text-decoration:none;
-                  text-transform:uppercase;
-                  letter-spacing:.12em;
-                  font-size:.72rem;
-                  white-space:nowrap;
-                ">Back to Busta Files</a>
-
-                <a href="/account" style="
-                  display:inline-flex;
-                  margin-left:auto;
-                  border:1px solid rgba(231,224,210,.16);
-                  border-radius:999px;
-                  background:rgba(0,0,0,.18);
-                  color:rgba(231,224,210,.76);
-                  padding:13px 15px;
-                  text-decoration:none;
-                  text-transform:uppercase;
-                  letter-spacing:.12em;
-                  font-size:.72rem;
-                  white-space:nowrap;
-                ">My Account</a>
-              </div>
-            </section>
-          </main>
-        `;
+        document.body.innerHTML = [
+          "<main class='chaos-gate-page'>",
+            "<style>",
+              ".chaos-gate-page{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:max(72px,calc(env(safe-area-inset-top,0px) + 24px)) 24px max(24px,env(safe-area-inset-bottom,0px));background:radial-gradient(circle at 20% 0%,rgba(139,23,23,.34),transparent 35%),radial-gradient(circle at 80% 20%,rgba(231,224,210,.08),transparent 28%),linear-gradient(180deg,#0c0908 0%,#030303 72%);color:#e7e0d2;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;overflow-x:hidden;}",
+              ".chaos-gate-card{width:min(680px,100%);border:1px solid rgba(231,224,210,.2);border-radius:28px;padding:clamp(24px,6vw,48px);background:linear-gradient(135deg,rgba(231,224,210,.08),rgba(231,224,210,.025)),rgba(0,0,0,.34);box-shadow:0 32px 110px rgba(0,0,0,.48);position:relative;overflow:hidden;}",
+              ".chaos-gate-stamp{position:absolute;right:-20px;top:26px;transform:rotate(14deg);border:3px solid rgba(179,34,34,.5);color:rgba(179,34,34,.58);border-radius:10px;padding:4px 14px;font-weight:900;letter-spacing:.08em;font-size:clamp(1.9rem,7vw,4.4rem);pointer-events:none;}",
+              ".chaos-gate-kicker{color:rgba(231,224,210,.56);text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;margin-bottom:14px;max-width:calc(100% - 88px);}",
+              ".chaos-gate-title{font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.7rem,11vw,6rem);line-height:.86;letter-spacing:-.08em;margin:0 0 18px;text-transform:uppercase;}",
+              ".chaos-gate-message{color:rgba(231,224,210,.78);line-height:1.7;margin:0 0 18px;font-size:1rem;}",
+              ".chaos-gate-info{border:1px solid rgba(231,224,210,.18);border-radius:18px;padding:16px;background:rgba(255,255,255,.045);margin:18px 0 0;}",
+              ".chaos-gate-info+.chaos-gate-info{background:rgba(255,255,255,.035);margin-top:12px;}",
+              ".chaos-gate-info-title{color:#d8f7cf;text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;margin-bottom:8px;}",
+              ".chaos-gate-info-copy{color:rgba(231,224,210,.72);line-height:1.65;}",
+              ".chaos-gate-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-top:22px;width:100%;}",
+              ".chaos-gate-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;border:1px solid rgba(231,224,210,.22);border-radius:999px;padding:13px 16px;color:#e7e0d2;text-decoration:none;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;font-weight:900;line-height:1.25;text-align:center;overflow-wrap:anywhere;background:rgba(231,224,210,.07);}",
+              ".chaos-gate-primary{border-color:rgba(216,247,207,.46);background:linear-gradient(180deg,rgba(216,247,207,.18),rgba(216,247,207,.06)),rgba(20,32,25,.9);color:#f4fff1;box-shadow:0 0 28px rgba(216,247,207,.08);}",
+              ".chaos-gate-platform{border-color:rgba(30,215,96,.42);background:rgba(9,18,12,.7);}",
+              ".chaos-gate-login{color:rgba(231,224,210,.82);background:rgba(0,0,0,.2);}",
+              "@media (min-width:620px){.chaos-gate-actions{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);}.chaos-gate-login{grid-column:1/-1;}}",
+              "@media (max-width:520px){.chaos-gate-page{padding:max(64px,calc(env(safe-area-inset-top,0px) + 18px)) 14px max(18px,env(safe-area-inset-bottom,0px));align-items:start;}.chaos-gate-card{border-radius:24px;padding:24px 16px 18px;}.chaos-gate-stamp{right:-18px;top:18px;font-size:clamp(1.6rem,13vw,3.2rem);}.chaos-gate-title{font-size:clamp(2.45rem,18vw,4.25rem);}.chaos-gate-message,.chaos-gate-info-copy{font-size:.9rem;}.chaos-gate-button{width:100%;min-height:46px;padding:12px 13px;font-size:.66rem;letter-spacing:.08em;}}",
+            "</style>",
+            "<section class='chaos-gate-card' aria-labelledby='chaos-gate-title'>",
+              "<div class='chaos-gate-stamp' aria-hidden='true'>LOCKED</div>",
+              "<div class='chaos-gate-kicker'>Private NFC Album Access</div>",
+              "<h1 class='chaos-gate-title' id='chaos-gate-title'>#chaoscore<br>Locked</h1>",
+              "<p class='chaos-gate-message'>" + safeMessage + "</p>",
+              "<div class='chaos-gate-info'>",
+                "<div class='chaos-gate-info-title'>Serve un #CHAOSCORE TAG</div>",
+                "<div class='chaos-gate-info-copy'>Il player esclusivo si sblocca solo con un tag fisico riscattato e collegato al tuo account LOOK APP.</div>",
+              "</div>",
+              "<div class='chaos-gate-info'>",
+                "<div class='chaos-gate-info-title'>" + escapeHtml(accountStateTitle) + "</div>",
+                "<div class='chaos-gate-info-copy'>" + escapeHtml(accountStateCopy) + "</div>",
+              "</div>",
+              "<div class='chaos-gate-actions' aria-label='Opzioni di accesso #CHAOSCORE'>",
+                "<a class='chaos-gate-button chaos-gate-primary' href='/shop#chaoscore-tag'>Acquista ora — a partire da €4,99</a>",
+                "<a class='chaos-gate-button chaos-gate-platform' href='https://orcd.co/chaoscore' target='_blank' rel='noopener noreferrer'>Ascolta sulle piattaforme</a>",
+                loginAction,
+              "</div>",
+            "</section>",
+          "</main>"
+        ].join("");
       }
 
       if (!client) {
-        lockPage("Authentication could not be loaded. Scan your #Chaoscore NFC key again.");
+        lockPage("Authentication could not be loaded. Accedi per verificare il tuo accesso oppure acquista un #CHAOSCORE TAG.", { showLogin: true });
         return;
       }
 
@@ -1947,7 +1870,7 @@ dialog {
       const session = await getStableSession();
 
       if (!session?.user) {
-        lockPage("This album is private. To unlock it, avvicina il tuo tag NFC #Chaoscore al telefono. Il tag aprirà il link privato di sblocco e collegherà la key al tuo account.");
+        lockPage("Il player esclusivo #CHAOSCORE e riservato agli account con un #CHAOSCORE TAG riscattato e collegato. Accedi per verificare il tuo accesso oppure acquista un tag per sbloccarlo.", { showLogin: true });
         return;
       }
 
@@ -1959,12 +1882,12 @@ dialog {
             throw accessCheck.error;
           }
 
-          lockPage("Your account is logged in, but it is not Chaos Verificato yet. Avvicina il tuo tag NFC #Chaoscore al telefono per sbloccare l’album su questo account.");
+          lockPage("Il tuo account e attivo, ma non risulta ancora collegato a un #CHAOSCORE TAG verificato. Per entrare nel player esclusivo devi riscattare o acquistare un tag.", { state: "verified-missing" });
           return;
         }
       } catch (err) {
         console.error(err);
-        lockPage("#Chaoscore access could not be verified. Try again or scan your NFC key.");
+        lockPage("#CHAOSCORE access could not be verified. Riprova tra poco oppure scannerizza il tuo NFC TAG per completare il claim.", { state: "verified-missing" });
       }
     });
   </script>
