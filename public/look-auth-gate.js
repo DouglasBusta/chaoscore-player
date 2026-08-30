@@ -261,6 +261,10 @@
     return data?.session || null;
   };
 
+  window.lookAuth.getClient = async function () {
+    return await getSharedClient();
+  };
+
   if (ALLOWED_PATHS.has(path)) {
     return;
   }

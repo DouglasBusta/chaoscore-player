@@ -2428,7 +2428,50 @@ Checkout sicuro tramite PayPal.`;
       }, 0);
     });
 
+    async function loadSavedCheckoutProfile() {
+      try {
+        const session = await window.lookAuth?.getSession?.();
+        if (!session?.user?.id) return;
+
+        const client = await window.lookAuth.getClient();
+        const { data, error } = await client
+          .from("profiles")
+          .select("first_name,last_name,phone,shipping_address,shipping_city,shipping_province,shipping_postal_code,shipping_country")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        if (error) throw error;
+        if (!data) return;
+
+        const fields = {
+          "customer-name": data.first_name,
+          "customer-surname": data.last_name,
+          "customer-phone": data.phone,
+          "shipping-address": data.shipping_address,
+          "shipping-city": data.shipping_city,
+          "shipping-province": data.shipping_province,
+          "shipping-zip": data.shipping_postal_code,
+          "shipping-country": data.shipping_country
+        };
+
+        for (const [id, value] of Object.entries(fields)) {
+          const input = document.getElementById(id);
+          if (input && !input.value.trim() && value) {
+            input.value = value;
+          }
+        }
+
+        const emailInput = document.getElementById("customer-email");
+        if (emailInput && !emailInput.value.trim() && session.user.email) {
+          emailInput.value = session.user.email;
+        }
+      } catch (error) {
+        console.error("Unable to load saved checkout profile:", error);
+      }
+    }
+
     renderCart();
+    loadSavedCheckoutProfile();
 
   </script>
 
@@ -2586,6 +2629,22 @@ Checkout sicuro tramite PayPal.`;
           sessionStorage.setItem("lookManualOrderPreview", preview);
           sessionStorage.setItem("lookManualOrderId", orderId);
           sessionStorage.setItem("lookManualOrderTotal", total);
+
+          const checkoutProfile = {
+            first_name: document.getElementById("customer-name")?.value?.trim() || "",
+            last_name: document.getElementById("customer-surname")?.value?.trim() || "",
+            phone: document.getElementById("customer-phone")?.value?.trim() || "",
+            shipping_address: document.getElementById("shipping-address")?.value?.trim() || "",
+            shipping_city: document.getElementById("shipping-city")?.value?.trim() || "",
+            shipping_province: document.getElementById("shipping-province")?.value?.trim() || "",
+            shipping_postal_code: document.getElementById("shipping-zip")?.value?.trim() || "",
+            shipping_country: document.getElementById("shipping-country")?.value?.trim() || ""
+          };
+
+          sessionStorage.setItem(
+            "lookCheckoutProfile",
+            JSON.stringify(checkoutProfile)
+          );
         } catch (err) {}
 
         const url =

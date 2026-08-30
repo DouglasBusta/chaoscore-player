@@ -413,6 +413,50 @@
     });
   </script>
 
+  <script src="/look-auth-gate.js?v=3"></script>
+
+  <script id="save-checkout-profile">
+    (async function () {
+      try {
+        const session = await window.lookAuth?.getSession?.();
+        if (!session?.user?.id) return;
+
+        let rawProfile = "";
+        try {
+          rawProfile = sessionStorage.getItem("lookCheckoutProfile") || "";
+        } catch (err) {}
+
+        if (!rawProfile) return;
+
+        const profile = JSON.parse(rawProfile);
+
+        const client = await window.lookAuth.getClient();
+        const { error } = await client
+          .from("profiles")
+          .upsert({
+            user_id: session.user.id,
+            first_name: profile.first_name || null,
+            last_name: profile.last_name || null,
+            phone: profile.phone || null,
+            shipping_address: profile.shipping_address || null,
+            shipping_city: profile.shipping_city || null,
+            shipping_province: profile.shipping_province || null,
+            shipping_postal_code: profile.shipping_postal_code || null,
+            shipping_country: profile.shipping_country || null,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: "user_id"
+          });
+
+        if (error) throw error;
+
+        console.log("Checkout profile saved to profiles.");
+      } catch (error) {
+        console.error("Unable to save checkout profile:", error);
+      }
+    })();
+  </script>
+
   <script id="paypal-clean-checkout-v3">
     (async function () {
       const statusEl = document.getElementById("paypal-status");
