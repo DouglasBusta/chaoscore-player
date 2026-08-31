@@ -93,6 +93,10 @@
       "destination": "/chaoscore.html"
     },
     {
+      "source": "/chaoscore/player",
+      "destination": "/chaoscore-player.html"
+    },
+    {
       "source": "/chaoscore/",
       "destination": "/chaoscore.html"
     }
