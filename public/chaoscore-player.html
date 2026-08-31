@@ -1712,7 +1712,9 @@ dialog {
   <script id="chaoscore-access-guard">
     window.addEventListener("DOMContentLoaded", async () => {
       const cleanPath = window.location.pathname.replace(/\/$/, "") || "/";
-      const isPrivateAlbumRoute = cleanPath === "/chaoscore" || cleanPath === "/chaoscore.html";
+      const isPrivateAlbumRoute =
+        cleanPath === "/chaoscore/player" ||
+        cleanPath === "/chaoscore-player.html";
       if (!isPrivateAlbumRoute) return;
 
       const SUPABASE_URL = "https://giixvsfwsguudrvvbmkj.supabase.co";
