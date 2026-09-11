@@ -383,6 +383,109 @@
       align-self: flex-start;
     }
 
+
+    /* AUTH GRID ORDER V1 */
+    .card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
+      row-gap: 16px;
+    }
+
+    .card > .kicker,
+    .card > h1,
+    .card > p,
+    .card > .mode-switch,
+    .card > form,
+    .card > .message,
+    .card > .debug {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    #auth-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      width: 100%;
+    }
+
+    #auth-form > label {
+      margin: 0 0 7px;
+    }
+
+    #auth-form > input,
+    #auth-form > .password-field,
+    #auth-form > #confirm-wrap {
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    #confirm-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    #confirm-wrap > label {
+      margin: 0 0 7px;
+    }
+
+    #confirm-wrap > .password-field {
+      margin: 0;
+    }
+
+    .password-field {
+      width: 100%;
+    }
+
+    #legal-consent-wrap {
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    #main-action {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #forgot {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #auth-form > a.button {
+      margin-top: 0;
+    }
+
+    #message,
+    #debug {
+      width: 100%;
+    }
+
+    @media (max-width: 520px) {
+      .card {
+        row-gap: 14px;
+      }
+
+      #auth-form > label,
+      #confirm-wrap > label {
+        margin-bottom: 6px;
+      }
+
+      #auth-form > input,
+      #auth-form > .password-field,
+      #auth-form > #confirm-wrap,
+      #legal-consent-wrap {
+        margin-bottom: 14px;
+      }
+
+      #main-action,
+      #forgot {
+        margin-bottom: 9px;
+      }
+    }
+
   </style>
 </head>
 <body>
