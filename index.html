@@ -2087,9 +2087,10 @@
         matcher: item => item.folder === "NUMA Incident — 11 October 2025"
       },
       {
-        title: "Other Busta Files",
-        label: "Evidence room",
+        title: "Want to contribute to Busta Files?",
+        label: "Community submission",
         icon: "◌",
+        cta: true,
         matcher: item => item.folder === "Other Busta Files"
       }
     ];
@@ -2125,9 +2126,19 @@
           <div class="folder-icon">${folder.icon}</div>
           <div class="folder-label">${folder.label}</div>
           <div class="folder-title">${folder.title}</div>
-          <div class="folder-count">${count ? `${count} indexed file${count === 1 ? "" : "s"}` : "COMING SOON"}</div>
+          <div class="folder-count">${
+            folder.cta
+              ? "Upload now ↗"
+              : (count ? `${count} indexed file${count === 1 ? "" : "s"}` : "COMING SOON")
+          }</div>
         `;
+
         card.addEventListener("click", () => {
+          if (folder.cta) {
+            window.dispatchEvent(new CustomEvent("busta:open-upload"));
+            return;
+          }
+
           const section = document.getElementById(slugify(folder.title));
           if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
         });
@@ -3015,30 +3026,6 @@
         if (message) message.textContent = text || "";
       }
 
-      function ensureUploadButton() {
-        if (document.getElementById("busta-upload-open")) return;
-
-        const button = document.createElement("button");
-        button.id = "busta-upload-open";
-        button.className = "busta-upload-button";
-        button.type = "button";
-        button.textContent = "Upload File";
-
-        const downloads = document.querySelector(".busta-app-downloads");
-        const search = document.querySelector("[class*='search']");
-        const hero = document.querySelector("main");
-
-        if (downloads) {
-          downloads.appendChild(button);
-        } else if (search) {
-          search.insertAdjacentElement("afterend", button);
-        } else if (hero) {
-          hero.prepend(button);
-        } else {
-          document.body.prepend(button);
-        }
-      }
-
       async function openUpload() {
         if (!client) {
           alert("Authentication not loaded. Refresh and try again.");
@@ -3361,13 +3348,7 @@
         }
       }
 
-      ensureUploadButton();
-
-      document.addEventListener("click", (event) => {
-        const uploadOpen = event.target.closest("#busta-upload-open");
-        if (!uploadOpen) return;
-
-        event.preventDefault();
+      window.addEventListener("busta:open-upload", () => {
         openUpload();
       });
 
