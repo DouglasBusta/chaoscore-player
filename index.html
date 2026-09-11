@@ -1454,7 +1454,66 @@
     text-transform: lowercase;
     cursor: pointer;
   }
-</style>
+
+    /* FOLDER CARD ALIGNMENT FIX */
+    .folder-grid {
+      align-items: stretch;
+    }
+
+    .folder-card {
+      box-sizing: border-box;
+      height: 190px;
+      min-height: 190px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      align-items: start;
+    }
+
+    .folder-card .folder-icon {
+      align-self: start;
+    }
+
+    .folder-card .folder-title {
+      align-self: start;
+    }
+
+    .folder-card .folder-count {
+      align-self: end;
+      width: 100%;
+    }
+
+    .folder-upload-now {
+      appearance: none;
+      -webkit-appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: auto;
+      min-width: 0;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      line-height: inherit;
+      letter-spacing: inherit;
+      text-align: left;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    @media (max-width: 820px) {
+      .folder-card {
+        height: 190px;
+        min-height: 190px;
+      }
+    }
+
+  </style>
   <link rel="stylesheet" href="/busta-mobile-desktopish.css?v=1">
   <link rel="stylesheet" href="/look-shop-busta-card.css?v=7">
 
@@ -2118,7 +2177,7 @@
       resultCount.textContent = `${visibleFiles.length} result${visibleFiles.length === 1 ? "" : "s"}`;
 
       folderGrid.innerHTML = "";
-      folders.forEach(folder => {
+      [folders[3], folders[1], folders[2], folders[0]].forEach(folder => {
         const count = visibleFiles.filter(folder.matcher).length;
         const card = document.createElement("article");
         card.className = "folder-card";
@@ -2128,7 +2187,7 @@
           <div class="folder-title">${folder.title}</div>
           <div class="folder-count">${
             folder.cta
-              ? "Upload now ↗"
+              ? `<button class="folder-upload-now" type="button">Upload now ↗</button>`
               : (count ? `${count} indexed file${count === 1 ? "" : "s"}` : "COMING SOON")
           }</div>
         `;
