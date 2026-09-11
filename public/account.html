@@ -1451,7 +1451,11 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         }
 
         const allowedFolders = new Set([
-          "Live Evidence");
+          "Live Evidence",
+          "Villa Spada",
+          "NUMA",
+          "Other Busta Files"
+        ]);
 
         if (!allowedFolders.has(folder)) {
           alert("Choose a valid destination folder.");
