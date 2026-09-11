@@ -178,14 +178,12 @@
 
     <div id="key-status" class="message">Reading Chaos NFC key...</div>
 
-    <form id="auth-form" class="form">
-      <input id="email" type="email" autocomplete="email" placeholder="Email" required>
-      <input id="password" type="password" autocomplete="current-password" placeholder="Password, min. 8 characters" required>
+    <div id="auth-form" class="form">
       <div class="row">
-        <button id="signup" type="button">Create Account</button>
-        <button id="login" type="button">Log In</button>
+        <a id="login-link" class="button" href="#">Log In</a>
+        <a id="signup-link" class="button" href="#">Create Account</a>
       </div>
-    </form>
+    </div>
 
     <div id="claim-area" class="hidden">
       <div class="badge">✓ Ready to activate</div>
@@ -220,10 +218,6 @@
     const authForm = document.getElementById("auth-form");
     const claimArea = document.getElementById("claim-area");
     const message = document.getElementById("message");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const signup = document.getElementById("signup");
-    const login = document.getElementById("login");
     const claim = document.getElementById("claim");
 
     function setMessage(text, type = "") {
@@ -250,49 +244,6 @@
       }
 
       return session;
-    }
-
-    async function signUpOrLogin(mode) {
-      const userEmail = email.value.trim().toLowerCase();
-      const userPassword = password.value;
-
-      if (!userEmail || !userPassword) {
-        setMessage("Enter email and password.", "error");
-        return;
-      }
-
-      if (userPassword.length < 8) {
-        setMessage("Password must be at least 8 characters.", "error");
-        return;
-      }
-
-      setMessage(mode === "signup" ? "Creating account..." : "Logging in...");
-
-      const result = mode === "signup"
-        ? await bustaSupabase.auth.signUp({
-            email: userEmail,
-            password: userPassword,
-            options: {
-              emailRedirectTo: "https://lookapp.org/claim?key=" + encodeURIComponent(chaosKey)
-            }
-          })
-        : await bustaSupabase.auth.signInWithPassword({
-            email: userEmail,
-            password: userPassword
-          });
-
-      if (result.error) {
-        setMessage(result.error.message, "error");
-        return;
-      }
-
-      await refreshSession();
-
-      if (mode === "signup") {
-        setMessage("Account created. Now unlock your #Chaoscore access.", "success");
-      } else {
-        setMessage("Login successful. Now unlock your #Chaoscore access.", "success");
-      }
     }
 
     async function claimChaosAccess() {
@@ -338,8 +289,14 @@
       }, 1000);
     }
 
-    signup.addEventListener("click", () => signUpOrLogin("signup"));
-    login.addEventListener("click", () => signUpOrLogin("login"));
+    const claimReturn = "/claim?key=" + encodeURIComponent(chaosKey);
+    const encodedNext = encodeURIComponent(claimReturn);
+
+    document.getElementById("login-link").href =
+      "/auth?mode=login&next=" + encodedNext;
+
+    document.getElementById("signup-link").href =
+      "/auth?mode=signup&next=" + encodedNext;
     claim.addEventListener("click", claimChaosAccess);
 
     if (!chaosKey || chaosKey.length < 12) {

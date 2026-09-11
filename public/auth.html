@@ -255,6 +255,36 @@
       word-break: break-word;
     }
 
+    .password-field {
+      position: relative;
+    }
+
+    .password-field input {
+      width: 100%;
+      padding-right: 84px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: rgba(231,224,210,0.68);
+      font: inherit;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 8px 4px;
+    }
+
+    .password-toggle:hover {
+      color: rgba(231,224,210,0.95);
+    }
+
     .hidden { display: none !important; }
   </style>
 </head>
@@ -274,11 +304,17 @@
       <input id="email" type="email" autocomplete="email" required>
 
       <label for="password">Password</label>
-      <input id="password" type="password" autocomplete="new-password" required>
+      <div class="password-field">
+        <input id="password" type="password" autocomplete="new-password" required>
+        <button class="password-toggle" type="button" data-target="password">Show</button>
+      </div>
 
       <div id="confirm-wrap">
         <label for="confirm">Confirm password</label>
-        <input id="confirm" type="password" autocomplete="new-password">
+        <div class="password-field">
+          <input id="confirm" type="password" autocomplete="new-password">
+          <button class="password-toggle" type="button" data-target="confirm">Show</button>
+        </div>
       </div>
 
       <div id="legal-consent-wrap" class="legal-consent">
@@ -310,6 +346,18 @@
         autoRefreshToken: true,
         detectSessionInUrl: true
       }
+    });
+
+    document.querySelectorAll(".password-toggle").forEach((button) => {
+      button.addEventListener("click", () => {
+        const input = document.getElementById(button.dataset.target);
+        if (!input) return;
+
+        const willShow = input.type === "password";
+        input.type = willShow ? "text" : "password";
+        button.textContent = willShow ? "Hide" : "Show";
+        button.setAttribute("aria-label", willShow ? "Hide password" : "Show password");
+      });
     });
 
     const params = new URLSearchParams(window.location.search);
