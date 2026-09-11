@@ -72,7 +72,7 @@
 
     const frame = document.getElementById("look-app-global-frame");
     if (frame && frame.src === "about:blank") {
-      frame.src = "/exclusive";
+      frame.src = "/";
     }
 
     document.body.classList.add("look-app-global-view-open");
