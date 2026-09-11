@@ -2975,13 +2975,14 @@
       </div>
 
       <div class="busta-upload-field">
-        <label for="busta-upload-folder">Suggested folder</label>
-        <select id="busta-upload-folder">
-          <option value="Live Evidence">Live Evidence</option>
-          <option value="Villa Spada Case File">Villa Spada Case File</option>
-          <option value="NUMA Incident — 11 October 2025">NUMA Incident — 11 October 2025</option>
-          <option value="Other Busta Files">Other Busta Files</option>
-        </select>
+        <label for="busta-upload-title">Title</label>
+          <input
+            id="busta-upload-title"
+            type="text"
+            maxlength="120"
+            placeholder="Enter a title"
+            required
+          >
       </div>
 
       <div class="busta-upload-field">
@@ -3016,7 +3017,7 @@
       const dialog = document.getElementById("busta-upload-dialog");
       const form = document.getElementById("busta-upload-form");
       const fileInput = document.getElementById("busta-upload-file");
-      const folderInput = document.getElementById("busta-upload-folder");
+      const titleInput = document.getElementById("busta-upload-title");
       const noteInput = document.getElementById("busta-upload-note");
       const message = document.getElementById("busta-upload-message");
       const closeButton = document.getElementById("busta-upload-close");
@@ -3249,6 +3250,16 @@
 
           fileUploaded = true;
 
+          const titleValue = String(
+            document.getElementById("busta-upload-title")?.value || ""
+          ).trim();
+
+          if (!titleValue) {
+            setMessage("Enter a title before sending your Busta File.");
+            document.getElementById("busta-upload-title")?.focus();
+            return;
+          }
+
           const insert = await client
             .from("pending_uploads")
             .insert({
@@ -3264,8 +3275,7 @@
                   ? "video/mp4"
                   : "application/octet-stream"),
               file_size: file.size,
-              suggested_folder:
-                folderInput?.value ||
+              title: titleValue,
                 "Other Busta Files",
               note:
                 noteInput?.value || "",
@@ -3276,7 +3286,9 @@
             throw insert.error;
           }
 
-          setMessage(
+                    if (titleInput) titleInput.value = "";
+
+setMessage(
             "File submitted. Douglas will review it."
           );
 

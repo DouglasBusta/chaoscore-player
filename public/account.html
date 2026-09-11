@@ -1399,13 +1399,35 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
             <div class="owner-review-name">${item.file_name}</div>
             <div class="owner-review-meta">
               From: @${item.uploader_username || "unknown"}<br>
-              Suggested folder: ${item.suggested_folder || "Other Busta Files"}<br>
+              Submitted title: ${item.title || item.file_name || "Untitled"}<br>
               Size: ${Math.round((item.file_size || 0) / 1024)} KB
             </div>
             ${item.note ? `<div class="owner-review-note">${item.note}</div>` : ""}
+            <div class="owner-review-note">
+              <label for="owner-title-${item.id}">Public title</label>
+              <input
+                id="owner-title-${item.id}"
+                data-owner-title="${item.id}"
+                type="text"
+                value="${String(item.title || item.file_name || "").replace(/"/g, "&quot;")}"
+                maxlength="120"
+              >
+
+              <label for="owner-folder-${item.id}">Publish inside</label>
+              <select
+                id="owner-folder-${item.id}"
+                data-owner-folder="${item.id}"
+              >
+                <option value="Live Evidence">Live Evidence</option>
+                <option value="Villa Spada">Villa Spada</option>
+                <option value="NUMA">NUMA</option>
+                <option value="Other Busta Files">Other Busta Files</option>
+              </select>
+            </div>
+
             <div class="owner-review-actions">
               ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">Preview</a>` : ""}
-              <button data-approve-upload="${item.id}" data-folder="${item.suggested_folder || "Other Busta Files"}">Approve</button>
+              <button data-approve-upload="${item.id}">Approve</button>
               <button data-reject-upload="${item.id}">Reject</button>
             </div>
           `;
@@ -1414,18 +1436,32 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         }
       }
 
-      async function approveUpload(id, suggestedFolder) {
-        const title =
-          prompt(
-            "Public title? Leave empty to use original filename."
-          ) || "";
+      async function approveUpload(id) {
+        const title = String(
+          document.querySelector(`[data-owner-title="${id}"]`)?.value || ""
+        ).trim();
+
+        const folder = String(
+          document.querySelector(`[data-owner-folder="${id}"]`)?.value || ""
+        ).trim();
+
+        if (!title) {
+          alert("Add a public title before approving.");
+          return;
+        }
+
+        const allowedFolders = new Set([
+          "Live Evidence");
+
+        if (!allowedFolders.has(folder)) {
+          alert("Choose a valid destination folder.");
+          return;
+        }
 
         const description =
           prompt(
             "Public description? Optional."
           ) || "";
-
-        const folder = "Other Busta Files";
 
         let publicPath = "";
         let publicFileUploaded = false;
@@ -1472,8 +1508,14 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
             "_"
           );
 
+          const folderStoragePath = folder
+            .trim()
+            .replace(/[^a-zA-Z0-9_-]+/g, "_")
+            .replace(/^_+|_+$/g, "");
+
           publicPath =
-            "Other_Busta_Files/" +
+            folderStoragePath +
+            "/" +
             Date.now() +
             "-" +
             safeName;
@@ -1553,7 +1595,7 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
               reviewed_at:
                 new Date().toISOString(),
               admin_note:
-                "Published to Other Busta Files",
+                "Published to " + folder,
               target_folder: folder
             })
             .eq("id", id);
@@ -1563,7 +1605,7 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
           }
 
           alert(
-            "Approved and published inside Other Busta Files."
+            "Approved and published inside " + folder + "."
           );
 
           await loadPending();
@@ -1640,7 +1682,7 @@ avatarDisplay.src = profile?.avatar_url || defaultAvatarUrl(displayName);
         const approve = event.target.closest("[data-approve-upload]");
         const reject = event.target.closest("[data-reject-upload]");
 
-        if (approve) approveUpload(approve.dataset.approveUpload, approve.dataset.folder);
+        if (approve) approveUpload(approve.dataset.approveUpload);
         if (reject) rejectUpload(reject.dataset.rejectUpload);
       });
 
